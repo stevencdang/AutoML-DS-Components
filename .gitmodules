@@ -7,3 +7,6 @@
 [submodule "lib/ls_utilities"]
 	path = lib/ls_utilities
 	url = https://stevencdang@bitbucket.org/stevencdang/ls_utilities.git
+[submodule "lib/ls_dataset"]
+	path = lib/ls_dataset
+	url = https://stevencdang@bitbucket.org/stevencdang/ls_dataset.git
