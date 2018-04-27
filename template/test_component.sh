@@ -9,10 +9,10 @@ cwd=$(pwd)
 if [ ! -d "$cwd/test" ]; then
     mkdir $cwd/test
     echo "Made test directory: '$cwd/test'"
-    if [ ! -d "$cwd/test/output" ]; then
-        mkdir "$cwd/test/output"
-        echo "Made test directory: '$cwd/test/output'"
-    fi
+fi
+if [ ! -d "$cwd/test/output" ]; then
+    mkdir "$cwd/test/output"
+    echo "Made test directory: '$cwd/test/output'"
 fi
 
 # Add all src subdirectories to python path (This emulates the flat heirarch that 
