@@ -19,7 +19,7 @@ pypath=$(which python)
 export IFS="="
 f1="component.interpreter.path"
 f2="component.program.path"
-if [ build.properties ]; then
+if [ -f build.properties ]; then
     rm build.properties
 fi
 while read -r k v; do

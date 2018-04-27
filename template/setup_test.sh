@@ -12,8 +12,15 @@ source env/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
-mkdir test 
-mkdir test/output
+cwd=$(pwd)
+if [ ! -d "$cwd/test" ]; then
+    mkdir $cwd/test
+    echo "Made test directory: '$cwd/test'"
+    if [ ! -d "$cwd/test/output" ]; then
+        mkdir "$cwd/test/output"
+        echo "Made test directory: '$cwd/test/output'"
+    fi
+fi
 
 # Deactiate python venv
 deactivate

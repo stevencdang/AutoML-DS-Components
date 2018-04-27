@@ -1,0 +1,17 @@
+### Vim files ###
+#################
+.*.*.sw*
+
+
+### Python files ###
+####################
+*.pyc
+
+### Local virtualenv folder ###
+###############################
+env
+
+### Test folder for local testing ###
+#####################################
+test
+
