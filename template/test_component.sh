@@ -15,6 +15,14 @@ if [ ! -d "$cwd/test" ]; then
     fi
 fi
 
+# Add all src subdirectories to python path (This emulates the flat heirarch that 
+# will exist when this script is run in Tigris
+path="$PYTHONPATH"
+for dir in $(find src -type d); do
+    path="$path:$dir"
+done
 
-python program/main.py -programDir $cwd/program -workingDir $cwd/test/output -ds_name='185_baseball' -userId=' ' -is_test=1
+PYTHONPATH="$path" python src/main.py -programDir $cwd/src -workingDir $cwd/test/output -userId=' ' -is_test=1
+
+
 
