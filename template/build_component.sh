@@ -28,6 +28,11 @@ if [ "$#" -gt 0 ]; then
             dir="$1"
         else
             dir="$(pwd)"/${1%/}
+            # hack to resolve if relative path is given with ../..
+            cwd="$(pwd)"
+            cd "$dir"
+            dir="$(pwd)"
+            cd "$cwd"
         fi
     fi
 fi

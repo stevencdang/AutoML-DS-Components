@@ -15,3 +15,8 @@ env
 #####################################
 test
 
+# A local program config file for running the application with system specific settings
+src/settings.cfg
+
+# Ignore auto generate log file when generating component
+gen_component.log
