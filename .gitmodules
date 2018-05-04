@@ -10,3 +10,6 @@
 [submodule "lib/ls_dataset"]
 	path = lib/ls_dataset
 	url = https://stevencdang@bitbucket.org/stevencdang/ls_dataset.git
+[submodule "visualizeconfusionmatrix"]
+	path = visualizeconfusionmatrix
+	url = https://stevencdang@bitbucket.org/stevencdang/visualizeconfusionmatrix.git
