@@ -1,0 +1,16 @@
+{% extends base_d3_viz.html %}
+
+{% block head_css_custom %}
+    <link type="text/css" rel="stylesheet" href="{{ resource_path }}/component.css">
+{% endblock %}
+
+{% block footer_js_custom %}
+    <script src="{{ resource_path }}/component.js"></script>
+    <script type="text/javascript">
+        // var sm = new ScatterMatrix("http://www.erikharpstead.net/data/ss_demo.tsv",undefined,"comp-target",undefined,"tsv","property-panel");
+       //var sm = new ScatterMatrix("${input0}",undefined,"scatter-matrix-container",undefined,"tsv","controls");
+    var sm = new ScatterMatrix({{ data_json }}, undefined,"scatter-matrix-container",undefined,"tsv","controls");
+      sm.render();
+    </script>
+{% endblock %}
+

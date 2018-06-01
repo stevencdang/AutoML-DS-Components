@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head_css_lib %}
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css">
+        {% endblock %}
+        {% block head_css_custom %}
+            <style>
+                {{ d3_dashboard_css }}
+            </style>
+            <style>
+                .test-class {}
+            </style>
+        {% endblock %}
+        {% block head_other %}
+        {% endblock %}
+    </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div id="plot-panel" class="col-md-9 col-sm-8 col-xs-12">
+            {% block plot_panel %}
+            {% endblock %}
+          </div>
+        </div>
+        <div id="property-container" class="col-md-3 col-sm-4 col-xs-6">
+            {% block property_panel %}
+               <div id="property-panel"></div>
+            {% endblock %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    {% block footer_js_lib %}
+    <script src="http://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+    <!--<script src="https://d3js.org/d3.v5.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    {% endblock %}
+    {% block data %}
+    {% endblock %}
+    {% block footer_js_custom %}
+    {% endblock %}
+</body></html>

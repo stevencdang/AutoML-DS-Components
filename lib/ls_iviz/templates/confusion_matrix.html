@@ -1,0 +1,70 @@
+{% extends "base_d3_viz.html" %}
+
+{% block head_css_custom %}
+    {{ super() }}
+    <style>
+        {{ component_css }}
+    </style>
+{% endblock %}
+{% block head_other %}
+{% endblock %}
+
+{% block plot_panel %}
+	<div id="dataView"></div>
+    <div style="display:inline-block; float:left" id="container"></div>
+    <div style="display:inline-block; float:left" id="legend"></div>
+{% endblock %}
+{% block property_panel %}
+{% endblock %}
+
+{% block data %}
+    <script>
+        var raw_data = {{ raw_data }}
+    </script>
+{% endblock %}
+{% block footer_js_custom %}
+    <script type="text/javascript">
+        {% autoescape false %}
+            {{ component_js }}
+        {% endautoescape %}
+    </script>
+    <script type="text/javascript">
+        {% autoescape false %}
+        var confusionMatrix = {{ raw_data }};
+
+        var tp = confusionMatrix[0][0];
+        var fn = confusionMatrix[0][1];
+        var fp = confusionMatrix[1][0];
+        var tn = confusionMatrix[1][1];
+
+        var p = tp + fn;
+        var n = fp + tn;
+
+        var accuracy = (tp+tn)/(p+n);
+        var f1 = 2*tp/(2*tp+fp+fn);
+        var precision = tp/(tp+fp);
+        var recall = tp/(tp+fn);
+
+        accuracy = Math.round(accuracy * 100) / 100
+        f1 = Math.round(f1 * 100) / 100
+        precision = Math.round(precision * 100) / 100
+        recall = Math.round(recall * 100) / 100
+
+        var computedData = [];
+        computedData.push({"F1":f1, "PRECISION":precision,"RECALL":recall,"ACCURACY":accuracy});
+
+        var labels = {{ data_classes }};
+        Matrix({
+                        container : '#container',
+                        data      : confusionMatrix,
+                        labels    : labels,
+                        start_color : '#ffffff',
+                        end_color : '#e67e22'
+                    });
+
+        // rendering the table
+         //var table = tabulate(computedData, ["F1", "PRECISION","RECALL","ACCURACY"]);
+        {% endautoescape %}
+    </script>
+{% endblock %}
+

@@ -1,0 +1,26 @@
+{% extends "base_static_viz.html" %}
+
+{% block head_css_custom %}
+    {{ super() }}
+    <style>
+        {{ component_css }}
+    </style>
+{% endblock %}
+{% block head_other %}
+{% endblock %}
+
+{% block plot_panel %}
+    <div class="viz-img-container">
+        <img href="{{ viz_img_path }}"/>
+    </div>
+{% endblock %}
+
+{% block property_panel %}
+{% endblock %}
+
+{% block footer_js_custom %}
+    <script>
+        {{ component_js }}
+    </script>
+{% endblock %}
+
