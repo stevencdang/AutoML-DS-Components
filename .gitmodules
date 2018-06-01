@@ -1,9 +1,6 @@
 [submodule "d3mpipelinesearch"]
 	path = d3mpipelinesearch
 	url = https://stevencdang@bitbucket.org/stevencdang/d3mpipelinesearch.git
-[submodule "d3mdatasetselector"]
-	path = d3mdatasetselector
-	url = https://stevencdang@bitbucket.org/stevencdang/d3mdatasetselector.git
 [submodule "lib/ls_utilities"]
 	path = lib/ls_utilities
 	url = https://stevencdang@bitbucket.org/stevencdang/ls_utilities.git
