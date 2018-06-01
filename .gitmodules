@@ -13,3 +13,9 @@
 [submodule "visualizeconfusionmatrix"]
 	path = visualizeconfusionmatrix
 	url = https://stevencdang@bitbucket.org/stevencdang/visualizeconfusionmatrix.git
+[submodule "visualizationserver"]
+	path = visualizationserver
+	url = https://stevencdang@bitbucket.org/stevencdang/visualizationserver.git
+[submodule "visualizedescribedata"]
+	path = visualizedescribedata
+	url = https://stevencdang@bitbucket.org/stevencdang/visualizedescribedata.git
