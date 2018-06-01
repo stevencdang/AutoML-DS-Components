@@ -33,11 +33,11 @@ fi
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
 cd $srcdir/src
 # Replicate directory structure
-#find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
+find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
 # Copy files
-#find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-#find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-#find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
 cd $cwd
 
 cd $libdir
@@ -75,6 +75,6 @@ cd $cwd
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-#PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0 "$cwd/test/datasetDoc.json" -userId=' ' -is_test=1
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0 "$cwd/test/datasetDoc.json" -userId=' ' -is_test=1
 
 deactivate
