@@ -101,7 +101,11 @@ class TA2Client(object):
                 # For now force it into a string until type checking is implemented
                 i.string = str(inpt)
 
-        logger.debug("Sending msg: %s" % str(msg))
+        logger.debug("################################")
+        # logger.debug("Sending msg: %s" % str(msg))
+        for ip in msg.inputs:
+            logger.debug("Got file uri: %s" % ip)
+            logger.debug("Got file uri: %s" % ip.dataset_uri)
 
         reply = self.serv.SearchSolutions(msg)
 
