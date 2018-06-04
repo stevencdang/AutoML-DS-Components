@@ -5,6 +5,7 @@
 
 import logging
 import grpc
+from sets import Set
 
 # D3M TA2 API imports
 from .api_v3 import core_pb2, core_pb2_grpc
@@ -117,7 +118,7 @@ class TA2Client(object):
         msg = core_pb2.GetSearchSolutionsResultsRequest(
             search_id = sid
         )
-        soln_ids = []
+        soln_ids = Set()
         for reply in self.serv.GetSearchSolutionsResults(msg):
             logger.debug("Got message: %s" % str(reply))
             if reply.solution_id:
@@ -137,7 +138,7 @@ class TA2Client(object):
         if len(soln_ids) == 0:
             return None
         else:
-            return soln_ids
+            return list(soln_ids)
 
     def end_search_solutions(self, sid):
         msg = core_pb2.EndSearchSolutionsRequest(search_id=sid)
