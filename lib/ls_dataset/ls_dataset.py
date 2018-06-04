@@ -8,6 +8,7 @@ import os.path as path
 import json
 from io import IOBase
 import pathlib
+import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +27,6 @@ class LSDataset(object):
         self.name = path.split(dpath)[-1]
         # Path to the dataset json
         self.schema_path = path.join(self.dpath, self.name + "_dataset", self.__default_schema__)
-    
-    def __str__(self):
-        return self.to_json()
     
     @staticmethod
     def from_json(fpath):
@@ -96,4 +94,29 @@ class LSDataset(object):
             out_file.close()
 
         return json.dumps(out)
+
+    def to_json_pretty(self, fpath=None):
+        """
+        Write the dataset info to file in human readable format and return a 
+        string with the json. If no path is given, then just returns a string 
+        with the json representation of the dataset json. 
+
+        """
+        out = self.print()
+        if fpath is not None:
+            logger.debug("Writing pretty dataset json to: %s" % fpath)
+            with open(fpath, 'w') as out_file:
+                outfile.write(out)
+
+        return out
+
+
+    def __str__(self):
+        return self.to_json()
+    
+    def print(self):
+        # return self.__str__()
+        out = self.__str__()
+        ds_json = json.loads(out)
+        return pprint.pformat(ds_json)
 

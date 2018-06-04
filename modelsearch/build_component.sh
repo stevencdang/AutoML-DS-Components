@@ -113,8 +113,9 @@ else
 fi
 
 # Generate the component
-#./runWCC.sh $dir $wcc
+./runWCC.sh $dir $wcc
 echo "Completed component generation"
+rm $wcc
 
 ### Perform post generation actions ###
 #######################################

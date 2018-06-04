@@ -29,6 +29,17 @@ __version__ = '0.1'
 
 logging.basicConfig()
 
+class Solution(object):
+
+    def __init__(self, sid):
+        self.sid = sid
+        self.workflow = None
+        self.steps = None
+        self.scores = None
+    
+    def add_description(self, workflow, step_desc):
+        self.workflow = workflow
+        self.steps = step_desc
 
 
 if __name__ == '__main__':
@@ -68,33 +79,23 @@ if __name__ == '__main__':
     address = config.get("TA2", 'ta2_url')
     
     logger.info("using server at address %s" % address)
-    ############### TA2 V2 Code #######################
-    # server = {
-        # 'channel': grpc.insecure_channel(address)
-    # }
-    # server['stub'] = core_pb2_grpc.CoreStub(server['channel'])
-    # server['stub_dataflow_ext'] = dataflow_ext_pb2_grpc.DataflowExtStub(server['channel'])
-    # server['stub_data_ext'] = data_ext_pb2_grpc.DataExtStub(server['channel'])
-    # server['version'] = core_pb2.DESCRIPTOR.GetOptions().Extensions[
-            # core_pb2.protocol_version]
-    # ta2 = TA2Client(server)
-
-    # # Execute Pipeline Creation Process
-    # context = ta2.start_session()
-    # pipelines, predictions = ta2.create_pipelines(ds, prob_desc)
-    # ta2.execute_pipelines(ds, pipelines)
-    # ta2.end_session()
-
-    ############### End TA2 V2 Code #######################
     serv = TA2Client(address)
     serv.hello()
 
+    # Search for solutions
     search_id = serv.search_solutions(prob, ds)
     soln_ids = serv.get_search_solutions_results(search_id)
     if soln_ids is None:
         raise Exception("No solution returned")
+    
+    # Get workflow for each solution returned
+    solns = {soln_id: Solution(soln_id) for soln_id in soln_ids}
+    # for soln_id in solns:
+        # slns[soln_id].add_description(*self.serv.describe_solution(soln_id))
+
+    # Get Score for each solution
     score_req_ids = []
-    for soln_id in soln_ids:
+    for soln_id in solns:
         score_req_ids.append(serv.score_solution(soln_id, ds))
     scores = {}
     for req_id in score_req_ids:
@@ -136,12 +137,13 @@ if __name__ == '__main__':
                              # prob_desc=prob_desc, 
                              # pfiles=list(pfiles))
     
-    # # Write dataset info to output file
-    # out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
-    # pred_out.to_json(out_file_path)
+    # Write dataset info to output file
+    out_file_path = path.join(args.workingDir, config.get('Output', 'data_out_file'))
+    ds.to_json(out_file_path)
     # Write out human readable version for debugging
-    # ds_json = json.loads(pred_out.to_json())
-    # with open(out_file_path, 'w') as out_file:
-        # pprint.pprint(ds_json, out_file)
+    ds.to_json_pretty(out_file_path + ".readable")
+
+    # Write Solution workflows to file
+
 
 
