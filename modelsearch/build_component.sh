@@ -86,15 +86,15 @@ awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir
 
 ### Perform pre generation actions ###
 #######################################
-srcdir=$(dirname "$wcc")
-echo "Packaging python source to be built into 'program' directory: $srcdir/program"
-if [ ! -d "$srcdir"/program ]; then
-    mkdir "$srcdir"/program
-else
-    # Clean out the old source before continuing
-    rm -R "$srcdir"/program
-    mkdir "$srcdir"/program
-fi
+#srcdir=$(dirname "$wcc")
+#echo "Packaging python source to be built into 'program' directory: $srcdir/program"
+#if [ ! -d "$srcdir"/program ]; then
+    #mkdir "$srcdir"/program
+#else
+    ## Clean out the old source before continuing
+    #rm -R "$srcdir"/program
+    #mkdir "$srcdir"/program
+#fi
 
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
 ./setup_run.sh
