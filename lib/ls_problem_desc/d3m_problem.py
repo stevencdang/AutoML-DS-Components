@@ -90,8 +90,9 @@ class D3MProblemDesc(ProblemDesc):
         return D3MProblemDesc(pr_desc)
 
     @staticmethod
-    def get_task_type(t):
-        if isinstance(t, str):
+    def get_task_type(ttype):
+        if isinstance(ttype, str):
+            t = ttype.upper()
             if t == 'TASK_TYPE_UNDEFINED':
                 return problem_pb2.TASK_TYPE_UNDEFINED
             elif t == 'CLASSIFICATION':
@@ -117,6 +118,7 @@ class D3MProblemDesc(ProblemDesc):
             else:
                 return problem_pb2.TASK_TYPE_UNDEFINED
         else:
+            t = ttype
             if t == problem_pb2.TASK_TYPE_UNDEFINED:
                 return 'TASK_TYPE_UNDEFINED'
             elif t == problem_pb2.CLASSIFICATION:
@@ -143,8 +145,9 @@ class D3MProblemDesc(ProblemDesc):
                 return problem_pb2.TASK_TYPE_UNDEFINED
 
     @staticmethod
-    def get_task_subtype(t):
-        if isinstance(t, str):
+    def get_task_subtype(ttype):
+        if isinstance(ttype, str):
+            t = ttype.upper()
             if t == 'TASK_SUBTYPE_UNDEFINE':
                 return problem_pb2.TASK_SUBTYPE_UNDEFINED
             elif t == 'NONE':
@@ -166,6 +169,7 @@ class D3MProblemDesc(ProblemDesc):
             else: 
                 return problem_pb2.TASK_SUBTYPE_UNDEFINED
         else:
+            t = ttype
             if t == problem_pb2.TASK_SUBTYPE_UNDEFINE:
                 return 'TASK_SUBTYPE_UNDEFINED'
             elif t == problem_pb2.NONE:
@@ -189,8 +193,9 @@ class D3MProblemDesc(ProblemDesc):
 
 
     @staticmethod
-    def get_perf_metric(m):
-        if isinstance(m, str):
+    def get_perf_metric(metric):
+        if isinstance(metric, str):
+            m = metric.upper()
             if m == 'METRIC_UNDEFINED':
                 return problem_pb2.METRIC_UNDEFINED
             elif m == 'ACCURACY':
@@ -228,6 +233,7 @@ class D3MProblemDesc(ProblemDesc):
             else:
                 raise Exception ("Invalid metric given: %s" % m)
         else:
+            m = metric
             if m == problem_pb2.METRIC_UNDEFINED:
                 return 'METRIC_UNDEFINED'
             elif m == problem_pb2.ACCURACY:

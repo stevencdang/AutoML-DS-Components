@@ -109,6 +109,8 @@ class ProblemDesc(object):
         else:
             raise Exception("Found no problem schema json at path: %s" % str(fpath))
 
+        logger.debug("Got raw problem schema json: %s" % str(ds_json))
+
         return ProblemDesc(
             name=ds_json['about']['problemName'], 
             desc=ds_json['about']['problemDescription'], 
@@ -143,9 +145,10 @@ class ProblemDesc(object):
         return json.dumps(out)
 
     def print(self):
+        # return self.__str__()
         out = self.__str__()
         ds_json = json.loads(out)
-        return pprint.pprint(ds_json)
+        return pprint.pformat(ds_json)
 
     def __str__(self):
         out = {

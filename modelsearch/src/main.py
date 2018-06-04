@@ -90,7 +90,7 @@ if __name__ == '__main__':
     serv.hello()
 
     search_id = serv.search_solutions(prob, ds)
-    # soln_ids = serv.get_search_solutions_results(search_id)
+    soln_ids = serv.get_search_solutions_results(search_id)
     # if soln_ids is None:
         # raise Exception("No solution returned")
     # score_req_ids = []

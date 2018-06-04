@@ -117,23 +117,27 @@ class TA2Client(object):
         msg = core_pb2.GetSearchSolutionsResultsRequest(
             search_id = sid
         )
-        completed_ids = []
+        soln_ids = []
         for reply in self.serv.GetSearchSolutionsResults(msg):
+            logger.debug("Got message: %s" % str(reply))
+            if reply.solution_id:
+                logger.debug("Got a message with a solution id: %s" % reply.solution_id)
+                soln_ids.add(reply.solution_id)
             if reply.progress.state == core_pb2.PENDING:
                 logger.debug("Search is still pending and hasn't begin")
             elif reply.progress.state == core_pb2.RUNNING:
                 logger.debug("Search is currently running and has not completed: %s" % reply.progress.status)
             elif reply.progress.state == core_pb2.COMPLETED:
                 logger.info("Search has completed successfully: %s" % reply.progress.status)
-                completed_ids.append(reply.progress.solution_id)
             elif reply.progress.state == core_pb2.ERRORED:
                 logger.error("Search has completed in an error state: %s" % reply.progress.status)
+                raise Exception("Search Solution returned in error: %s" % reply.progress.status)
             else:
                 logger.warning("Search is in an unknown state: %s" % str(reply.progress))
-        if len(completed_ids) == 0:
+        if len(soln_ids) == 0:
             return None
         else:
-            return completed_ids
+            return soln_ids
 
     def end_search_solutions(self, sid):
         msg = core_pb2.EndSearchSolutionsRequest(search_id=sid)
