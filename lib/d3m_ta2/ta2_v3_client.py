@@ -87,10 +87,7 @@ class TA2Client(object):
             # pipe.source = self.get_id()
             # pipe.context = pipeline_pb2.TESTING
             # out = pipe.outputs.add()
-
-         
-
-
+        
         # Add inputs if given
         if inputs is None:
             i = msg.inputs.add()
@@ -101,16 +98,15 @@ class TA2Client(object):
                 # For now force it into a string until type checking is implemented
                 i.string = str(inpt)
 
-        logger.debug("################################")
+        # logger.debug("################################")
         # logger.debug("Sending msg: %s" % str(msg))
-        for ip in msg.inputs:
-            logger.debug("Got file uri: %s" % ip)
-            logger.debug("Got file uri: %s" % ip.dataset_uri)
+        # for ip in msg.inputs:
+            # logger.debug("Got file uri: %s" % ip)
+            # logger.debug("Got file uri: %s" % ip.dataset_uri)
 
         reply = self.serv.SearchSolutions(msg)
 
         return reply.search_id
-        # return "dummy_id_123456"
 
     def get_search_solutions_results(self, sid):
         logger.info("Geting Search Solution request results for search id: %s" % sid)
@@ -158,14 +154,27 @@ class TA2Client(object):
         )
         return cfg
 
-    def score_solution(self, sid):
+    def score_solution(self, sid, dataset, inputs=None, metrics=None):
         logger.info("Requesting to score solution with id: %s" % sid)
         msg = core_pb2.ScoreSolutionRequest(
             solution_id=sid,
-            inputs=None,
-            performance_metrics=None,
             configuration=self.get_default_scoring_config()
         )
+        # Add inputs if given
+        if inputs is None:
+            i = msg.inputs.add()
+            i.dataset_uri = dataset.get_schema_uri()
+        else:
+            for inpt in inputs:
+                i = msg.inputs.add()
+                # For now force it into a string until type checking is implemented
+                i.string = str(inpt)
+
+        # Add metrics if given
+        if metrics is None:
+            m = msg.performance_metrics.add()
+            m.metric = problem_pb2.ACCURACY
+
         reply = self.serv.ScoreSolution(msg)
         return reply.request_id
 

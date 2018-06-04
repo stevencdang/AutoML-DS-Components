@@ -95,7 +95,7 @@ if __name__ == '__main__':
         raise Exception("No solution returned")
     score_req_ids = []
     for soln_id in soln_ids:
-        score_req_ids.append(serv.score_solution(soln_id))
+        score_req_ids.append(serv.score_solution(soln_id, ds))
     scores = {}
     for req_id in score_req_ids:
         scores[req_id] = serv.get_score_solution_results(req_id)
