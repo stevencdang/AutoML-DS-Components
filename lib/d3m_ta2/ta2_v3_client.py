@@ -9,6 +9,7 @@ import grpc
 # D3M TA2 API imports
 from .api_v3 import core_pb2, core_pb2_grpc
 from .api_v3 import value_pb2
+from .api_v3 import problem_pb2
 
 from ls_problem_desc.d3m_problem import D3MProblemDesc
 
@@ -174,7 +175,7 @@ class TA2Client(object):
         if metrics is None:
             m = msg.performance_metrics.add()
             m.metric = problem_pb2.ACCURACY
-
+        logger.debug("Sending Score solution request: \n%s" % str(msg))
         reply = self.serv.ScoreSolution(msg)
         return reply.request_id
 
