@@ -91,14 +91,14 @@ if __name__ == '__main__':
 
     search_id = serv.search_solutions(prob, ds)
     soln_ids = serv.get_search_solutions_results(search_id)
-    # if soln_ids is None:
-        # raise Exception("No solution returned")
-    # score_req_ids = []
-    # for soln_id in soln_ids:
-        # score_req_ids.append(serv.score_solution(soln_id))
-    # scores = {}
-    # for req_id in score_req_ids:
-        # scores[req_id] = serv.get_score_solution_results(req_id)
+    if soln_ids is None:
+        raise Exception("No solution returned")
+    score_req_ids = []
+    for soln_id in soln_ids:
+        score_req_ids.append(serv.score_solution(soln_id))
+    scores = {}
+    for req_id in score_req_ids:
+        scores[req_id] = serv.get_score_solution_results(req_id)
 
     # serv.end_search_solutions(search_id)
 
@@ -110,13 +110,14 @@ if __name__ == '__main__':
     # soln_ids = serv.get_search_solutions_results(search_id)
     # if soln_ids is None:
         # raise Exception("No solution returned")
-    # fit_req_ids = []
-    # for soln_id in soln_ids:
-        # fit_req_ids.append(serv.fit_solution(soln_id, ds))
+    fit_req_ids = []
+    for soln_id in soln_ids:
+        fit_req_ids.append(serv.fit_solution(soln_id, ds))
     # for fit_req_id in fit_req_ids:
 
     
 
+    serv.end_search_solutions(search_id)
     
 
     # Retrieve output

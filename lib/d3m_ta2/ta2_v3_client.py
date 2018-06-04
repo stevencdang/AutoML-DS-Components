@@ -153,7 +153,7 @@ class TA2Client(object):
         cfg = core_pb2.ScoringConfiguration(
             method = core_pb2.K_FOLD,
             folds = 10,
-            train_test_ratios = 5,
+            train_test_ratio = 5,
             shuffle = True
         )
         return cfg
@@ -189,6 +189,8 @@ class TA2Client(object):
                 logger.warning("Scoring solution is in an unknown state: %s" % str(reply.progress))
         
         logger.debug("Returned %i scores-sets" % len(soln_scores))
+        for soln in soln_scores:
+            logger.debug("Score solution received: %s" % str(soln))
         return soln_scores
 
     def fit_solution(self, sid, ds):
@@ -207,7 +209,7 @@ class TA2Client(object):
                 i = msg.inputs.add()
                 # For now force it into a string until type checking is implemented
                 i.string = str(inpt)
-
+        logger.debug("Sending Fit request msg: %s" % str(msg))
         reply = self.serv.FitSolution(msg)
         return reply.request_id
 
