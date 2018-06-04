@@ -98,20 +98,6 @@ fi
 
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
 ./setup_run.sh
-# Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-#find "$srcdir"/src -name "*.py"  -print0 | xargs -0 cp -t "$srcdir"/program
-#find "$srcdir"/src -name "*.cfg"  -print0 | xargs -0 cp -t "$srcdir"/program
-#find "$srcdir"/src -name "*.cfg.sample" -print0 | xargs -0 cp -t "$srcdir"/program
-
-#cwd=$(pwd)
-#cd $srcdir/src
-## Replicate directory structure
-#find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
-## Copy files
-#find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-#find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-#find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-
 
 ### Generating new component ###
 ################################
@@ -193,3 +179,5 @@ done
 
 # Return to current working directory after completion
 cd "$cwd"
+echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3
+echo "Build component completed"

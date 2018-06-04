@@ -13,6 +13,7 @@
 # Write all echo statements to gen_component.log
 dir=$(pwd)
 LOG_FILE="$dir"/gen_component.log
+# Remove the log file if it exists
 if [ -f $LOG_FILE ]; then
     rm $LOG_FILE
 fi
@@ -59,22 +60,28 @@ else
 fi
 
 # Handle the argument specifying where the wcc.properties file is
-wcc=$(pwd)/wcc.properties
+wcctemp=$(pwd)/wcc.properties.template
+#wccdir=$(pwd)
 
 if [ "$#" -gt 1 ]; then
     if [[ "$2" = /* ]]; then
-        wcc="$2"
+        wcctemp="$2"
     else
-        wcc="$(pwd)/$2"
+        wcctemp="$(pwd)/$2"
     fi
 fi
 
-if [ ! -f "$wcc" ]; then
+if [ ! -f "$wcctemp" ]; then
     echo "ERROR: Could not find wcc.properties file at $wcc"
     exit 1
 else
     echo "Running using properties file: $wcc"
 fi
+
+# Generate wcc from wcc template
+wccdir=$(dirname "$wcctemp")
+wcc=$wccdir/wcc.properties
+awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir "/program";next}1' "$wcctemp" > tmp && mv tmp "$wcc"
 
 ### Perform pre generation actions ###
 #######################################
@@ -89,19 +96,7 @@ else
 fi
 
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-#find "$srcdir"/src -name "*.py"  -print0 | xargs -0 cp -t "$srcdir"/program
-#find "$srcdir"/src -name "*.cfg"  -print0 | xargs -0 cp -t "$srcdir"/program
-#find "$srcdir"/src -name "*.cfg.sample" -print0 | xargs -0 cp -t "$srcdir"/program
-
-# Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-cwd=$(pwd)
-cd $srcdir/src
-# Replicate directory structure
-find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
-# Copy files
-find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+./setup_run.sh
 
 ### Generating new component ###
 ################################
@@ -173,3 +168,4 @@ done
 # Return to current working directory after completion
 cd "$cwd"
 echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3
+echo "Build component completed"

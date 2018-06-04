@@ -16,24 +16,26 @@ if [ ! -d "$cwd/test/output" ]; then
 fi
 
 # Packaging source into "program" directory
-srcdir=$(pwd)
-echo "Packaging python source to be built into 'program' directory: $srcdir/program"
-if [ ! -d "$srcdir"/program ]; then
-    mkdir "$srcdir"/program
-else
-    # Clean out the old source before continuing
-    rm -R "$srcdir"/program
-    mkdir "$srcdir"/program
-fi
-# Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-cd $srcdir/src
-# Replicate directory structure
-find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
-# Copy files
-find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-cd $cwd
+./setup_run.sh
+# Packaging source into "program" directory
+#srcdir=$(pwd)
+#echo "Packaging python source to be built into 'program' directory: $srcdir/program"
+#if [ ! -d "$srcdir"/program ]; then
+    #mkdir "$srcdir"/program
+#else
+    ## Clean out the old source before continuing
+    #rm -R "$srcdir"/program
+    #mkdir "$srcdir"/program
+#fi
+## Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
+#cd $srcdir/src
+## Replicate directory structure
+#find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
+## Copy files
+#find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+#find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+#find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+#cd $cwd
 
 # Add all src subdirectories to python path (This emulates the flat heirarch that 
 # will exist when this script is run in Tigris
