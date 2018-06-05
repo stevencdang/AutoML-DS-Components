@@ -85,9 +85,17 @@ class ProblemDesc(object):
         """
         dname = ds.name
         dpath = ds.dpath
-        logger.debug("Getting problem schema with name: %s" % dname)
-        logger.debug("Getting problem schema at path: %s" % path.join(dpath, dname + '_problem', ProblemDesc.__default_schema__))
-        return path.join(dpath, dname + '_problem', ProblemDesc.__default_schema__)
+        dir_name = path.split(dpath)[1]
+        logger.debug("Getting problem for dataset with name, %s, and dataset_dir: %s" % (dname, dir_name))
+        for root, dirs, files in os.walk(ds.dpath):
+            for f in files:
+                if f == ProblemDesc.__default_schema__:
+                    parent = path.split(root)[1]
+                    if parent == dir_name + '_problem':
+                        logger.debug("Getting problem schema at path: %s" % path.join(root, f))
+                        return path.join(root, f)
+        logger.warning("Found no default problem doc in dataset at: %s" % dpath)
+        # return path.join(dpath, dname + '_problem', ProblemDesc.__default_schema__)
     
     
     @staticmethod
@@ -143,6 +151,15 @@ class ProblemDesc(object):
             out_file.close()
 
         return json.dumps(out)
+
+    def to_json_pretty(self, fpath=None):
+        out = self.print()
+        if fpath is not None:
+            logger.debug("Writing problem json in human readable format to: %s" % fpath)
+            with open(fpath, 'w') as out_file:
+                out_file.write(out)
+
+        return out
 
     def print(self):
         # return self.__str__()
