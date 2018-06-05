@@ -75,6 +75,7 @@ class ProblemDesc(object):
             self.about = None
             self.inputs = None
             self.expectedOutputs = None
+            self.metadata = None
 
 
     @staticmethod
@@ -138,11 +139,8 @@ class ProblemDesc(object):
         representation of the problem description
 
         """
-        out = {
-            'about': self.about,
-            'inputs': self.inputs,
-            'expectedOutputs': self.expectedOutputs
-        }
+        out = self.__iter__()
+        logger.debug("Writing to json: %s" % out)
 
         if fpath is not None:
             logger.debug("Writing dataset json to: %s" % fpath)
@@ -150,10 +148,11 @@ class ProblemDesc(object):
             json.dump(out, out_file)
             out_file.close()
 
-        return json.dumps(out)
+        return out
 
     def to_json_pretty(self, fpath=None):
         out = self.print()
+        logger.debug("Writing to pretty json: %s" % out)
         if fpath is not None:
             logger.debug("Writing problem json in human readable format to: %s" % fpath)
             with open(fpath, 'w') as out_file:
@@ -162,12 +161,12 @@ class ProblemDesc(object):
         return out
 
     def print(self):
-        # return self.__str__()
-        out = self.__str__()
-        ds_json = json.loads(out)
+        # out = self.__str__()
+        # ds_json = json.loads(out)
+        ds_json = self.__iter__()
         return pprint.pformat(ds_json)
 
-    def __str__(self):
+    def __iter__(self):
         out = {
             'about': {
                 'problemID': self.id,
@@ -188,31 +187,42 @@ class ProblemDesc(object):
         if self.metadata is not None:
             out['inputs'] = self.inputs
             out['expectedOutputs'] =  self.expectedOutputs
-            out['about']['problemSchemaVersion'] =self.about['problemSchemaVersion']
+            out['about']['problemSchemaVersion'] = self.about['problemSchemaVersion']
         else:
             for metric in self.metrics:
-                out['inputs']['performanceMetrics'].append({
-                    'metric': metric
-                })
+                out['inputs']['performanceMetrics'].append(
+                    metric.__iter__()
+                )
+                    # {
+                    # 'metric': metric
+                # })
             for ds in self.datasets:
-                out['intputs']['data'].append({
-                    'datasetID': ds['id'],
-                    'targets': {
-                        'targetIndex': ds['target_index'],
-                        'resID': str(ds['res_id']),
-                        'colIndex': ds['col_index'],
-                        'colName': ds['col_name']
-                    }
+                out['inputs']['data'].append(
+                    # ds.__iter__()
+                    { k: ds[k] for k in ds }
+                )
+                    # 'datasetID': ds.id,
+                    # 'targets': {
+                        # 'targetIndex': ds['target_index'],
+                        # 'resID': str(ds['res_id']),
+                        # 'colIndex': ds['col_index'],
+                        # 'colName': ds['col_name']
+                    # }
 
-                })
+                # })
 
-        return json.dumps(out)
+        return out
+
+
+
+    def __str__(self):
+        return json.dumps(self.__iter__())
 
 
 class Dataset(object):
     def __init__(self, _id, targets):
         self.id = _id
-        logger.debug(targets)
+        # logger.debug(targets)
         try:
             self.targets = [DSTarget(t['targetIndex'], t['resID'], t['colIndex'], t['colName']) for t in targets]
         except KeyError:
