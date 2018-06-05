@@ -47,6 +47,8 @@ if __name__ == '__main__':
     parser = get_default_arg_parser("D3M Pipeline Search")
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json provided for the search')
+    parser.add_argument('-file1', type=argparse.FileType('r'),
+                       help='the problem json provided for the search')
     args = parser.parse_args()
 
     # Get config file
@@ -68,10 +70,13 @@ if __name__ == '__main__':
     logger.debug("Dataset json parse: %s" % str(ds))
 
     # Get the Problem Doc to forulate the Pipeline request
-    prob_desc = ProblemDesc.from_json(
-        ProblemDesc.get_default_problem(ds))
-    logger.debug("Got Problem Description for json: %s" % prob_desc.print())
-    prob = D3MProblemDesc.from_problem_desc(prob_desc)
+    logger.debug("Problem input: %s" % args.file1)
+    prob = D3MProblemDesc.from_file(args.file1)
+    # prob_desc = ProblemDesc.from_file(args.file1)
+        # # ProblemDesc.get_default_problem(ds))
+    # logger.debug("Got Problem Description for json: %s" % prob_desc.print())
+    # prob = D3MProblemDesc.from_problem_desc(prob_desc)
+    # prob = D3MProblemDesc.from_file(args.file1)
     logger.debug("Got D3M Problem Description: %s" % prob.print())
 
 
@@ -90,8 +95,9 @@ if __name__ == '__main__':
     
     # Get workflow for each solution returned
     solns = {soln_id: Solution(soln_id) for soln_id in soln_ids}
-    # for soln_id in solns:
-        # slns[soln_id].add_description(*self.serv.describe_solution(soln_id))
+    for soln_id in solns:
+        solns[soln_id].add_description(serv.describe_solution(soln_id))
+        logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].workflow))
 
     # Get Score for each solution
     score_req_ids = []

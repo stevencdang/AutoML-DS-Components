@@ -32,3 +32,4 @@ wcc.properties.*
 test/datasetDoc.json
 test/datasetDoc.json.*
 !test/datasetDoc.json.sample
+!test/problemDoc.json.sample

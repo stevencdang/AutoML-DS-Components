@@ -8,6 +8,7 @@ import os.path as path
 import os
 from io import IOBase
 import json
+import pprint
 
 from google.protobuf import json_format
 
@@ -42,15 +43,26 @@ class D3MProblemDesc(ProblemDesc):
         self.id = prob.problem.id
         self.d3m_prob = prob
 
+    @staticmethod
+    def from_string(msg):
+        prob =  problem_pb2.ProblemDescription().ParseFromString(msg)
+        return D3mProblemDesc(prob)
+
    
     @staticmethod
     def from_file(fpath):
-        logger.info("Initializing D3MProblemDesc from json file: %s" % fpath)
-        with open(fpath, 'r') as f:
-            data = f.readlines()
-        prob = json_format.Parse(data, problem_pb2.ProblemDescription())
+        logger.info("Initializing D3MProblemDesc from json file")
+        if isinstance(fpath, str):
+            with open(fpath, 'r') as f:
+                data = f.readlines()
+        elif isinstance(fpath, IOBase):
+            data = fpath.readlines()
+        prob = json_format.Parse(data[0], problem_pb2.ProblemDescription())
+        # with open(fpath, 'r') as f:
+            # data = f.readlines()
+        # prob = json_format.Parse(data, problem_pb2.ProblemDescription())
         logger.debug("Succesfully imported problem from json")
-        return D3mProblemDesc(prob)
+        return D3MProblemDesc(prob)
 
     @staticmethod
     def from_problem_desc(prob):
@@ -172,7 +184,7 @@ class D3MProblemDesc(ProblemDesc):
                 return problem_pb2.TASK_SUBTYPE_UNDEFINED
         else:
             t = ttype
-            if t == problem_pb2.TASK_SUBTYPE_UNDEFINE:
+            if t == problem_pb2.TASK_SUBTYPE_UNDEFINED:
                 return 'TASK_SUBTYPE_UNDEFINED'
             elif t == problem_pb2.NONE:
                 return 'NONE'
@@ -272,6 +284,25 @@ class D3MProblemDesc(ProblemDesc):
                 return 'LOSS'
             else:
                 raise Exception ("Invalid metric given: %s" % str(m))
+
+    def to_json(self, fpath=None):
+        out = self.__str__()
+        msg_json = json.loads(self.__str__())
+        if fpath is not None:
+            logger.debug("Writing problem json to: %s" % fpath)
+            with open(fpath, 'w') as out_file:
+                json.dump(msg_json, out_file)
+
+        return out
+
+    def to_json_pretty(self, fpath=None):
+        msg_json = json.loads(self.__str__())
+        if fpath is not None:
+            logger.debug("Writing readable problem json to: %s" % fpath)
+            with open(fpath, 'w') as out_file:
+                pprint.pprint(msg_json, out_file)
+
+        return json.dumps(msg_json)
 
 
     def __str__(self):

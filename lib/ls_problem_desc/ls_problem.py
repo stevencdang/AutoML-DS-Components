@@ -199,7 +199,7 @@ class ProblemDesc(object):
             for ds in self.datasets:
                 out['inputs']['data'].append(
                     # ds.__iter__()
-                    { k: ds[k] for k in ds }
+                    { k: v for k,v in ds }
                 )
                     # 'datasetID': ds.id,
                     # 'targets': {
