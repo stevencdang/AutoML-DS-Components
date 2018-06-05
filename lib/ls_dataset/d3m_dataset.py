@@ -33,6 +33,8 @@ class D3MDataset(LSDataset):
 
         # Parse dataset metadata
         self.about = dsdata['about']
+        self.id = dsdata['about']['datasetID']
+        self.name = dsdata['about']['datasetName']
 
         # Parse data resources in the dataset
         self.dataResources = [DatasetResourceFactory.get_resource(dsr) for dsr in dsdata['dataResources']]
