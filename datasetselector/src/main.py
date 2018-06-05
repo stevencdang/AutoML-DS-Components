@@ -80,4 +80,5 @@ if __name__ == '__main__':
     out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))
     logger.info("Writing dataset json to: %s" % out_file_path)
     ds.to_json(out_file_path)
-    ds.to_json_pretty(out_file_path + '.readable')
+    if args.is_test == 1:
+        ds.to_json_pretty(out_file_path + '.readable')
