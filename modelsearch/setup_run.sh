@@ -50,6 +50,12 @@ mkdir "$srcdir"/program/d3m_ta2
 find "$libdir"/d3m_ta2 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/d3m_ta2/{}"
 # Copy source files
 find "$libdir"/d3m_ta2 -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/d3m_ta2/{} "$srcdir"/program/d3m_ta2/{}
+### Copy Workflows dir
+# Replicate directory structure
+mkdir "$srcdir"/program/ls_workflow
+find "$libdir"/ls_workflow -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/ls_workflow/{}"
+# Copy source files
+find "$libdir"/ls_workflow -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/ls_workflow/{} "$srcdir"/program/ls_workflow/{}
 
 cd $cwd
 

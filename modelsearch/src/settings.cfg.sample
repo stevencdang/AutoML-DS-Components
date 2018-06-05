@@ -6,6 +6,5 @@ file_log_path = /rdata/dataStore/d3m/tmp
 [TA2]
 ta2_url = sophia.stevencdang.com:45042
 [Output]
-out_file = dataset_pred.json
-
-
+dataset_out_file = datasetDoc.json
+workflows_out_file = model-flows.tsv

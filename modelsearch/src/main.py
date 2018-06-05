@@ -26,45 +26,12 @@ from ls_dataset.d3m_prediction import D3MPrediction
 from ls_problem_desc.ls_problem import ProblemDesc
 from ls_problem_desc.d3m_problem import D3MProblemDesc
 from d3m_ta2.ta2_v3_client import TA2Client
+from ls_workflow.workflow import Workflow as Solution
 
 
 __version__ = '0.1'
 
 logging.basicConfig()
-
-class Solution(object):
-
-    def __init__(self, sid):
-        self.id = sid
-        self.workflow = None
-        self.steps = None
-        self.scores = None
-        self.model = None
-    
-    def add_description(self, workflow, step_desc):
-        self.workflow = workflow
-        self.steps = step_desc
-
-    def get_default_output(self):
-        """
-        Just returns the first output
-
-        """
-        return self.workflow.outputs[0].name
-
-    def __str__(self):
-        out = json_format.MessageToJson(self.workflow)
-        return out
-
-    def to_file(self, fpath):
-        """
-        Writes the workflows to a file where the first line is tab separated
-        list of solution ids. The second row contains a stringified version
-        of the json for the corresponding solution id
-
-        """
-        return fpath
-
 
         
 
@@ -119,7 +86,7 @@ if __name__ == '__main__':
     solns = {soln_id: Solution(soln_id) for soln_id in soln_ids}
     for soln_id in solns:
         solns[soln_id].add_description(*serv.describe_solution(soln_id))
-        logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].workflow))
+        logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].model))
 
     # Get Score for each solution
     score_req_ids = {}
@@ -130,7 +97,7 @@ if __name__ == '__main__':
     for sid in score_req_ids:
         solns[sid].score = serv.get_score_solution_results(score_req_ids[sid])
 
-    # serv.end_search_solutions(search_id)
+    serv.end_search_solutions(search_id)
 
     # ### For testing only ###
     # serv.hello()
@@ -140,17 +107,17 @@ if __name__ == '__main__':
     # soln_ids = serv.get_search_solutions_results(search_id)
     # if soln_ids is None:
         # raise Exception("No solution returned")
-    fit_req_ids = {}
-    for sid, soln in solns.items():
-        fit_req_ids[sid] = serv.fit_solution(soln, ds)
-    for sid, rid in fit_req_ids.items():
-        solns[sid].model = serv.get_fit_solution_results(rid)
+    # fit_req_ids = {}
+    # for sid, soln in solns.items():
+        # fit_req_ids[sid] = serv.fit_solution(soln, ds)
+    # for sid, rid in fit_req_ids.items():
+        # solns[sid].model = serv.get_fit_solution_results(rid)
 
         
 
     
 
-    serv.end_search_solutions(search_id)
+    # serv.end_search_solutions(search_id)
 
     ### End testing code ###
    

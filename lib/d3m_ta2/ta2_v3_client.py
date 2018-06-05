@@ -261,9 +261,11 @@ class TA2Client(object):
                 logger.warning("Fittin model to solution is in an unknown state: %s" % str(reply.progress))
 
         logger.debug("Got %i completed responses" % len(replies))
+        fitted_ids = [reply.fitted_solution_id for reply in replies]
         for reply in replies:
             logger.debug(reply)
-        return replies
+        logger.debug("Got fitted ids: %s" % fitted_ids)
+        return fitted_ids
         
     def produce_solution(self, sid, ds):
         logger.debug("Produce predictions for solution with is: %s" % sid)
