@@ -1,0 +1,8 @@
+  <xs:element name="json" substitutionGroup="text" />
+      <xs:element name="dataset" substitutionGroup="json" />
+      <xs:element name="model-fitter-set" substitutionGroup="json" />
+      <xs:element name="modelling-problem" substitutionGroup="json" />
+      <xs:element name="model" substitutionGroup="json" />
+
+  <xs:element name="dataset-list" substitutionGroup="tab-delimited" />
+
