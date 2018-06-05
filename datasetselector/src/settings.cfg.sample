@@ -1,6 +1,4 @@
 [Dataset]
-dataset_dir = /rdata/dataStore/d3m/datasets/seed_datasets_current
-dataset_json = datasetDoc.json
 out_file = datasetDoc.json
 [Logging]
 log_level = DEBUG

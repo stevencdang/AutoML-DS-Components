@@ -72,10 +72,10 @@ if [ "$#" -gt 1 ]; then
 fi
 
 if [ ! -f "$wcctemp" ]; then
-    echo "ERROR: Could not find wcc.properties file at $wcc"
+    echo "ERROR: Could not find wcc.properties file at $wcctemp"
     exit 1
 else
-    echo "Running using properties file: $wcc"
+    echo "Running using properties file: $wcctemp"
 fi
 
 # Generate wcc from wcc template
@@ -85,15 +85,6 @@ awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir
 
 ### Perform pre generation actions ###
 #######################################
-srcdir=$(dirname "$wcc")
-echo "Packaging python source to be built into 'program' directory: $srcdir/program"
-if [ ! -d "$srcdir"/program ]; then
-    mkdir "$srcdir"/program
-else
-    # Clean out the old source before continuing
-    rm -R "$srcdir"/program
-    mkdir "$srcdir"/program
-fi
 
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
 ./setup_run.sh
@@ -126,11 +117,13 @@ done < $wcc
 cdir="$dir/$cname"
 
 # Copy component setup scripts to new component directory
+srcdir=$(dirname "$wcc")
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
-cp "$srcdir"/add_component.sql "$cdir"/
+cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
+cp "$srcdir"/test/dataset-list.tsv "$cdir"/test/components/dataset-list.tsv
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
 echo "Copied setup files to new component directory from source directory"
 
@@ -160,11 +153,24 @@ for file in $(find "$cdir"/source -name "*.java"); do
     awk '/The addMetaData/{print $0 RS "\t\tthis.addMetaData(\"d3m-dataset\", 0, META_DATA_LABEL, \"label0\", 0, null);" RS;next}1' "$file" > tmp && mv tmp "$file"
 done
 
+# Altering auto generated test xml (This will vary for each component) #
+########################################################################
+for file in $(find "$cdir"/test/components -name "*.xml"); do
+    echo "Editing test xml: " $file
+    # Inserting path to test file into test xml
+    awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/dataset-list.tsv</file_path>";next}1' "$file" > tmp && mv tmp "$file"
+    # Inserting name of test file into test xml
+    awk -v cdir="$cdir" '/<file_name>/{print "<file_name>dataset-list.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
+done
+
+
 # run 'and runComponent' to buildthe files after installing #
 #############################################################
 #echo "Building and testing component from terminal"
 #ant runComponent
 
+# Delete generated wcc file before completed
+rm $wcc
 # Return to current working directory after completion
 cd "$cwd"
 echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3

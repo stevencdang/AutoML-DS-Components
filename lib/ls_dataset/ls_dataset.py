@@ -106,7 +106,7 @@ class LSDataset(object):
         if fpath is not None:
             logger.debug("Writing pretty dataset json to: %s" % fpath)
             with open(fpath, 'w') as out_file:
-                outfile.write(out)
+                out_file.write(out)
 
         return out
 

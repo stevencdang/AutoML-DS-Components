@@ -8,6 +8,8 @@ import os.path as path
 import sys
 import json
 import pprint
+import argparse
+import csv
 
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
@@ -22,20 +24,22 @@ logging.basicConfig()
 if __name__ == '__main__':
 
     # Parse argumennts
-    parser = get_default_arg_parser("Import D3M Dataset")
+    parser = get_default_arg_parser("Select Dataset")
     parser.add_argument('-ds_name', type=str,
                        help='the name of the dataset to import')
+    parser.add_argument('-file0', type=argparse.FileType('r'),
+                       help='the file list of all datasets')
     args = parser.parse_args()
 
     # Get config file
     if args.programDir is None:
-        config = stg().parse_config()
+        config = stg()
     else:
-        config = stg(path.join(args.programDir, 'program', 'settings.cfg')).parse_config()
+        config = stg(path.join(args.programDir, 'program', 'settings.cfg'))
 
     # Setup Logging
-    setup_logging(config, args.workingDir, args.is_test == 1)
-    logger = logging.getLogger('d3m_dataset_selector')
+    setup_logging(config.parse_logging(), args.workingDir, args.is_test == 1)
+    logger = logging.getLogger('dataset_selector')
 
     ### Begin Script ###
     logger.info("Importing D3M Dataset selected by user")
@@ -45,10 +49,25 @@ if __name__ == '__main__':
     if args.ds_name is not None:
         ds_name = args.ds_name
     else:
-        ds_name = "185_baseball"
+        ds_name = "baseball"
+
+    # Lookup path to dataset from input file and selected datset option
+    ds_reader = csv.reader(args.file0, delimiter='\t')
+    for row in ds_reader:
+        logger.debug("Line number: %i" % ds_reader.line_num)
+        if ds_reader.line_num == 1:
+            # Dataset names are the first row
+            ds_names = row
+        elif ds_reader.line_num == 2:
+            # Dataset paths are the second row
+            ds_paths = row
+    i = ds_names.index(ds_name)
+    logger.debug("Index of chosen dataset: %i" % i)
+    ds_path = ds_paths[i]
+    logger.debug("Corresponding path: %s" % ds_paths)
+
 
     # Read in the dataset json
-    ds_path = path.join(config['dataset_dir'], ds_name)
     schema_path = D3MDataset.get_schema_path(ds_path)
     with open(schema_path, 'r') as spath:
         logger.debug("opening dataset schema at path: %s" % schema_path)
@@ -58,9 +77,7 @@ if __name__ == '__main__':
     logger.debug("Got dataset: %s" % str(ds))
 
     # Write dataset info to output file
-    out_file_path = path.join(args.workingDir, config['out_file'])
+    out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))
     logger.info("Writing dataset json to: %s" % out_file_path)
     ds.to_json(out_file_path)
-    # ds_json = json.loads(ds.to_json())
-    # with open(out_file_path, 'w') as out_file:
-        # pprint.pprint(ds_json, out_file)
+    ds.to_json_pretty(out_file_path + '.readable')
