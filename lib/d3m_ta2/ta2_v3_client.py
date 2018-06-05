@@ -165,10 +165,10 @@ class TA2Client(object):
         logger.debug("Got describe solution reply: %s" % str(reply))
         return reply.pipeline, reply.steps
 
-    def score_solution(self, sid, dataset, inputs=None, metrics=None):
-        logger.info("Requesting to score solution with id: %s" % sid)
+    def score_solution(self, sln, dataset, inputs=None, metrics=None):
+        logger.info("Requesting to score solution with id: %s" % sln.id)
         msg = core_pb2.ScoreSolutionRequest(
-            solution_id=sid,
+            solution_id=sln.id,
             configuration=self.get_default_scoring_config()
         )
         # Add inputs if given
@@ -214,12 +214,12 @@ class TA2Client(object):
             logger.debug("Score solution received: %s" % str(soln))
         return soln_scores
 
-    def fit_solution(self, sid, dataset, inputs=None, outputs=None):
+    def fit_solution(self, soln, dataset, inputs=None, outputs=None):
         logger.info("Fitting solution with id: %s\t on dataset at: %s" % 
-            (sid, dataset.get_schema_uri())
+            (soln.id, dataset.get_schema_uri())
         )
         msg = core_pb2.FitSolutionRequest(
-            solution_id = sid,
+            solution_id = soln.id,
         )
 
         # Add inputs if given
@@ -234,8 +234,8 @@ class TA2Client(object):
 
         # Add list of outputs to expose
         if outputs is None:
-            o = msg.expose_outputs.add()
-            o = "produce"
+            msg.expose_outputs.extend([soln.get_default_output()])
+            msg.expose_value_types.extend(self.__allowed_values__)
 
         logger.debug("Sending Fit request msg: %s" % str(msg))
         reply = self.serv.FitSolution(msg)

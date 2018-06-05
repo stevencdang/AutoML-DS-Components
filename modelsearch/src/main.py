@@ -13,6 +13,9 @@ import sys
 from os import path
 import argparse
 import pprint
+import csv
+
+from google.protobuf import json_format
 
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
@@ -32,14 +35,39 @@ logging.basicConfig()
 class Solution(object):
 
     def __init__(self, sid):
-        self.sid = sid
+        self.id = sid
         self.workflow = None
         self.steps = None
         self.scores = None
+        self.model = None
     
     def add_description(self, workflow, step_desc):
         self.workflow = workflow
         self.steps = step_desc
+
+    def get_default_output(self):
+        """
+        Just returns the first output
+
+        """
+        return self.workflow.outputs[0].name
+
+    def __str__(self):
+        out = json_format.MessageToJson(self.workflow)
+        return out
+
+    def to_file(self, fpath):
+        """
+        Writes the workflows to a file where the first line is tab separated
+        list of solution ids. The second row contains a stringified version
+        of the json for the corresponding solution id
+
+        """
+        return fpath
+
+
+        
+
 
 
 if __name__ == '__main__':
@@ -72,13 +100,7 @@ if __name__ == '__main__':
     # Get the Problem Doc to forulate the Pipeline request
     logger.debug("Problem input: %s" % args.file1)
     prob = D3MProblemDesc.from_file(args.file1)
-    # prob_desc = ProblemDesc.from_file(args.file1)
-        # # ProblemDesc.get_default_problem(ds))
-    # logger.debug("Got Problem Description for json: %s" % prob_desc.print())
-    # prob = D3MProblemDesc.from_problem_desc(prob_desc)
-    # prob = D3MProblemDesc.from_file(args.file1)
     logger.debug("Got D3M Problem Description: %s" % prob.print())
-
 
     # Init the server connection
     address = config.get("TA2", 'ta2_url')
@@ -96,16 +118,17 @@ if __name__ == '__main__':
     # Get workflow for each solution returned
     solns = {soln_id: Solution(soln_id) for soln_id in soln_ids}
     for soln_id in solns:
-        solns[soln_id].add_description(serv.describe_solution(soln_id))
+        solns[soln_id].add_description(*serv.describe_solution(soln_id))
         logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].workflow))
 
     # Get Score for each solution
-    score_req_ids = []
+    score_req_ids = {}
     for soln_id in solns:
-        score_req_ids.append(serv.score_solution(soln_id, ds))
+        soln = solns[soln_id]
+        score_req_ids[soln.id] = serv.score_solution(soln, ds)
     scores = {}
-    for req_id in score_req_ids:
-        scores[req_id] = serv.get_score_solution_results(req_id)
+    for sid in score_req_ids:
+        solns[sid].score = serv.get_score_solution_results(score_req_ids[sid])
 
     # serv.end_search_solutions(search_id)
 
@@ -117,15 +140,30 @@ if __name__ == '__main__':
     # soln_ids = serv.get_search_solutions_results(search_id)
     # if soln_ids is None:
         # raise Exception("No solution returned")
-    fit_req_ids = []
-    for soln_id in soln_ids:
-        fit_req_ids.append(serv.fit_solution(soln_id, ds))
-    # for fit_req_id in fit_req_ids:
+    fit_req_ids = {}
+    for sid, soln in solns.items():
+        fit_req_ids[sid] = serv.fit_solution(soln, ds)
+    for sid, rid in fit_req_ids.items():
+        solns[sid].model = serv.get_fit_solution_results(rid)
+
+        
 
     
 
     serv.end_search_solutions(search_id)
-    
+
+    ### End testing code ###
+   
+    # Write the received solutions to file
+    for sid, soln in solns.items():
+        logger.debug("###########################################")
+        logger.debug("Received solution: %s" % soln)
+        logger.debug("###########################################")
+    out_file_path = path.join(args.workingDir, config.get('Output', 'workflows_out_file'))
+    with open(out_file_path, 'w') as out_file:
+        out = csv.writer(out_file, delimiter='\t')
+        out.writerow([solns[sln].id for sln in solns])
+        out.writerow([str(solns[sln]) for sln in solns])
 
     # Retrieve output
     # pfiles = set()
@@ -144,7 +182,7 @@ if __name__ == '__main__':
                              # pfiles=list(pfiles))
     
     # Write dataset info to output file
-    out_file_path = path.join(args.workingDir, config.get('Output', 'data_out_file'))
+    out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
     ds.to_json(out_file_path)
     # Write out human readable version for debugging
     ds.to_json_pretty(out_file_path + ".readable")
