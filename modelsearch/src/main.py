@@ -33,10 +33,6 @@ __version__ = '0.1'
 
 logging.basicConfig()
 
-        
-
-
-
 if __name__ == '__main__':
     # Parse argumennts
     parser = get_default_arg_parser("D3M Pipeline Search")
@@ -97,7 +93,7 @@ if __name__ == '__main__':
     for sid in score_req_ids:
         solns[sid].score = serv.get_score_solution_results(score_req_ids[sid])
 
-    serv.end_search_solutions(search_id)
+    # serv.end_search_solutions(search_id)
 
     # ### For testing only ###
     # serv.hello()
@@ -122,32 +118,16 @@ if __name__ == '__main__':
     ### End testing code ###
    
     # Write the received solutions to file
-    for sid, soln in solns.items():
-        logger.debug("###########################################")
-        logger.debug("Received solution: %s" % soln)
-        logger.debug("###########################################")
+    # for sid, soln in solns.items():
+        # logger.debug("###########################################")
+        # logger.debug("Received solution: %s" % soln)
+        # logger.debug("###########################################")
     out_file_path = path.join(args.workingDir, config.get('Output', 'workflows_out_file'))
     with open(out_file_path, 'w') as out_file:
         out = csv.writer(out_file, delimiter='\t')
         out.writerow([solns[sln].id for sln in solns])
         out.writerow([str(solns[sln]) for sln in solns])
 
-    # Retrieve output
-    # pfiles = set()
-    # for pred in predictions:
-        # pfiles.add(path.split(pred.predict_result_uri)[-1])
-
-
-    # ds_data = {'about': ds.about,
-               # 'dataResources': [json.loads(dr.to_json()) for dr in ds.dataResources]
-               # }
-    # logger.debug("Getting problem description in dataset dir: %s" % ds.dpath)
-    # pred_out = D3MPrediction(ds.dpath, 
-                             # ds_data, 
-                             # path.join(ds.get_ds_path(), 'output'), 
-                             # prob_desc=prob_desc, 
-                             # pfiles=list(pfiles))
-    
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
     ds.to_json(out_file_path)

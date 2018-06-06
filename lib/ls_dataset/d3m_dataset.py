@@ -86,8 +86,8 @@ class D3MDataset(LSDataset):
                 raise Exception("Found no dataset json at path: %s" % str(fpath))
         elif isinstance(fpath, IOBase):
             logger.debug("Loading dataset json from open file")
-            logger.debug("dataset path: %s" % str(fpath.fileno()))
-            dpath = path.split(path.split(fpath.fileno())[0])[0]
+            logger.debug("dataset path: %s" % str(fpath))
+            dpath = path.split(path.split(fpath)[0])[0]
             ds_json = json.load(fpath)
             return D3MDataset(dpath,
                                 ds_json)
