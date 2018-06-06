@@ -21,8 +21,10 @@ from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import Settings as stg
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
+# from ls_problem_desc.ls_problem import ProblemDesc
+# from ls_problem_desc.d3m_problem import D3MProblemDesc
+from ls_workflow.workflow import Workflow
 from d3m_ta2.ta2_v3_client import TA2Client
-from modeling.models import Model, ModelScores
 
 
 __version__ = '0.1'
@@ -60,13 +62,8 @@ if __name__ == '__main__':
     # Import all the models
     reader = csv.reader(args.file1, delimiter='\t')
     rows = [row for row in reader]
-    models =  {mid: Model.from_json(rows[1][i]) for i, mid in enumerate(rows[0])}
-    scores =  {mid: ModelScore.from_json(rows[2][i]) for i, mid in enumerate(rows[0])}
+    models =  {mid: Workflow.from_json(rows[1][i]) for i, mid in enumerate(rows[0])}
     logger.info("Got %i models to fit" % len(models))
-    # Print sampel model
-    mid = list(models.keys())[0]
-    model = models[mid]
-    logger.debug("Sample model id: %s\nmodel: \t%s" % (mid, models))
 
     # Init the server connection
     address = config.get("TA2", 'ta2_url')
@@ -77,13 +74,11 @@ if __name__ == '__main__':
     # Get fitted solution
     serv.hello()
 
-    fit_req_ids = {}
+    req_ids = {}
     for mid, model in models.items():
-        fit_req_ids[mid] = serv.fit_solution(model, ds)
-    for mid, rid in fit_req_ids.items():
-        models[mid].fit = serv.get_fit_solution_results(rid)
-
-    # serv.end_search_solutions(search_id)
+        req_ids[mid] = serv.produce_solution(model, ds)
+    for mid, rid in req_ids.items():
+        models[mid].add_result(serv.get_produce_solution_results(rid))
 
     
     # # Write model fit id info to output file
@@ -91,7 +86,6 @@ if __name__ == '__main__':
     with open(out_file_path, 'w') as out_file:
         writer = csv.writer(out_file, delimiter='\t')
         writer.writerow([model.id for model in models])
-        writer.writerow([str(model.model) for model in models])
         writer.writerow([model.fit for model in models])
 
 

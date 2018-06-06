@@ -1,43 +1,7 @@
-34227ad3-a45a-4c0f-803c-399aaf6a1290	b012c8da-4c10-46e1-a0f5-b014820456c3	db2e7982-494d-40e6-8bf2-7446bb55c269	1f37edb0-0150-473f-83eb-3836d1f188c2	19455291-0104-41c4-9f90-e7e7c4e578a8	a46fa90c-70bf-4500-a4ec-fd53d9244b36	bbae906c-7f8a-4d7e-8eee-54946f1507f8	1aca24ec-ca2d-4dbd-9350-8f78fabbf88b	b13bbff0-120a-4d2b-9ac3-55bfe7ebedec	82ccb6a3-0145-47f8-8e16-e7ffad2740e5	0e5a04de-2139-4e65-9cc7-2063c3f650ff	b07d6dc6-6c8d-42be-8be6-c90ee338e96a	7bccf0ef-d734-4344-bd74-6905b5818afc	72c340e5-73d8-42d4-85bd-ecbef51e55a3	bb1bdbe9-5b35-4b7c-8b75-cfb0bc8c5dd7
+243020e3-b792-43e2-94ba-bcab20cc4bb1	cca4fe8f-05f5-4018-8fd7-292d10660662	254273fa-df74-4847-94a8-3af5ac5012c0	c7ed11ef-d63c-416f-88ad-2b53b98a3086	9f808179-e6cb-4ae0-8b3d-013e510b752a	c2d83e20-49aa-4605-977b-072001051cf6	98587bfe-7aa8-49cd-8464-126ca87ea3bb	6741f294-6799-4c1d-a254-14f02a6daa1e	0f348651-5423-4ec6-909b-2daa12732805	adb29557-e3dc-41c2-abdb-09aa7a6b5e92	47f34e9f-ff7e-414b-ab45-77aae73df359	e9e0d0af-b9c9-4a24-b908-7fafd665a24f	1f0d942b-48c1-4832-8570-5440b42d0fe8	f1fc9a68-889b-4ad7-ad47-f3ceb21b3cf1	b5e98b9a-a2ec-4dd4-9870-2e289eddcd27
 "{
-  ""id"": ""34227ad3-a45a-4c0f-803c-399aaf6a1290"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""464783a8-771e-340d-999b-ae90b9f84f0b"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKGaussianNB"",
-          ""name"": ""sklearn.naive_bayes.GaussianNB"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""b012c8da-4c10-46e1-a0f5-b014820456c3"",
-  ""created"": ""2018-06-06T01:46:41Z"",
+  ""id"": ""243020e3-b792-43e2-94ba-bcab20cc4bb1"",
+  ""created"": ""2018-06-06T09:14:35Z"",
   ""context"": ""PRETRAINING"",
   ""inputs"": [
     {
@@ -72,332 +36,8 @@
     }
   ]
 }"	"{
-  ""id"": ""db2e7982-494d-40e6-8bf2-7446bb55c269"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""321dbf4d-07d9-3274-bd1b-2751520ed1d7"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKQuadraticDiscriminantAnalysis"",
-          ""name"": ""sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""1f37edb0-0150-473f-83eb-3836d1f188c2"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""1dd82833-5692-39cb-84fb-2455683075f3"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKRandomForestClassifier"",
-          ""name"": ""sklearn.ensemble.forest.RandomForestClassifier"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""19455291-0104-41c4-9f90-e7e7c4e578a8"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""b9c81b40-8ed1-3b23-80cf-0d6fe6863962"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKLogisticRegression"",
-          ""name"": ""sklearn.linear_model.logistic.LogisticRegression"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""a46fa90c-70bf-4500-a4ec-fd53d9244b36"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""85e5c88d-9eec-3452-8f2f-414f17d3e4d5"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKPassiveAggressiveClassifier"",
-          ""name"": ""sklearn.linear_model.passive_aggressive.PassiveAggressiveClassifier"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""bbae906c-7f8a-4d7e-8eee-54946f1507f8"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""71749b20-80e9-3a8e-998e-25da5bbc1abc"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKLinearSVC"",
-          ""name"": ""sklearn.svm.classes.LinearSVC"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""1aca24ec-ca2d-4dbd-9350-8f78fabbf88b"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""2305e400-131e-356d-bf77-e8db19517b7a"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKSGDClassifier"",
-          ""name"": ""sklearn.linear_model.stochastic_gradient.SGDClassifier"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""b13bbff0-120a-4d2b-9ac3-55bfe7ebedec"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""a323b46a-6c15-373e-91b4-20efbd65402f"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKLinearDiscriminantAnalysis"",
-          ""name"": ""sklearn.discriminant_analysis.LinearDiscriminantAnalysis"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""82ccb6a3-0145-47f8-8e16-e7ffad2740e5"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""adf13b4b-9fe5-38a2-a1ea-d1b1cc342576"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKMultinomialNB"",
-          ""name"": ""sklearn.naive_bayes.MultinomialNB"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""0e5a04de-2139-4e65-9cc7-2063c3f650ff"",
-  ""created"": ""2018-06-06T01:46:41Z"",
-  ""context"": ""PRETRAINING"",
-  ""inputs"": [
-    {
-      ""name"": ""dataframe inputs""
-    },
-    {
-      ""name"": ""dataframe outputs""
-    }
-  ],
-  ""outputs"": [
-    {
-      ""name"": ""dataframe predictions"",
-      ""data"": ""steps.0.produce""
-    }
-  ],
-  ""steps"": [
-    {
-      ""primitive"": {
-        ""primitive"": {
-          ""id"": ""0ae7d42d-f765-3348-a28c-57d94880aa6a"",
-          ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKSVC"",
-          ""name"": ""sklearn.svm.classes.SVC"",
-          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
-        },
-        ""outputs"": [
-          {
-            ""id"": ""produce""
-          }
-        ]
-      }
-    }
-  ]
-}"	"{
-  ""id"": ""b07d6dc6-6c8d-42be-8be6-c90ee338e96a"",
-  ""created"": ""2018-06-06T01:46:41Z"",
+  ""id"": ""cca4fe8f-05f5-4018-8fd7-292d10660662"",
+  ""created"": ""2018-06-06T09:14:35Z"",
   ""context"": ""PRETRAINING"",
   ""inputs"": [
     {
@@ -432,8 +72,8 @@
     }
   ]
 }"	"{
-  ""id"": ""7bccf0ef-d734-4344-bd74-6905b5818afc"",
-  ""created"": ""2018-06-06T01:46:41Z"",
+  ""id"": ""254273fa-df74-4847-94a8-3af5ac5012c0"",
+  ""created"": ""2018-06-06T09:14:35Z"",
   ""context"": ""PRETRAINING"",
   ""inputs"": [
     {
@@ -453,10 +93,10 @@
     {
       ""primitive"": {
         ""primitive"": {
-          ""id"": ""e20d003d-6a9f-35b0-b4b5-20e42b30282a"",
+          ""id"": ""1dd82833-5692-39cb-84fb-2455683075f3"",
           ""version"": ""0.1.0"",
-          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKDecisionTreeClassifier"",
-          ""name"": ""sklearn.tree.tree.DecisionTreeClassifier"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKRandomForestClassifier"",
+          ""name"": ""sklearn.ensemble.forest.RandomForestClassifier"",
           ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
         },
         ""outputs"": [
@@ -468,8 +108,116 @@
     }
   ]
 }"	"{
-  ""id"": ""72c340e5-73d8-42d4-85bd-ecbef51e55a3"",
-  ""created"": ""2018-06-06T01:46:41Z"",
+  ""id"": ""c7ed11ef-d63c-416f-88ad-2b53b98a3086"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""85e5c88d-9eec-3452-8f2f-414f17d3e4d5"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKPassiveAggressiveClassifier"",
+          ""name"": ""sklearn.linear_model.passive_aggressive.PassiveAggressiveClassifier"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""9f808179-e6cb-4ae0-8b3d-013e510b752a"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""adf13b4b-9fe5-38a2-a1ea-d1b1cc342576"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKMultinomialNB"",
+          ""name"": ""sklearn.naive_bayes.MultinomialNB"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""c2d83e20-49aa-4605-977b-072001051cf6"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""321dbf4d-07d9-3274-bd1b-2751520ed1d7"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKQuadraticDiscriminantAnalysis"",
+          ""name"": ""sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""98587bfe-7aa8-49cd-8464-126ca87ea3bb"",
+  ""created"": ""2018-06-06T09:14:35Z"",
   ""context"": ""PRETRAINING"",
   ""inputs"": [
     {
@@ -504,8 +252,188 @@
     }
   ]
 }"	"{
-  ""id"": ""bb1bdbe9-5b35-4b7c-8b75-cfb0bc8c5dd7"",
-  ""created"": ""2018-06-06T01:46:41Z"",
+  ""id"": ""6741f294-6799-4c1d-a254-14f02a6daa1e"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""71749b20-80e9-3a8e-998e-25da5bbc1abc"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKLinearSVC"",
+          ""name"": ""sklearn.svm.classes.LinearSVC"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""0f348651-5423-4ec6-909b-2daa12732805"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""a323b46a-6c15-373e-91b4-20efbd65402f"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKLinearDiscriminantAnalysis"",
+          ""name"": ""sklearn.discriminant_analysis.LinearDiscriminantAnalysis"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""adb29557-e3dc-41c2-abdb-09aa7a6b5e92"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""b9c81b40-8ed1-3b23-80cf-0d6fe6863962"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKLogisticRegression"",
+          ""name"": ""sklearn.linear_model.logistic.LogisticRegression"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""47f34e9f-ff7e-414b-ab45-77aae73df359"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""464783a8-771e-340d-999b-ae90b9f84f0b"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKGaussianNB"",
+          ""name"": ""sklearn.naive_bayes.GaussianNB"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""e9e0d0af-b9c9-4a24-b908-7fafd665a24f"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""0ae7d42d-f765-3348-a28c-57d94880aa6a"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKSVC"",
+          ""name"": ""sklearn.svm.classes.SVC"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""1f0d942b-48c1-4832-8570-5440b42d0fe8"",
+  ""created"": ""2018-06-06T09:14:35Z"",
   ""context"": ""PRETRAINING"",
   ""inputs"": [
     {
@@ -539,4 +467,182 @@
       }
     }
   ]
+}"	"{
+  ""id"": ""f1fc9a68-889b-4ad7-ad47-f3ceb21b3cf1"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""2305e400-131e-356d-bf77-e8db19517b7a"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKSGDClassifier"",
+          ""name"": ""sklearn.linear_model.stochastic_gradient.SGDClassifier"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
+}"	"{
+  ""id"": ""b5e98b9a-a2ec-4dd4-9870-2e289eddcd27"",
+  ""created"": ""2018-06-06T09:14:35Z"",
+  ""context"": ""PRETRAINING"",
+  ""inputs"": [
+    {
+      ""name"": ""dataframe inputs""
+    },
+    {
+      ""name"": ""dataframe outputs""
+    }
+  ],
+  ""outputs"": [
+    {
+      ""name"": ""dataframe predictions"",
+      ""data"": ""steps.0.produce""
+    }
+  ],
+  ""steps"": [
+    {
+      ""primitive"": {
+        ""primitive"": {
+          ""id"": ""e20d003d-6a9f-35b0-b4b5-20e42b30282a"",
+          ""version"": ""0.1.0"",
+          ""pythonPath"": ""d3m.primitives.sklearn_wrap.SKDecisionTreeClassifier"",
+          ""name"": ""sklearn.tree.tree.DecisionTreeClassifier"",
+          ""digest"": ""dee828e3055bf77d8aff3f3b4056f860efec8636f0877216eaede78c89de48b1""
+        },
+        ""outputs"": [
+          {
+            ""id"": ""produce""
+          }
+        ]
+      }
+    }
+  ]
 }"
+"{'model_id': '243020e3-b792-43e2-94ba-bcab20cc4bb1', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.9321034098775093
+}
+]}"	"{'model_id': 'cca4fe8f-05f5-4018-8fd7-292d10660662', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.8745715499108823
+}
+]}"	"{'model_id': '254273fa-df74-4847-94a8-3af5ac5012c0', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.9149436703082835
+}
+]}"	"{'model_id': 'c7ed11ef-d63c-416f-88ad-2b53b98a3086', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.7251465508304825
+}
+]}"	"{'model_id': '9f808179-e6cb-4ae0-8b3d-013e510b752a', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.7075019311604017
+}
+]}"	"{'model_id': 'c2d83e20-49aa-4605-977b-072001051cf6', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.8836103837909598
+}
+]}"	"{'model_id': '98587bfe-7aa8-49cd-8464-126ca87ea3bb', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.9328491220326174
+}
+]}"	"{'model_id': '6741f294-6799-4c1d-a254-14f02a6daa1e', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.8806141591677452
+}
+]}"	"{'model_id': '0f348651-5423-4ec6-909b-2daa12732805', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.9276274649465126
+}
+]}"	"{'model_id': 'adb29557-e3dc-41c2-abdb-09aa7a6b5e92', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.8791210628571812
+}
+]}"	"{'model_id': '47f34e9f-ff7e-414b-ab45-77aae73df359', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.8388291984764732
+}
+]}"	"{'model_id': 'e9e0d0af-b9c9-4a24-b908-7fafd665a24f', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.9067308046000074
+}
+]}"	"{'model_id': '1f0d942b-48c1-4832-8570-5440b42d0fe8', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.9067308046000074
+}
+]}"	"{'model_id': 'f1fc9a68-889b-4ad7-ad47-f3ceb21b3cf1', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.917918158926977
+}
+]}"	"{'model_id': 'b5e98b9a-a2ec-4dd4-9870-2e289eddcd27', 'inputs': ['file:///rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json'], 'scores': [metric {
+  metric: ACCURACY
+}
+fold: 10
+value {
+  double: 0.0
+}
+]}"

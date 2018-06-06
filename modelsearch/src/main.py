@@ -125,7 +125,7 @@ if __name__ == '__main__':
         # logger.debug("###########################################")
         # logger.debug("Received solution: %s" % soln)
         # logger.debug("###########################################")
-    out_file_path = path.join(args.workingDir, config.get('Output', 'workflows_out_file'))
+    out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
     with open(out_file_path, 'w') as out_file:
         out = csv.writer(out_file, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
         out.writerow([solns[sln].id for sln in solns])
