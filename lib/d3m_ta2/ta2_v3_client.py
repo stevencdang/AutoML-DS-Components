@@ -203,7 +203,7 @@ class TA2Client(object):
                 logger.debug("Scoring solution is currently running and has not completed: %s" % reply.progress.status)
             elif reply.progress.state == core_pb2.COMPLETED:
                 logger.info("Scoring solution has completed successfully: %s" % reply.progress.status)
-                soln_scores.append(reply.scores)
+                return reply.scores
             elif reply.progress.state == core_pb2.ERRORED:
                 logger.error("Scoring solution has completed in an error state: %s" % reply.progress.status)
             else:
@@ -243,6 +243,7 @@ class TA2Client(object):
 
 
     def get_fit_solution_results(self, rid):
+        logger.info("Getting fit solution results for request with id: %s" % rid)
         msg = core_pb2.GetFitSolutionResultsRequest(
             request_id = rid
         )
@@ -267,10 +268,10 @@ class TA2Client(object):
         logger.debug("Got fitted ids: %s" % fitted_ids)
         return fitted_ids
         
-    def produce_solution(self, sid, ds):
-        logger.debug("Produce predictions for solution with is: %s" % sid)
+    def produce_solution(self, soln, ds, inputs=None, outputs=None):
+        logger.info("Produce predictions for solution with id: %s" % soln.id)
         msg = core_pb2.ProduceSolutionRequest(
-            solution_id = sid
+            solution_id = soln.id
         )
         # Add inputs if given
         if inputs is None:
@@ -282,8 +283,37 @@ class TA2Client(object):
                 # For now force it into a string until type checking is implemented
                 i.string = str(inpt)
 
+        # Add list of outputs to expose
+        if outputs is None:
+            msg.expose_outputs.extend([soln.get_default_output()])
+            msg.expose_value_types.extend(self.__allowed_values__)
 
         reply = self.serv.ProduceSolution(msg)
+
+        return reply.request_id
+
+    def get_produce_solution_results(self, req_id):
+        logger.info("Getting ProduceSolutionRequest results with id: %s" % req_id)
+        msg = core_pb2.GetProduceSolutionResultsRequest(
+                request_id = req_id
+        )
+
+        for reply in self.serv.GetProduceSolutionResults(msg):
+            if reply.progress.state == core_pb2.PENDING:
+                logger.debug("Fitting model to solution is still pending and hasn't begin")
+            elif reply.progress.state == core_pb2.RUNNING:
+                logger.debug("Fitting model to solution is currently running and has not completed: %s" % reply.progress.status)
+            elif reply.progress.state == core_pb2.COMPLETED:
+                logger.info("Fitting model to solution has completed successfully: %s" % reply.progress.status)
+                return reply.exposed_outputs
+            elif reply.progress.state == core_pb2.ERRORED:
+                logger.error("Fitting model to solution has completed in an error state: %s" % reply.progress.status)
+            else:
+                logger.warning("Fittin model to solution is in an unknown state: %s" % str(reply.progress))
+
+        # logger.debug("Got %i completed responses" % len(replies))
+        # fitted_ids = [reply.fitted_solution_id for reply in replies]
+
 
     def list_primitives(self):
         logger.info("Getting list of TA2 primitives supported")

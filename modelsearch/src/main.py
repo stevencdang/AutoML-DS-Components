@@ -26,7 +26,8 @@ from ls_dataset.d3m_prediction import D3MPrediction
 from ls_problem_desc.ls_problem import ProblemDesc
 from ls_problem_desc.d3m_problem import D3MProblemDesc
 from d3m_ta2.ta2_v3_client import TA2Client
-from ls_workflow.workflow import Workflow as Solution
+# from ls_workflow.workflow import Workflow as Solution
+from modeling.models import Model, ModelScores
 
 
 __version__ = '0.1'
@@ -78,10 +79,10 @@ if __name__ == '__main__':
     if soln_ids is None:
         raise Exception("No solution returned")
     
-    # Get workflow for each solution returned
-    solns = {soln_id: Solution(soln_id) for soln_id in soln_ids}
+    # Get Model for each solution returned
+    solns = {soln_id: Model(soln_id) for soln_id in soln_ids}
     for soln_id in solns:
-        solns[soln_id].add_description(*serv.describe_solution(soln_id))
+        solns[soln_id].add_description(serv.describe_solution(soln_id)[0])
         logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].model))
 
     # Get Score for each solution
@@ -91,7 +92,9 @@ if __name__ == '__main__':
         score_req_ids[soln.id] = serv.score_solution(soln, ds)
     scores = {}
     for sid in score_req_ids:
-        solns[sid].score = serv.get_score_solution_results(score_req_ids[sid])
+        results = serv.get_score_solution_results(score_req_ids[sid])
+        scores[sid] = ModelScores(solns[sid], [ds.get_schema_uri()], results)
+
 
     # serv.end_search_solutions(search_id)
 
@@ -124,9 +127,10 @@ if __name__ == '__main__':
         # logger.debug("###########################################")
     out_file_path = path.join(args.workingDir, config.get('Output', 'workflows_out_file'))
     with open(out_file_path, 'w') as out_file:
-        out = csv.writer(out_file, delimiter='\t')
+        out = csv.writer(out_file, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
         out.writerow([solns[sln].id for sln in solns])
-        out.writerow([str(solns[sln]) for sln in solns])
+        out.writerow([solns[sln] for sln in solns])
+        out.writerow([scores[sln].__dict__() for sln in solns])
 
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
