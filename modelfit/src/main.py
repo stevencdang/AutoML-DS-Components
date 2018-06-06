@@ -32,7 +32,6 @@ __version__ = '0.1'
 logging.basicConfig()
 
 
-
 if __name__ == '__main__':
     # Parse argumennts
     parser = get_default_arg_parser("Fit Models")
@@ -88,28 +87,11 @@ if __name__ == '__main__':
     serv.end_search_solutions(search_id)
 
     
-    # Retrieve output
-    # pfiles = set()
-    # for pred in predictions:
-        # pfiles.add(path.split(pred.predict_result_uri)[-1])
-
-
-    # ds_data = {'about': ds.about,
-               # 'dataResources': [json.loads(dr.to_json()) for dr in ds.dataResources]
-               # }
-    # logger.debug("Getting problem description in dataset dir: %s" % ds.dpath)
-    # pred_out = D3MPrediction(ds.dpath, 
-                             # ds_data, 
-                             # path.join(ds.get_ds_path(), 'output'), 
-                             # prob_desc=prob_desc, 
-                             # pfiles=list(pfiles))
-    
-    # # Write dataset info to output file
-    # out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
-    # pred_out.to_json(out_file_path)
-    # Write out human readable version for debugging
-    # ds_json = json.loads(pred_out.to_json())
-    # with open(out_file_path, 'w') as out_file:
-        # pprint.pprint(ds_json, out_file)
+    # # Write model fit id info to output file
+    out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
+    with open(out_file_path, 'w') as out_file:
+        writer = csv.writer(out_file, delimiter='\t')
+        writer.writerow([model.id for model in models])
+        writer.writerow([model.fit for model in models])
 
 

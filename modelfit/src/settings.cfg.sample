@@ -4,8 +4,8 @@ enable_syslog = True
 enable_file_log = True
 file_log_path = /rdata/dataStore/d3m/tmp
 [TA2]
-ta2_url = sophia.stevencdang.com:45042
+ta2_url = localhost:45042
 [Output]
-out_file = dataset_pred.json
+out_file = fit-models.tsv
 
 
