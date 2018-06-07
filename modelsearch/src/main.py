@@ -27,7 +27,7 @@ from ls_problem_desc.ls_problem import ProblemDesc
 from ls_problem_desc.d3m_problem import D3MProblemDesc
 from d3m_ta2.ta2_v3_client import TA2Client
 # from ls_workflow.workflow import Workflow as Solution
-from modeling.models import Model, ModelScores
+from modeling.models import Model, ModelScores, Score
 
 
 __version__ = '0.1'
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     scores = {}
     for sid in score_req_ids:
         results = serv.get_score_solution_results(score_req_ids[sid])
-        scores[sid] = ModelScores(solns[sid], [ds.get_schema_uri()], results)
+        scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
 
 
     # serv.end_search_solutions(search_id)
@@ -130,7 +130,7 @@ if __name__ == '__main__':
         out = csv.writer(out_file, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
         out.writerow([solns[sln].id for sln in solns])
         out.writerow([solns[sln] for sln in solns])
-        out.writerow([scores[sln].__dict__() for sln in solns])
+        out.writerow([scores[sln] for sln in solns])
 
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))

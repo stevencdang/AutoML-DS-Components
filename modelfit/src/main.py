@@ -61,7 +61,7 @@ if __name__ == '__main__':
     reader = csv.reader(args.file1, delimiter='\t')
     rows = [row for row in reader]
     models =  {mid: Model.from_json(rows[1][i]) for i, mid in enumerate(rows[0])}
-    scores =  {mid: ModelScore.from_json(rows[2][i]) for i, mid in enumerate(rows[0])}
+    scores =  {mid: ModelScores.from_json(rows[2][i]) for i, mid in enumerate(rows[0])}
     logger.info("Got %i models to fit" % len(models))
     # Print sampel model
     mid = list(models.keys())[0]
@@ -79,6 +79,7 @@ if __name__ == '__main__':
 
     fit_req_ids = {}
     for mid, model in models.items():
+        logger.debug("Fitting model: %s" % str(model))
         fit_req_ids[mid] = serv.fit_solution(model, ds)
     for mid, rid in fit_req_ids.items():
         models[mid].fit = serv.get_fit_solution_results(rid)
