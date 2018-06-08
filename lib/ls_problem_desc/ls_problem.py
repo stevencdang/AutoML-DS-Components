@@ -50,20 +50,20 @@ class ProblemDesc(object):
         else:
             self.metadata = None
 
-    def add_input(self, ds, res, col):
+    def add_input(self, did, res, col):
         if len(self.inputs) == 0:
-            inpt = Input(ds)
+            inpt = Input(did)
             inpt.add_target(res, col)
             self.inputs.append(inpt)
         else:
             added = False
             for inpt in self.inputs:
-                if inpt.id == ds.id:
+                if inpt.id == did:
                     inpt.add_target(res, col)
                     added = True
 
             if not added:
-                inpt = Input(ds)
+                inpt = Input(did)
                 inpt.add_target(res,col)
                 self.inputs.append(inpt)
 

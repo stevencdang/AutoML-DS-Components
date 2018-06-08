@@ -14,7 +14,7 @@
 dir=$(pwd)
 LOG_FILE="$dir"/gen_component.log
 # Remove the log file if it exists
-if [ -f "$LOG_FILE" ]; then
+if [ -f $LOG_FILE ]; then
     rm $LOG_FILE
 fi
 exec 3>&1 1>>${LOG_FILE} 2>&1
@@ -72,10 +72,10 @@ if [ "$#" -gt 1 ]; then
 fi
 
 if [ ! -f "$wcctemp" ]; then
-    echo "ERROR: Could not find wcc.properties file at $wcc"
+    echo "ERROR: Could not find wcc.properties file at $wcctemp"
     exit 1
 else
-    echo "Running using properties file: $wcc"
+    echo "Running using properties file: $wcctemp"
 fi
 
 # Generate wcc from wcc template
@@ -83,18 +83,8 @@ wccdir=$(dirname "$wcctemp")
 wcc=$wccdir/wcc.properties
 awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir "/program";next}1' "$wcctemp" > tmp && mv tmp "$wcc"
 
-
 ### Perform pre generation actions ###
 #######################################
-#srcdir=$(dirname "$wcc")
-#echo "Packaging python source to be built into 'program' directory: $srcdir/program"
-#if [ ! -d "$srcdir"/program ]; then
-    #mkdir "$srcdir"/program
-#else
-    ## Clean out the old source before continuing
-    #rm -R "$srcdir"/program
-    #mkdir "$srcdir"/program
-#fi
 
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
 ./setup_run.sh
@@ -115,7 +105,6 @@ fi
 # Generate the component
 ./runWCC.sh $dir $wcc
 echo "Completed component generation"
-rm $wcc
 
 ### Perform post generation actions ###
 #######################################
@@ -128,13 +117,14 @@ done < $wcc
 cdir="$dir/$cname"
 
 # Copy component setup scripts to new component directory
+srcdir=$(dirname "$wcc")
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
-cp "$srcdir"/add_component.sql "$cdir"/
+cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
+cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/datasetDoc.tsv
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
-cp "$srcdir"/test/datasetDoc.json "$cdir"/test/components/
 echo "Copied setup files to new component directory from source directory"
 
 # Create dir for writing logs
@@ -158,7 +148,7 @@ echo "Ran install script"
 ####################################################################
 # Getting path to java
 for file in $(find "$cdir"/source -name "*.java"); do
-    echo "Editing java file: " $file
+    echo $file
     # Adding line to expose metadata to downstream components
     awk '/The addMetaData/{print $0 RS "\t\tthis.addMetaData(\"d3m-dataset\", 0, META_DATA_LABEL, \"label0\", 0, null);" RS;next}1' "$file" > tmp && mv tmp "$file"
 done
@@ -173,11 +163,14 @@ for file in $(find "$cdir"/test/components -name "*.xml"); do
     awk -v cdir="$cdir" '/<file_name>/{print "<file_name>datasetDoc.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
 done
 
-# Run a test of the component using ant #
-#########################################
-#echo "Running 'ant runComponent' to test the component install"
-#`ant runComponent`
 
+# run 'and runComponent' to buildthe files after installing #
+#############################################################
+#echo "Building and testing component from terminal"
+#ant runComponent
+
+# Delete generated wcc file before completed
+rm $wcc
 # Return to current working directory after completion
 cd "$cwd"
 echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3
