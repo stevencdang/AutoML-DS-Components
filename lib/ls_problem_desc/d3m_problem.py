@@ -248,10 +248,36 @@ class DefaultProblemDesc(ProblemDesc):
             metrics = prob.metrics,
             metadata = prob.metadata
         )
+        out.id = prob['id']
         out.inputs = prob.inputs
         return out
+    
+    def to_file(self, fpath):
+        if isinstance(fpath, str):
+            with open(fpath, 'w') as out_file:
+                json.dump(super().to_dict(), out_file)
+        elif isinstance(fpath, IOBase):
+            json.dump(super().to_dict(), fpath)
+        else:
+            raise Exception("Invalid file/path given to write to file. Given \
+                            input type: %s" % type(fpath))
+
+
+    def print(self, fpath=None):
+        msg_json = super().to_dict()
+        if fpath is None:
+            return pprint.pformat(msg_json)
+        else:
+            logger.debug("Writing readable problem json to: %s" % fpath)
+            with open(fpath, 'w') as out_file:
+                pprint.pprint(msg_json, out_file)
+            return pprint.pformat(msg_json)
+
 
     def to_dict(self):
+        logger.debug("######################################")
+        logger.debug("DefaultProblmDesc to dict")
+        logger.debug("######################################")
         out = {
             'about': {
                 'problemID': self.id,
@@ -311,93 +337,9 @@ class DefaultProblemDesc(ProblemDesc):
                         logger.debug("Getting problem schema at path: %s" % path.join(root, f))
                         return path.join(root, f)
         logger.warning("Found no default problem doc in dataset at: %s" % dpath)
-        # return path.join(dpath, dname + '_problem', ProblemDesc.__default_schema__)
     
-    # def to_json(self, fpath=None):
-        # msg_json = self.to_dict()
-        # if fpath is not None:
-            # logger.debug("Writing problem json to: %s" % fpath)
-            # with open(fpath, 'w') as out_file:
-                # json.dump(msg_json, out_file)
-
-        # return msg_json
-
-    # def to_json_pretty(self, fpath=None):
-        # msg_json = self.to_dict()
-        # if fpath is not None:
-            # logger.debug("Writing readable problem json to: %s" % fpath)
-            # with open(fpath, 'w') as out_file:
-                # pprint.pprint(msg_json, out_file)
-
-        # return json.dumps(msg_json)
-
-
     def __str__(self):  
         out = self.to_dict()
         logger.debug("Problem to string: %s" % str(out))
         return str(out)
-
-    
-# class Problem(object):
-
-    # def __init__(self, 
-                 # pid=None, 
-                 # name=None, 
-                 # version=None,
-                 # perf_metrics=None,
-                 # task_type=None,
-                 # task_subtype=None,
-                 # desc=None):
-        # self.id = pid
-        # self.name = name
-        # self.version = version
-        # self.performanceMetrics = perf_metrics
-        # self.taskType = task_type
-        # self.taskSubtype = task_subtype
-        # self.description = desc
-
-    # @staticmethod
-    # def from_protobuf(msg):
-        # if 'id' in msg.keys():
-            # id = msg.id
-        # else:
-            # id = None
-        # if 'name' in msg.keys():
-            # name = msg.name
-        # else:
-            # name = None
-        # if 'version' in msg.keys():
-            # version = msg.version
-        # else:
-            # version = None
-        # if 'performanceMetrics' in msg.keys():
-            # perf_metrics = msg.performanceMetrics
-        # else:
-            # perf_metrics = []
-        # if 'taskType' in msg.keys():
-            # task_type = msg.taskType
-        # else:
-            # task_type = None
-        # if 'taskSubtype' in msg.keys():
-            # task_subtype = msg.taskSubtype
-        # else:
-            # task_subtype = None
-        # if 'description' in msg.keys():
-            # desc = msg.description
-        # else:
-            # desc = None
-        # return Problem( 
-            # id=id,
-            # name=name,
-            # version=version,
-            # performanceMetrics = perf_metrics,
-            # taskType = task_type,
-            # taskSubtype = task_subtype,
-            # desc = desc
-        # )
-
-    # def __str__(self):
-        # out = self.__dict__
-        # out['performanceMetrics'] = [str(m) for m in self.performanceMetrics]
-        # return str(out)
 

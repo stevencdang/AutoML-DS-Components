@@ -137,6 +137,9 @@ class ProblemDesc(object):
         
 
     def to_dict(self):
+        logger.debug("######################################")
+        logger.debug("ProblmDesc to dict")
+        logger.debug("######################################")
         out = {
             "id": self.id,
             "version": self.version,
