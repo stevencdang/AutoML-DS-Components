@@ -8,6 +8,7 @@ import os.path as path
 import os
 from io import IOBase
 import json
+import csv
 
 from ls_dataset.ls_dataset import LSDataset
 from ls_dataset.dsr_factory import DatasetResourceFactory
@@ -40,24 +41,15 @@ class D3MDataset(LSDataset):
         self.dataResources = [DatasetResourceFactory.get_resource(dsr) for dsr in dsdata['dataResources']]
    
     @staticmethod
-    def from_json(fpath):
+    def from_json(d):
         """
         A static constructor of this class given a jsonified file
 
         """
-        if isinstance(fpath, str):
-            if path.exists(fpath):
-                with open(fpath, 'r') as f:
-                    ds_json = json.load(f)
-            else:
-                logger.error("Found no dataset json at path: %s" % str(fpath))
-                raise Exception("Found no dataset json at path: %s" % str(fpath))
-        elif isinstance(fpath, IOBase):
-            logger.debug("Loading dataset json from open file")
-            ds_json = json.load(fpath)
+        if isinstance(d, str):
+            ds_json = json.loads(d)
         else:
-            logger.error("Found no dataset json at path: %s" % str(fpath))
-            raise Exception("Found no dataset json at path: %s" % str(fpath))
+            ds_json = d
         
         logger.debug("got dataset json: %s" % str(ds_json))
         json_doc = {'about': ds_json['about'],
@@ -104,6 +96,48 @@ class D3MDataset(LSDataset):
         else:
             raise Exception("No schema doc found in dataset directory: %s" % dpath)
 
+    def to_component_out_file(self, fpath):
+        """
+        Write the dataset to file for passing between components. 
+        Writes the first row of a tab separated file as the list of column names.
+        The first cell of the second row is simply the 
+
+        """
+        for resource in self.dataResources:
+            if resource.resType == 'table':
+                logger.debug("Resource type: %s\t %s" % (str(type(resource.columns)), str(resource.columns)))
+                for col in resource.columns:
+                    logger.debug("Type: %s\t col: %s" % (str(type(col)), str(col)))
+                names = [col.colName for col in resource.columns]
+        js = self.to_json()
+
+        with open(fpath, 'w') as out_file:
+            logger.debug("Writing dataset json to component out file: %s" % fpath)
+            writer = csv.writer(out_file, delimiter='\t')
+            writer.writerow(names)
+            writer.writerow([js])
+
+    @staticmethod
+    def from_component_out_file(fpath):
+        """
+        Load the dataset from an out file written to pass between workflow components
+
+        """
+        if isinstance(fpath, str):
+            in_file = open(fpath, 'r')
+            reader = csv.reader(in_file, delimiter='\t')
+            rows = [row for row in reader]
+            in_file.close()
+        elif isinstance(fpath, IOBase):
+            reader = csv.reader(fpath, delimiter='\t')
+            rows = [row for row in reader]
+            fpath.close()
+        logger.debug("got rows %i from component file" % len(rows))
+        col_names = rows[0]
+        logger.debug("Got columns names: %s" % str(col_names))
+        logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1])))
+        return D3MDataset.from_json(rows[1][0])
+
 
     def to_json(self, fpath=None):
         """
@@ -115,8 +149,7 @@ class D3MDataset(LSDataset):
         out = json.loads(super().to_json())
         out['about'] = self.about
         out['dataResources'] = [json.loads(rc.to_json()) for rc in self.dataResources]
-
-
+        
         if fpath is not None:
             logger.debug("Writing dataset json to: %s" % fpath)
             out_file = open(fpath, 'w')

@@ -14,7 +14,7 @@ from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import Settings as stg
 from ls_dataset.d3m_dataset import D3MDataset
-from ls_problem_desc.d3m_problem import D3MProblemDesc
+from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from ls_problem_desc.ls_problem import ProblemDesc
 
 __version__ = '0.1'
@@ -44,19 +44,18 @@ if __name__ == '__main__':
     logger.debug("Running Generate Default Problem with arguments: %s" % str(args))
 
     # Open dataset json
-    ds = D3MDataset.from_json(args.file0)
+    # ds = D3MDataset.from_json(args.file0)
+    ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json: %s" % str(ds))
 
     # Get Problem Schema from Dataset
-    prob_path = ProblemDesc.get_default_problem(ds)
-    prob_desc = ProblemDesc.from_json(prob_path)
+    prob_path = DefaultProblemDesc.get_default_problem(ds)
+    prob_desc = DefaultProblemDesc.from_file(prob_path)
     logger.debug("Got Problem Description for json: %s" % prob_desc.print())
-    prob = D3MProblemDesc.from_problem_desc(prob_desc)
-    logger.debug("Got D3M Problem Description: %s" % prob.print())
 
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Main', 'out_file'))
     logger.info("Writing dataset json to: %s" % out_file_path)
-    prob.to_json(out_file_path)
+    prob_desc.to_json(out_file_path)
     if args.is_test == 1:
-        prob.to_json_pretty(out_file_path + '.readable')
+        prob_desc.to_json_pretty(out_file_path + '.readable')

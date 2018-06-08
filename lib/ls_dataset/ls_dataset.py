@@ -81,7 +81,8 @@ class LSDataset(object):
         then just returns a string with the json representation of the dataset json
 
         """
-        out = {'dataset_info': {
+        out = {
+            'dataset_info': {
                 'root_path': self.dpath,
                 'dataset_dir': self.name + '_dataset',
                 'dataset_schema': self.schema_path

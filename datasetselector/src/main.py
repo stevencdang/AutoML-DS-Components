@@ -79,6 +79,6 @@ if __name__ == '__main__':
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))
     logger.info("Writing dataset json to: %s" % out_file_path)
-    ds.to_json(out_file_path)
+    ds.to_component_out_file(out_file_path)
     if args.is_test == 1:
         ds.to_json_pretty(out_file_path + '.readable')

@@ -8,11 +8,11 @@ import os.path as path
 import os
 from io import IOBase
 import json
-import hashlib
 from datetime import datetime
 import pprint
 
 from ls_dataset.d3m_dataset import D3MDataset
+from modeling.scores import Metric
 
 logger = logging.getLogger(__name__)
 
@@ -23,81 +23,78 @@ class ProblemDesc(object):
     Class representing a D3m problem description for pipeline search
 
     """
-
-    __default_schema__ = 'problemDoc.json'
     
-    def __init__(self, name, desc, task_type, subtype, datasets=None, version=1, metrics=None, metadata=None):
+    def __init__(self, name=None, desc=None, task_type=None, subtype=None, version=1, metrics=None, metadata=None):
         """
         inputs: 
-            metadata - dictionary representation of the problem schema
+            metadata - dictionary representation of additional information
         
         """
-        h = hashlib.sha1()
-        h.update(str(datetime.now()).encode('utf-8'))
-        self.id = h.hexdigest()
-        self.version=version
+        self.id = str(abs(hash(datetime.now())))
         self.name=name
+        self.version=version
         self.description=desc
         self.task_type=task_type
-
-        if subtype is not None:
-            self.subtype = subtype
-        else:
-            self.subtype = None
-
+        self.subtype = subtype
         if metrics is None:
             self.metrics=[]
         elif hasattr(metrics, '__iter__'):
-            self.metrics = [PerformanceMetric(m['metric']) for m in metrics]
+            self.metrics = [Metric(m) for m in metrics]
         else:
-            self.metrics = [PerformanceMetric(metrics['metric'])]
-        try:
-            if datasets is None:
-                self.datasets = []
-            elif hasattr(datasets, '__iter__'):
-                self.datasets = [Dataset(d['datasetID'], d['targets']) for d in datasets]
-            else:
-                self.datasets = [Dataset(d['datasetID'], d['targets'])]
-        except KeyError:
-            if datasets is None:
-                self.datasets = []
-            elif hasattr(datasets, '__iter__'):
-                self.datasets = [Dataset(d['datasetId'], d['targets']) for d in datasets]
-            else:
-                self.datasets = [Dataset(d['datasetId'], d['targets'])]
-        
+            raise Exception("Invalid metrics given, must be a list")
+        self.inputs = []
+       
+        # Catchall for extra information to support easy subclassing
         if metadata is not None:
             self.metadata = metadata
-            self.about = metadata['about']
-            self.inputs = metadata['inputs']
-            self.expectedOutputs = metadata['expectedOutputs']
         else:
-            self.about = None
-            self.inputs = None
-            self.expectedOutputs = None
             self.metadata = None
 
+    def add_input(self, ds, res, col):
+        if len(self.inputs) == 0:
+            inpt = Input(ds)
+            inpt.add_target(res, col)
+            self.inputs.append(inpt)
+        else:
+            added = False
+            for inpt in self.inputs:
+                if inpt.id == ds.id:
+                    inpt.add_target(res, col)
+                    added = True
 
-    @staticmethod
-    def get_default_problem(ds):
-        """
-        Return path to problem desc assuming default location given a dataset
+            if not added:
+                inpt = Input(ds)
+                inpt.add_target(res,col)
+                self.inputs.append(inpt)
 
-        """
-        dname = ds.name
-        dpath = ds.dpath
-        dir_name = path.split(dpath)[1]
-        logger.debug("Getting problem for dataset with name, %s, and dataset_dir: %s" % (dname, dir_name))
-        for root, dirs, files in os.walk(ds.dpath):
-            for f in files:
-                if f == ProblemDesc.__default_schema__:
-                    parent = path.split(root)[1]
-                    if parent == dir_name + '_problem':
-                        logger.debug("Getting problem schema at path: %s" % path.join(root, f))
-                        return path.join(root, f)
-        logger.warning("Found no default problem doc in dataset at: %s" % dpath)
-        # return path.join(dpath, dname + '_problem', ProblemDesc.__default_schema__)
-    
+    def to_dict(self):
+        out = {
+            "id": self.id,
+            "version": self.version,
+            "metrics": [metric.to_dict() for metric in self.metrics],
+            "inputs": [inpt.to_dict() for inpt in self.inputs]
+        }
+        if self.name is not None:
+            out["name"] = self.name
+        if self.description is not None:
+            out["description"] = self.description
+        if self.task_type is not None:
+            out["task_type"] = self.task_type
+        if self.subtype is not None:
+            out["task_subtype"] = self.subtype
+        if self.metadata is not None:
+            out["metadata"] = self.metadata
+        return out
+
+    def to_file(self, fpath):
+        if isinstance(fpath, str):
+            with open(fpath, 'w') as out_file:
+                json.dump(self.to_dict(), out_file)
+        elif isinstance(fpath, IOBase):
+            json.dump(self.to_dict(), fpath)
+        else:
+            raise Exception("Invalid file/path given to write to file. Given \
+                            input type: %s" % type(fpath))
     
     @staticmethod
     def from_json(fpath):
@@ -130,174 +127,163 @@ class ProblemDesc(object):
             metrics=ds_json['inputs']['performanceMetrics'],
             metadata=ds_json
         )
-        
-    
-    def to_json(self, fpath=None):
-        """
-        Write the problem description to file and return a string with the json. 
-        If no path is given, then just returns a string with the json 
-        representation of the problem description
 
-        """
-        out = self.__iter__()
-        logger.debug("Writing to json: %s" % out)
-
-        if fpath is not None:
-            logger.debug("Writing dataset json to: %s" % fpath)
-            out_file = open(fpath, 'w')
-            json.dump(out, out_file)
-            out_file.close()
-
-        return out
-
-    def to_json_pretty(self, fpath=None):
-        out = self.print()
-        logger.debug("Writing to pretty json: %s" % out)
-        if fpath is not None:
-            logger.debug("Writing problem json in human readable format to: %s" % fpath)
-            with open(fpath, 'w') as out_file:
-                out_file.write(out)
-
-        return out
+    def __str__(self):
+        return str(self.to_dict())
 
     def print(self):
-        # out = self.__str__()
-        # ds_json = json.loads(out)
-        ds_json = self.__iter__()
-        return pprint.pformat(ds_json)
+        msg_json = self.to_dict()
+        return pprint.pformat(msg_json)
 
-    def __iter__(self):
-        out = {
-            'about': {
-                'problemID': self.id,
-                'problemName': self.name,
-                'problemDescription': self.description,
-                'taskType': self.task_type,
-                'taskSubType': self.subtype,
-                'problemVersion': self.version,
-            },
-            'inputs': {
-                'data': [],
-                'performanceMetrics': []
-            },
-            'expectedOutputs': {
-                'predictionsFile': "predictions.csv"
-            }
-        }
-        if self.metadata is not None:
-            out['inputs'] = self.inputs
-            out['expectedOutputs'] =  self.expectedOutputs
-            out['about']['problemSchemaVersion'] = self.about['problemSchemaVersion']
-        else:
-            for metric in self.metrics:
-                out['inputs']['performanceMetrics'].append(
-                    metric.__iter__()
-                )
-                    # {
-                    # 'metric': metric
-                # })
-            for ds in self.datasets:
-                out['inputs']['data'].append(
-                    # ds.__iter__()
-                    { k: v for k,v in ds }
-                )
-                    # 'datasetID': ds.id,
-                    # 'targets': {
-                        # 'targetIndex': ds['target_index'],
-                        # 'resID': str(ds['res_id']),
-                        # 'colIndex': ds['col_index'],
-                        # 'colName': ds['col_name']
-                    # }
+       
+    # def __str__(self):
+        # return str(self.__iter__())
 
-                # })
+    # def __iter__(self):
+        # d = {
+            # 'datasetID': self.id,
+            # 'targets': [str(t) for t in self.targets]
+        # }
+        # for k in d:
+            # yield (k, d[k])
 
+
+# class DSTarget(object):
+    # def __init__(self, target_index, _id, col_index, col_name):
+        # self.target_index = target_index
+        # self.id = _id
+        # self.col_index = col_index
+        # self.col_name = col_name
+
+    # def __str__(self):
+        # return str(self.__iter__())
+
+    # def __iter__(self):
+        # d = {
+            # 'targetIndex': self.target_index,
+            # 'resID': str(self.id),
+            # 'colIndex': self.col_index,
+            # 'col_name': self.col_name
+        # }
+        # for k in d:
+            # yield (k, d[k])
+
+
+# class PerformanceMetric(object):
+    # def __init__(self, metric):
+        # self.metric = metric
+
+    # def __iter__(self):
+        # d =  {
+            # 'metric': self.metric
+        # }
+        # for k in d:
+            # yield (k, d[k])
+
+    # def __str__(self):
+        # out = {
+            # 'metric': self.metric
+        # }
+        # return str(out)
+        
+# class Problem(object):
+
+    # def __init__(self, 
+                 # pid=None, 
+                 # name=None, 
+                 # version=None,
+                 # perf_metrics=None,
+                 # task_type=None,
+                 # task_subtype=None,
+                 # desc=None):
+        # self.id = pid
+        # self.name = name
+        # self.version = version
+        # self.performanceMetrics = perf_metrics
+        # self.taskType = task_type
+        # self.taskSubtype = task_subtype
+        # self.description = desc
+
+    # @staticmethod
+    # def from_protobuf(msg):
+        # if 'id' in msg.keys():
+            # id = msg.id
+        # else:
+            # id = None
+        # if 'name' in msg.keys():
+            # name = msg.name
+        # else:
+            # name = None
+        # if 'version' in msg.keys():
+            # version = msg.version
+        # else:
+            # version = None
+        # if 'performanceMetrics' in msg.keys():
+            # perf_metrics = msg.performanceMetrics
+        # else:
+            # perf_metrics = []
+        # if 'taskType' in msg.keys():
+            # task_type = msg.taskType
+        # else:
+            # task_type = None
+        # if 'taskSubtype' in msg.keys():
+            # task_subtype = msg.taskSubtype
+        # else:
+            # task_subtype = None
+        # if 'description' in msg.keys():
+            # desc = msg.description
+        # else:
+            # desc = None
+        # return Problem( 
+            # id=id,
+            # name=name,
+            # version=version,
+            # performanceMetrics = perf_metrics,
+            # taskType = task_type,
+            # taskSubtype = task_subtype,
+            # desc = desc
+        # )
+
+    # def __str__(self):
+        # out = self.__dict__
+        # out['performanceMetrics'] = [str(m) for m in self.performanceMetrics]
+        # return str(out)
+
+class Input(object):
+    def __init__(self, did):
+        self.dataset_id = did
+        self.targets = []
+
+    def add_target(self, res, col):
+        i = len(self.targets)
+        target = Target(i, res, col)
+        self.targets.append(target)
+
+    def to_dict(self):
+        out = self.__dict__
+        out['targets'] = [t.to_dict() for t in self.targets]
         return out
 
+    def __str__(self):
+        return str(self.__dict__)
 
+class Target(object):
+    def __init__(self, indx, res=None, col=None):
+        if col is not None:
+            self.column_index = col.colIndex
+            self.column_name = col.colName
+        else:
+            self.column_index = None
+            self.column_name = None
+        if res is not None:
+            self.resource_id = res.resID
+        else:
+            self.resource_id = None
+        self.target_index = indx
+
+    def to_dict(self):
+        return self.__dict__
 
     def __str__(self):
-        return json.dumps(self.__iter__())
+        return str(self.__dict__)
 
-
-class Dataset(object):
-    def __init__(self, _id, targets):
-        self.id = _id
-        # logger.debug(targets)
-        try:
-            self.targets = [DSTarget(t['targetIndex'], t['resID'], t['colIndex'], t['colName']) for t in targets]
-        except KeyError:
-            self.targets = [DSTarget(t['targetIndex'], t['resourceId'], t['columnIndex'], t['columnName']) for t in targets]
-
-
-    def __str__(self):
-        return str(self.__iter__())
-
-    def __iter__(self):
-        d = {
-            'datasetID': self.id,
-            'targets': [str(t) for t in self.targets]
-        }
-        for k in d:
-            yield (k, d[k])
-
-
-class DSTarget(object):
-    def __init__(self, target_index, _id, col_index, col_name):
-        self.target_index = target_index
-        self.id = _id
-        self.col_index = col_index
-        self.col_name = col_name
-
-    def __str__(self):
-        return str(self.__iter__())
-
-    def __iter__(self):
-        d = {
-            'targetIndex': self.target_index,
-            'resID': str(self.id),
-            'colIndex': self.col_index,
-            'col_name': self.col_name
-        }
-        for k in d:
-            yield (k, d[k])
-
-
-class PerformanceMetric(object):
-    def __init__(self, metric):
-        self.metric = metric
-
-    def __iter__(self):
-        d =  {
-            'metric': self.metric
-        }
-        for k in d:
-            yield (k, d[k])
-
-    def __str__(self):
-        out = {
-            'metric': self.metric
-        }
-        return str(out)
-        
-        
-
-
-if __name__ == "__main__":
-    logger.info("Generating default problem doc")
-    name = "Testing Problem Doc"
-    desc = "A problem doc to test generating problem docs"
-    task_type = "CLASSIFICATION"
-    subtype = "NONE"
-    version = 1
-    metrics = [ {'metric': 'F1_MACRO'} ]
-    datasets = [ {'dataset_id': '185_baseball_dataset', 'targets': [
-        {
-            'target_index': 0,
-            'resource_id': "0",
-            'column_index': 18,
-            'columns_name': 'Hall_of_Fame'
-        }]
-    }]
-
-    ProblemDesc(name, desc, task_type, subtype, datasets=dataset, version=version, metrics=metrics)
-    

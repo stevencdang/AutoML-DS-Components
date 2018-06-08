@@ -22,5 +22,5 @@ fi
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0=$cwd/test/datasetDoc.json -userId=' ' -is_test=1
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0=$cwd/test/datasetDoc.tsv -userId=' ' -is_test=1
 
