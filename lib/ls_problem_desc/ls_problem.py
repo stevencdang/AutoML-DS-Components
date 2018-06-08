@@ -105,6 +105,14 @@ class ProblemDesc(object):
         i = self.get_task_types().index(t)
         self.task_type = self.__task_types__[i]
 
+    def add_metric(self, metric):
+        """
+        Add a metric given the name of the metric
+
+        """
+        m = Metric(metric)
+        self.metrics.append(m)
+
     @staticmethod
     def get_task_types():
         tasks = [t.lower() for t in ProblemDesc.__task_types__]
@@ -348,7 +356,7 @@ class ModelingProblem(ProblemDesc):
         col_names = rows[0]
         logger.debug("Got Valid Metrics: %s" % str(col_names))
         logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1])))
-        return DefaultProblemDesc.from_json(rows[1][0])
+        return ProblemDesc.from_json(rows[1][0])
 
     @staticmethod
     def problem_metric_select_to_file(prob, fpath):

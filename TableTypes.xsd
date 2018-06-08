@@ -1,8 +1,15 @@
   <xs:element name="json" substitutionGroup="text" />
-      <xs:element name="dataset" substitutionGroup="json" />
-      <xs:element name="model-fitter-set" substitutionGroup="json" />
-      <xs:element name="modelling-problem" substitutionGroup="json" />
-      <xs:element name="model" substitutionGroup="json" />
+      <!--<xs:element name="dataset" substitutionGroup="json" />-->
+      <!--<xs:element name="model-fitter-set" substitutionGroup="json" />-->
+      <xs:element name="fit-model" substitutionGroup="json" />
+      <xs:element name="json" substitutionGroup="tab-delimited" />
+  <xs:element name="modeling-problem" substitutionGroup="json" />
 
+  <xs:element name="dataset" substitutionGroup="tab-delimited" />
   <xs:element name="dataset-list" substitutionGroup="tab-delimited" />
+  <xs:element name="model-fitter-set" substitutionGroup="tab-delimited" />
+  <xs:element name="fit-model-set" substitutionGroup="tab-delimited" />
+  <!--<xs:element name="modeling-problem" substitutionGroup="tab-delimited" />-->
+  <xs:element name="problem-target" substitutionGroup="tab-delimited" />
+  <xs:element name="problem-task" substitutionGroup="tab-delimited" />
 

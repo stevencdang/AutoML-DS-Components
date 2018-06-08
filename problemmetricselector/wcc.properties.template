@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=ProblemTaskSelector
+component.name=ProblemMetricSelector
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -35,7 +35,7 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Allow user to select a problem task for the model search to perform
+component.description=Allow user to select metrics for the model search to use in its optimization
 
 # The number of inputs for the new component. 
 component.num_inputs=2
@@ -48,11 +48,11 @@ component.num_options=1
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
 input.0.type=dataset
-input.1.type=problem-target
+input.1.type=problem-task
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
-output.0.type=problem-task
-output.0.name=problemTask.tsv
+output.0.type=modeling-problem
+output.0.name=problemDoc.json
 
 # For each option, specify the type, name, id and default.
 # Common option types include: FileInputHeader, Enum, xs:string, xs:double
@@ -61,9 +61,9 @@ output.0.name=problemTask.tsv
 # The options will be passed to your program as command-line args using the option name.
 # For example, the following option is available to your program as "-kc_model <string>"
 option.0.type=FileInputHeader
-option.0.name=task-name
-option.0.id=task_name
-option.0.default=CLASSIFICATION
+option.0.name=metric
+option.0.id=metric
+option.0.default=ACCURACY
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model

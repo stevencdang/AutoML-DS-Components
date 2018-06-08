@@ -1,0 +1,11 @@
+{'description': 'CMU-Tigris User generated problem',
+ 'id': '5299394022898031555',
+ 'inputs': [{'dataset_id': '185_baseball_dataset',
+             'targets': [{'column_index': 18,
+                          'column_name': 'Hall_of_Fame',
+                          'resource_id': '0',
+                          'target_index': 0}]}],
+ 'metrics': [],
+ 'name': 'Problem-2018-06-08 13:34:25.630594',
+ 'task_type': 'CLASSIFICATION',
+ 'version': 1}
