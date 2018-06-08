@@ -5,6 +5,8 @@
 
 import logging
 import json
+from google.protobuf import json_format
+
 
 from d3m_ta2.api_v3 import problem_pb2
 
@@ -101,12 +103,12 @@ class Metric(object):
     @staticmethod
     def get_match(t):
         if type(t) is int:
-            logger.debug("Converting to enum name: %i" % t)
+            # logger.debug("Converting to enum name: %i" % t)
             t = problem_pb2.PerformanceMetric.Name(t)
-            logger.debug("Got enum name: %s" % t)
+            # logger.debug("Got enum name: %s" % t)
         convert_t = Metric.convert_type(t)
-        logger.debug("Got match of %s with %s" % (t, convert_t))
-        logger.debug("Looking for match in types: %s" % str(Metric.get_types()))
+        # logger.debug("Got match of %s with %s" % (t, convert_t))
+        # logger.debug("Looking for match in types: %s" % str(Metric.get_types()))
         try:
             i = Metric.get_types().index(convert_t)
             return Metric.__types__[i]

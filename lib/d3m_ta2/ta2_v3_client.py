@@ -11,7 +11,7 @@ from .api_v3 import core_pb2, core_pb2_grpc
 from .api_v3 import value_pb2
 from .api_v3 import problem_pb2
 
-from ls_problem_desc.d3m_problem import D3MProblemDesc
+from ls_problem_desc.d3m_problem import *
 
 logger = logging.getLogger(__name__)
 
@@ -65,11 +65,12 @@ class TA2Client(object):
 
         """
 
-        if type(prob) == D3MProblemDesc:
-            logger.debug("searching with proper prob")
+        if type(prob) == GRPCProblemDesc:
+            logger.debug("searching with proper GRPC problem description")
             p = prob
         else:
-            p = D3mProblemDesc.from_problem_desc(prob)
+            logger.debug("Converting %s to GRPC problem desc" % str(type(prob)))
+            p = GRPCProblemDesc.from_problem_desc(prob)
 
         
         msg = core_pb2.SearchSolutionsRequest(
@@ -78,7 +79,7 @@ class TA2Client(object):
             allowed_value_types = self.__allowed_values__,
             time_bound = max_time,
             priority = priority,
-            problem = p.d3m_prob,
+            problem = p.to_protobuf(),
         )
         if pipeline is not None:
             msg.template = pipeline

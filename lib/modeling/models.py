@@ -129,6 +129,7 @@ class SubModelNode(Model, ModelNode):
 class ModelScores(object):
 
     def __init__(self, mid, inputs, scores):
+        logger.debug("ModelScore initialized with id: %s\ninputs: %s\nscores: %s" % (mid, str(inputs), str(scores)))
         # A ModeL id this score applies to
         self.mid = mid
         # Inputs used to generate the score
@@ -136,29 +137,17 @@ class ModelScores(object):
         # list of scores
         self.scores = scores
 
-    def __dict__(self):
+    def to_dict(self):
         out = {'model_id': self.mid,
                'inputs': self.inputs,
                # 'scores': [json_format.MessageToJson(score) for score in self.scores]
                # 'scores': [protobuf_to_dict(score) for score in self.scores]
-               'scores': [score.__dict__() for score in self.scores]
+               'scores': [score.to_dict() for score in self.scores]
         }
         return out
 
     def __str__(self):
-        out = self.__dict__()
-        logger.debug("########################")
-        logger.debug("########################")
-        logger.debug("########################")
-        logger.debug(len(self.scores))
-        logger.debug(self.scores)
-        logger.debug("########################")
-        logger.debug([str(score) for score in self.scores])
-        # logger.debug("########################")
-        logger.debug(json.dumps(out))
-        logger.debug("########################")
-        logger.debug("########################")
-        logger.debug("########################")
+        out = self.to_dict()
         return json.dumps(out)
     
     @staticmethod
@@ -219,16 +208,16 @@ class Score(object):
         # msg.value = self.value.to_protobuf()
         return msg
 
-    def __dict__(self):
+    def to_dict(self):
         return {
-            'metric': self.metric.__dict__(),
+            'metric': self.metric.to_dict(),
             'fold': self.fold,
             'targets': self.targets,
-            'value': self.value.__dict__(),
+            'value': self.value.to_dict(),
         }
 
     def __str__(self):
-        return json_format.MessageToJson(self.to_protobuf())
+        return str(self.to_dict())
 
 class Value(object):
 
@@ -250,17 +239,17 @@ class Value(object):
         return Value.from_json(d)
 
     def to_protobuf(self):
-        msg = value_pb2.Value(
-        )
+        msg = value_pb2.Value()
         setattr(msg, self.type, self.value)
         return msg
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             self.type: self.value
         }
+
     def __str__(self):
-        return str({str(self.type): self.value})
+        return str(self.to_dict())
 
         
 

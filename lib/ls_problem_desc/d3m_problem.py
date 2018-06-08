@@ -23,6 +23,59 @@ class GRPCProblemDesc(ProblemDesc):
 
     __version__ = "D3M TA3TA2 API v2018.5.1"
 
+    def to_protobuf(self):
+        prob = problem_pb2.Problem(
+            id=self.id,
+            version=self.version
+        )
+        if self.name is not None:
+            prob.name = self.name
+        if self.description is not None:
+            prob.description = self.description
+        if self.task_type is not None:
+            prob.task_type = GRPCProblemDesc.get_task_type(self.task_type)
+        if self.subtype is not None:
+            prob.task_subtype = GRPCProblemDesc.get_task_subtype(self.subtype)
+        for metric in self.metrics:
+            m = prob.performance_metrics.add()
+            m.metric = metric.get_perf_metric(metric.type)
+            if metric.k is not None:
+                m.k = metric.k
+            if metric.pos is not None:
+                m.pos_label = metric.pos
+        msg = problem_pb2.ProblemDescription(
+            problem=prob
+        )
+        # logger.debug("Adding inputs: %s" % str(self.inputs))
+        for inpt in self.inputs:
+            i = msg.inputs.add()
+            i.dataset_id = inpt.dataset_id
+            for target in inpt.targets:
+                t = i.targets.add()
+                # logger.debug("adding target: %s" % str(target))
+                t.target_index = target.target_index
+                t.resource_id = target.resource_id
+                t.column_index = target.column_index
+                t.column_name = target.column_name
+                # Clusters_number????
+        
+        return msg
+
+    def from_problem_desc(prob):
+        logger.info("Initializing Default problem desc from problem description class")
+                              
+        out = GRPCProblemDesc(
+            name=prob.name,
+            version=prob.version,
+            desc = prob.description,
+            task_type = prob.task_type,
+            subtype = prob.subtype,
+            metrics = [m.type for m in prob.metrics],
+            metadata = prob.metadata
+        )
+        out.inputs = prob.inputs
+        return out
+
     @staticmethod
     def get_task_type(ttype):
         if isinstance(ttype, str):
@@ -140,6 +193,7 @@ class DefaultProblemDesc(ProblemDesc):
         else:
             raise Exception("Expected path string or file io object to initialize \
                             Problem Description. Got %s instead" % type(fpath))
+        # logger.debug("Read in Problem Doc from file: %s" % str(data))
         # Initialize the class
         out = DefaultProblemDesc(
             name=data['about']['problemName'],
@@ -150,23 +204,31 @@ class DefaultProblemDesc(ProblemDesc):
             metrics = [metric['metric']
                        for metric in data['inputs']['performanceMetrics']],
             metadata = {
-                            'schema_version': data['about']['problemSchemaVersion'],
-                            'dataSplits': data['inputs']['dataSplits'],
-                            'expectedOutputs': data['expectedOutputs'],
+                            # 'schema_version': data['about']['problemSchemaVersion'],
+                            # 'dataSplits': data['inputs']['dataSplits'],
+                            # 'expectedOutputs': data['expectedOutputs'],
                             # 'original_json': data
                        }
         )
+        if 'problemSchemaVersion' in data['about'].keys():
+            out.metadata['schema_version'] = data['about']['problemSchemaVersion']
+        if 'dataSplits' in data['inputs'].keys():
+            out.metadata['dataSplits'] = data['inputs']['dataSplits'],
+        if 'expectedOutputs' in data.keys():
+            out.metadata['expectedOutputs'] = data['expectedOutputs']
+
         # Overrite the auto-generated ID
         out.id = data['about']['problemID']
+
         # Manually create inputs and add them
         for d in data['inputs']['data']:
             inpt = Input(d['datasetID'])
             
             for t in d['targets']:
                 target = Target(t['targetIndex'])
-                target.resourceId = t['resID']
-                target.columnIndex = t['colIndex']
-                target.columnName = t['colName']
+                target.resource_id = t['resID']
+                target.column_index = t['colIndex']
+                target.column_name = t['colName']
                 inpt.targets.append(target)
 
             out.inputs.append(inpt)

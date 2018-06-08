@@ -260,12 +260,12 @@ class Input(object):
         self.targets.append(target)
 
     def to_dict(self):
-        out = self.__dict__
+        out = {'dataset_id': self.dataset_id}
         out['targets'] = [t.to_dict() for t in self.targets]
         return out
 
     def __str__(self):
-        return str(self.__dict__)
+        return str(self.to_dict())
 
 class Target(object):
     def __init__(self, indx, res=None, col=None):
@@ -275,15 +275,23 @@ class Target(object):
         else:
             self.column_index = None
             self.column_name = None
+
         if res is not None:
             self.resource_id = res.resID
         else:
             self.resource_id = None
+
         self.target_index = indx
 
     def to_dict(self):
-        return self.__dict__
+        return {
+            'column_index': self.column_index,
+            'column_name': self.column_name,
+            'resource_id': self.resource_id,
+            'target_index': self.target_index
+        }
+
 
     def __str__(self):
-        return str(self.__dict__)
+        return str(self.to_dict())
 

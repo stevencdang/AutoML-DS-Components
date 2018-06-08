@@ -24,7 +24,7 @@ from ls_utilities.ls_wf_settings import Settings as stg
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
 from ls_problem_desc.ls_problem import ProblemDesc
-from ls_problem_desc.d3m_problem import D3MProblemDesc
+from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from d3m_ta2.ta2_v3_client import TA2Client
 # from ls_workflow.workflow import Workflow as Solution
 from modeling.models import Model, ModelScores, Score
@@ -58,13 +58,13 @@ if __name__ == '__main__':
     logger.debug("Running D3M Pipeline Search with arguments: %s" % str(args))
 
     # Open dataset json
-    ds = D3MDataset.from_json(args.file0)
+    ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
     # Get the Problem Doc to forulate the Pipeline request
     logger.debug("Problem input: %s" % args.file1)
-    prob = D3MProblemDesc.from_file(args.file1)
-    logger.debug("Got D3M Problem Description: %s" % prob.print())
+    prob = DefaultProblemDesc.from_file(args.file1)
+    logger.debug("Got Problem Description: %s" % prob.print())
 
     # Init the server connection
     address = config.get("TA2", 'ta2_url')
@@ -127,7 +127,7 @@ if __name__ == '__main__':
         # logger.debug("###########################################")
     out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
     with open(out_file_path, 'w') as out_file:
-        out = csv.writer(out_file, delimiter='\t', quoting=csv.QUOTE_MINIMAL)
+        out = csv.writer(out_file, delimiter='\t')
         out.writerow([solns[sln].id for sln in solns])
         out.writerow([solns[sln] for sln in solns])
         out.writerow([scores[sln] for sln in solns])

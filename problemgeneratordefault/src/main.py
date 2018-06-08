@@ -44,7 +44,6 @@ if __name__ == '__main__':
     logger.debug("Running Generate Default Problem with arguments: %s" % str(args))
 
     # Open dataset json
-    # ds = D3MDataset.from_json(args.file0)
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json: %s" % str(ds))
 
