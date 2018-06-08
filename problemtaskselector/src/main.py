@@ -28,11 +28,13 @@ logging.basicConfig()
 if __name__ == '__main__':
 
     # Parse argumennts
-    parser = get_default_arg_parser("Select Problem Target")
-    parser.add_argument('-target_name', type=str,
-                       help='the name of the column from the dataset to use')
+    parser = get_default_arg_parser("Select Problem Task Select")
+    parser.add_argument('-task_name', type=str,
+                       help='the task type the user selected')
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the description of the dataset')
+    parser.add_argument('-file1', type=argparse.FileType('r'),
+                       help='the problem template with target selected')
     args = parser.parse_args()
 
     # Get config file
@@ -43,7 +45,7 @@ if __name__ == '__main__':
 
     # Setup Logging
     setup_logging(config.parse_logging(), args.workingDir, args.is_test == 1)
-    logger = logging.getLogger('problem_target_selector')
+    logger = logging.getLogger('problem_task_selector')
 
     ### Begin Script ###
     logger.info("Initializing Problem Description for a dataset with selected column")
@@ -53,31 +55,14 @@ if __name__ == '__main__':
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
-    # Get the information about the selected target from the dataset
-    for resource in ds.dataResources:
-        if resource.resType == 'table':
-            logger.debug("Looking for column in resource: %s" % str(resource))
-            cols = resource.columns
-            logger.debug("Got resource columns: %s" % str([str(col) for col in cols]))
-            col_names = [col.colName for col in cols]
-            logger.debug("Got column names: %s" % col_names)
-            i = col_names.index(args.target_name)
-            target_col = cols[i]
-            target_resource = resource
-            logger.debug("Got target column from resource with ID, %s, at index %i: %s" % (target_resource.resID, i, str(target_col)))
-
-    if target_col is None:
-        raise Exception("Could not identify column with name %s from dataset" % args.target_name)
-
     # Initialize a Problem Description and set target info
-    prob = ProblemDesc()
-    prob.description = "CMU-Tigris User generated problem"
-    prob.name = "Problem-%s" % str(datetime.now())
-    prob.add_input(ds.id, target_resource, target_col)
+    prob = ModelingProblem.problem_target_select_from_file(args.file1)
+    ###### Maybe add validation logic here? #####
+    prob.add_task_type(args.task_name)
 
-    # Write Problem Template with selected target to output file
+    # Write Problem Template with task type and metric options to output file
     out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))
     logger.info("Writing template prob desc to: %s" % out_file_path)
-    ModelingProblem.problem_target_select_to_file(prob, out_file_path)
+    ModelingProblem.problem_task_select_to_file(prob, out_file_path)
     if args.is_test == 1:
         prob.print(out_file_path + '.readable')

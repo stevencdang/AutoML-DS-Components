@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=ProblemTargetSelector
+component.name=ProblemTaskSelector
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -35,10 +35,10 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Allow user to select a problem target from the columns of a dataset from a dataset repository
+component.description=Allow user to select a problem task for the model search to perform
 
 # The number of inputs for the new component. 
-component.num_inputs=1
+component.num_inputs=2
 
 # The number of outputs for the new component. 
 component.num_outputs=1
@@ -48,10 +48,11 @@ component.num_options=1
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
 input.0.type=dataset
+input.1.type=modeling-problem
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 output.0.type=problem-target
-output.0.name=problemTarget.tsv
+output.0.name=problemDoc.json
 
 # For each option, specify the type, name, id and default.
 # Common option types include: FileInputHeader, Enum, xs:string, xs:double

@@ -158,9 +158,9 @@ done
 for file in $(find "$cdir"/test/components -name "*.xml"); do
     echo "Editing test xml: " $file
     # Inserting path to test file into test xml
-    awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/datasetTarget.tsv</file_path>";next}1' "$file" > tmp && mv tmp "$file"
+    awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/datasetDoc.tsv</file_path>";next}1' "$file" > tmp && mv tmp "$file"
     # Inserting name of test file into test xml
-    awk -v cdir="$cdir" '/<file_name>/{print "<file_name>datasetTarget.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
+    awk -v cdir="$cdir" '/<file_name>/{print "<file_name>datasetDoc.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
 done
 
 

@@ -1,5 +1,5 @@
 [Dataset]
-out_file = problemTarget.tsv
+out_file = problemTask.tsv
 [Logging]
 log_level = DEBUG
 enable_syslog = True

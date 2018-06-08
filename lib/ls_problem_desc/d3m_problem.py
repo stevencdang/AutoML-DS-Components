@@ -313,23 +313,23 @@ class DefaultProblemDesc(ProblemDesc):
         logger.warning("Found no default problem doc in dataset at: %s" % dpath)
         # return path.join(dpath, dname + '_problem', ProblemDesc.__default_schema__)
     
-    def to_json(self, fpath=None):
-        msg_json = self.to_dict()
-        if fpath is not None:
-            logger.debug("Writing problem json to: %s" % fpath)
-            with open(fpath, 'w') as out_file:
-                json.dump(msg_json, out_file)
+    # def to_json(self, fpath=None):
+        # msg_json = self.to_dict()
+        # if fpath is not None:
+            # logger.debug("Writing problem json to: %s" % fpath)
+            # with open(fpath, 'w') as out_file:
+                # json.dump(msg_json, out_file)
 
-        return msg_json
+        # return msg_json
 
-    def to_json_pretty(self, fpath=None):
-        msg_json = self.to_dict()
-        if fpath is not None:
-            logger.debug("Writing readable problem json to: %s" % fpath)
-            with open(fpath, 'w') as out_file:
-                pprint.pprint(msg_json, out_file)
+    # def to_json_pretty(self, fpath=None):
+        # msg_json = self.to_dict()
+        # if fpath is not None:
+            # logger.debug("Writing readable problem json to: %s" % fpath)
+            # with open(fpath, 'w') as out_file:
+                # pprint.pprint(msg_json, out_file)
 
-        return json.dumps(msg_json)
+        # return json.dumps(msg_json)
 
 
     def __str__(self):  

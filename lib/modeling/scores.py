@@ -204,6 +204,24 @@ class Metric(object):
                 return 'LOSS'
             else:
                 raise Exception ("Invalid metric given: %s" % str(m))
+    
+    @staticmethod
+    def get_valid_metrics(dtype):
+        dtype = dtype.lower()
+        if dtype == 'integer':
+            return []
+        elif dtype == 'real':
+            return []
+        elif dtype =='categorical':
+            return []
+        elif dtype == 'string':
+            return []
+        elif dtype == 'boolean':
+            return []
+        else:
+            logger.warning("Unrecognized type. Defaulting to all supported metrics")
+            return Metric.__types__
+
 
     def to_json(self, fpath=None):
         out = self.__str__()

@@ -1,0 +1,2 @@
+VERTEX_NOMINATION	LINK_PREDICTION	TIME_SERIES_FORECASTING	GRAPH_CLUSTERING	CLUSTERING	OBJECT_DETECTION 	CLASSIFICATION	COLLABORATIVE_FILTERING 	COMMUNITY_DETECTION	REGRESSION	GRAPH_MATCHING
+{'id': '440917431785785309', 'version': 1, 'metrics': [], 'inputs': [{'dataset_id': '185_baseball_dataset', 'targets': [{'target_index': 0, 'column_index': 18, 'column_name': 'Hall_of_Fame', 'resource_id': '0'}]}], 'name': 'Problem-2018-06-08 13:34:25.630594', 'description': 'CMU-Tigris User generated problem'}

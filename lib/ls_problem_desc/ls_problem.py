@@ -8,8 +8,11 @@ import os.path as path
 import os
 from io import IOBase
 import json
+from json import JSONDecodeError
+import csv
 from datetime import datetime
 import pprint
+import ast
 
 from ls_dataset.d3m_dataset import D3MDataset
 from modeling.scores import Metric
@@ -23,6 +26,32 @@ class ProblemDesc(object):
     Class representing a D3m problem description for pipeline search
 
     """
+
+    __task_types__ =  [
+        'CLASSIFICATION',
+        'REGRESSION',
+        'CLUSTERING',
+        'LINK_PREDICTION',
+        'VERTEX_NOMINATION',
+        'COMMUNITY_DETECTION',
+        'GRAPH_CLUSTERING',
+        'GRAPH_MATCHING',
+        'TIME_SERIES_FORECASTING',
+        'COLLABORATIVE_FILTERING ',
+        'OBJECT_DETECTION '
+    ]
+    __task_subtypes__ =  [
+        'NONE',
+        'BINARY',
+        'MULTICLASS',
+        'MULTILABEL',
+        'UNIVARIATE',
+        'MULTIVARIATE',
+        'OVERLAPPING',
+        'NONOVERLAPPING'
+    ]
+
+    __ignore_chars__=['-','_']
     
     def __init__(self, name=None, desc=None, task_type=None, subtype=None, version=1, metrics=None, metadata=None):
         """
@@ -67,6 +96,38 @@ class ProblemDesc(object):
                 inpt.add_target(res,col)
                 self.inputs.append(inpt)
 
+    def add_task_type(self, task_type):
+        # Transform input to lowercase and removed ignore chars
+        t = task_type.lower()
+        for char in self.__ignore_chars__:
+            t = t.replace(char, "")
+        # Get index of matching type
+        i = self.get_task_types().index(t)
+        self.task_type = self.__task_types__[i]
+
+    @staticmethod
+    def get_task_types():
+        tasks = [t.lower() for t in ProblemDesc.__task_types__]
+        for i,t in enumerate(tasks):
+            for char in ProblemDesc.__ignore_chars__:
+                tasks[i] = t.replace(char, "")
+        return tasks    
+
+    def get_valid_tasks(self):
+        if len(self.inputs) > 0:
+            tasks = set()
+            hasTargets = False
+            for inpt in self.inputs:
+                if len(inpt.targets) > 0:
+                    tasks |= set(ProblemDesc.__task_types__)
+                    hasTargets = True
+            if not hasTargets:
+                raise Exception("No targets specified for any input, so cannot retrieve valid tasks")
+            return tasks
+        else:
+            raise Exception("No Datasets specificied, can not get valid tasks")
+        
+
     def to_dict(self):
         out = {
             "id": self.id,
@@ -95,160 +156,67 @@ class ProblemDesc(object):
         else:
             raise Exception("Invalid file/path given to write to file. Given \
                             input type: %s" % type(fpath))
+
+    # def get_target_types(self):
+        # targets = self.targets.
     
     @staticmethod
-    def from_json(fpath):
+    def from_json(inpt):
         """
         A static constructor of this class given a jsonified file
 
         """
-        if isinstance(fpath, str):
-            if path.exists(fpath):
-                #Get dataset path from json path
-                with open(fpath, 'r') as f:
-                    ds_json = json.load(f)
-            else:
-                raise Exception("Found no problem schema json at path: %s" % str(fpath))
-        elif isinstance(fpath, IOBase):
-            logger.debug("Loading problem schema json from open file")
-            ds_json = json.load(fpath)
+        if isinstance(inpt, str):
+            logger.debug(inpt)  
+            try: 
+                data = json.loads(inpt)
+            except JSONDecodeError:
+                data = ast.literal_eval(inpt)
+        elif isinstance(inpt, dict):
+            data = inpt
         else:
-            raise Exception("Found no problem schema json at path: %s" % str(fpath))
+            raise Exception("Could not create problem given input type %s\nraw input: %s" % (type(inpt), str(inpt)))
+        logger.debug("Got json to import: %s" % str(data))
 
-        logger.debug("Got raw problem schema json: %s" % str(ds_json))
+        name = data['name'] if 'name' in data.keys() else None
+        desc = data['description'] if 'description' in data.keys() else None
+        task_type = data['task_type'] if 'task_type' in data.keys() else None
+        task_subtype = data['task_subtype'] if 'task_subtype' in data.keys() else None
+        version = data['version'] if 'version' in data.keys() else 1
+        metrics = data['metrics'] if 'metrics' in data.keys() else None
+        metadata = data['metadata'] if 'metadata' in data.keys() else None
 
-        return ProblemDesc(
-            name=ds_json['about']['problemName'], 
-            desc=ds_json['about']['problemDescription'], 
-            task_type=ds_json['about']['taskType'], 
-            subtype=ds_json['about']['taskSubType'], 
-            datasets=ds_json['inputs']['data'], 
-            version=ds_json['about']['problemVersion'], 
-            metrics=ds_json['inputs']['performanceMetrics'],
-            metadata=ds_json
+        prob = ProblemDesc(
+            name=name,
+            desc=desc,
+            task_type=task_type,
+            subtype=task_subtype,
+            version=version,
+            metrics=metrics,
+            metadata=metadata
         )
 
-    def __str__(self):
-        return str(self.to_dict())
+        # Add inputs
+        prob.inputs.extend([Input.from_dict(i) for i in data['inputs']])
 
-    def print(self):
+        logger.debug("Created problem description form import: %s" % str(prob))
+
+        return prob
+
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def print(self, fpath=None):
         msg_json = self.to_dict()
-        return pprint.pformat(msg_json)
+        if fpath is None:
+            return pprint.pformat(msg_json)
+        else:
+            logger.debug("Writing readable problem json to: %s" % fpath)
+            with open(fpath, 'w') as out_file:
+                pprint.pprint(msg_json, out_file)
+            return pprint.pformat(msg_json)
 
        
-    # def __str__(self):
-        # return str(self.__iter__())
-
-    # def __iter__(self):
-        # d = {
-            # 'datasetID': self.id,
-            # 'targets': [str(t) for t in self.targets]
-        # }
-        # for k in d:
-            # yield (k, d[k])
-
-
-# class DSTarget(object):
-    # def __init__(self, target_index, _id, col_index, col_name):
-        # self.target_index = target_index
-        # self.id = _id
-        # self.col_index = col_index
-        # self.col_name = col_name
-
-    # def __str__(self):
-        # return str(self.__iter__())
-
-    # def __iter__(self):
-        # d = {
-            # 'targetIndex': self.target_index,
-            # 'resID': str(self.id),
-            # 'colIndex': self.col_index,
-            # 'col_name': self.col_name
-        # }
-        # for k in d:
-            # yield (k, d[k])
-
-
-# class PerformanceMetric(object):
-    # def __init__(self, metric):
-        # self.metric = metric
-
-    # def __iter__(self):
-        # d =  {
-            # 'metric': self.metric
-        # }
-        # for k in d:
-            # yield (k, d[k])
-
-    # def __str__(self):
-        # out = {
-            # 'metric': self.metric
-        # }
-        # return str(out)
-        
-# class Problem(object):
-
-    # def __init__(self, 
-                 # pid=None, 
-                 # name=None, 
-                 # version=None,
-                 # perf_metrics=None,
-                 # task_type=None,
-                 # task_subtype=None,
-                 # desc=None):
-        # self.id = pid
-        # self.name = name
-        # self.version = version
-        # self.performanceMetrics = perf_metrics
-        # self.taskType = task_type
-        # self.taskSubtype = task_subtype
-        # self.description = desc
-
-    # @staticmethod
-    # def from_protobuf(msg):
-        # if 'id' in msg.keys():
-            # id = msg.id
-        # else:
-            # id = None
-        # if 'name' in msg.keys():
-            # name = msg.name
-        # else:
-            # name = None
-        # if 'version' in msg.keys():
-            # version = msg.version
-        # else:
-            # version = None
-        # if 'performanceMetrics' in msg.keys():
-            # perf_metrics = msg.performanceMetrics
-        # else:
-            # perf_metrics = []
-        # if 'taskType' in msg.keys():
-            # task_type = msg.taskType
-        # else:
-            # task_type = None
-        # if 'taskSubtype' in msg.keys():
-            # task_subtype = msg.taskSubtype
-        # else:
-            # task_subtype = None
-        # if 'description' in msg.keys():
-            # desc = msg.description
-        # else:
-            # desc = None
-        # return Problem( 
-            # id=id,
-            # name=name,
-            # version=version,
-            # performanceMetrics = perf_metrics,
-            # taskType = task_type,
-            # taskSubtype = task_subtype,
-            # desc = desc
-        # )
-
-    # def __str__(self):
-        # out = self.__dict__
-        # out['performanceMetrics'] = [str(m) for m in self.performanceMetrics]
-        # return str(out)
-
 class Input(object):
     def __init__(self, did):
         self.dataset_id = did
@@ -264,11 +232,18 @@ class Input(object):
         out['targets'] = [t.to_dict() for t in self.targets]
         return out
 
+    @staticmethod
+    def from_dict(data):
+        out = Input(data['dataset_id'])
+        out.targets.extend([Target.from_dict(t) for t in data['targets']])
+        return out
+
     def __str__(self):
         return str(self.to_dict())
 
 class Target(object):
     def __init__(self, indx, res=None, col=None):
+        self.target_index = indx
         if col is not None:
             self.column_index = col.colIndex
             self.column_name = col.colName
@@ -281,17 +256,132 @@ class Target(object):
         else:
             self.resource_id = None
 
-        self.target_index = indx
 
     def to_dict(self):
         return {
+            'target_index': self.target_index,
             'column_index': self.column_index,
             'column_name': self.column_name,
-            'resource_id': self.resource_id,
-            'target_index': self.target_index
+            'resource_id': self.resource_id
         }
 
+    @staticmethod
+    def from_dict(data):
+        out = Target(data['target_index'])
+        out.column_index = data['column_index']
+        out.column_name = data['column_name']
+        out.resource_id = data['resource_id']
+        return out
 
     def __str__(self):
         return str(self.to_dict())
+
+
+class ModelingProblem(ProblemDesc):
+
+    @staticmethod
+    def problem_target_select_to_file(prob, fpath):
+        out = prob.to_dict()
+        if isinstance(fpath, str):
+            with open(fpath, 'w') as out_file:
+                writer = csv.writer(out_file, delimiter='\t')
+                # writer.writerow(Metric.get_valid_metrics("all"))
+                writer.writerow(prob.get_valid_tasks())
+                writer.writerow([out])
+        elif isinstance(fpath, IOBase):
+            writer = csv.writer(fpath, delimiter='\t')
+            # Write available metrics for next step in specifying problem
+            writer.writerow(Metric.__types__)
+            # Write problem doc to second row
+            writer.writerow([out])
+        else:
+            raise Exception("Invalid file/path given to write to file. Given \
+                            input type: %s" % type(fpath))
+
+    @staticmethod
+    def problem_target_select_from_file(fpath):
+        if isinstance(fpath, str):
+            in_file = open(fpath, 'r')
+            reader = csv.reader(in_file, delimiter='\t')
+            rows = [row for row in reader]
+            in_file.close()
+        elif isinstance(fpath, IOBase):
+            reader = csv.reader(fpath, delimiter='\t')
+            rows = [row for row in reader]
+            fpath.close()
+        logger.debug("got rows %i from component file" % len(rows))
+        col_names = rows[0]
+        logger.debug("Got Task optiosn: %s" % str(col_names))
+        logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1])))
+        return ProblemDesc.from_json(rows[1][0])
+
+    @staticmethod
+    def problem_task_select_to_file(prob, fpath):
+        out = prob.to_dict()
+        if isinstance(fpath, str):
+            with open(fpath, 'w') as out_file:
+                writer = csv.writer(out_file, delimiter='\t')
+                writer.writerow(Metric.get_valid_metrics("all"))
+                writer.writerow([out])
+        elif isinstance(fpath, IOBase):
+            writer = csv.writer(fpath, delimiter='\t')
+            # Write available metrics for next step in specifying problem
+            writer.writerow(ProblemDesc.__task_types__)
+            # Write problem doc to second row
+            writer.writerow([out])
+        else:
+            raise Exception("Invalid file/path given to write to file. Given \
+                            input type: %s" % type(fpath))
+
+    @staticmethod
+    def problem_task_select_from_file(fpath):
+        if isinstance(fpath, str):
+            in_file = open(fpath, 'r')
+            reader = csv.reader(in_file, delimiter='\t')
+            rows = [row for row in reader]
+            in_file.close()
+        elif isinstance(fpath, IOBase):
+            reader = csv.reader(fpath, delimiter='\t')
+            rows = [row for row in reader]
+            fpath.close()
+        logger.debug("got rows %i from component file" % len(rows))
+        col_names = rows[0]
+        logger.debug("Got Valid Metrics: %s" % str(col_names))
+        logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1])))
+        return DefaultProblemDesc.from_json(rows[1][0])
+
+    @staticmethod
+    def problem_metric_select_to_file(prob, fpath):
+        out = prob.to_dict()
+        if isinstance(fpath, str):
+            with open(fpath, 'w') as out_file:
+                writer = csv.writer(out_file, delimiter='\t')
+                writer.writerow(Metric.__types__)
+                writer.writerow([out])
+        elif isinstance(fpath, IOBase):
+            writer = csv.writer(fpath, delimiter='\t')
+            # Write available metrics for next step in specifying problem
+            writer.writerow(Metric.__types__)
+            # Write problem doc to second row
+            writer.writerow([out])
+        else:
+            raise Exception("Invalid file/path given to write to file. Given \
+                            input type: %s" % type(fpath))
+
+    @staticmethod
+    def problem_metric_select_from_file(fpath):
+        if isinstance(fpath, str):
+            in_file = open(fpath, 'r')
+            reader = csv.reader(in_file, delimiter='\t')
+            rows = [row for row in reader]
+            in_file.close()
+        elif isinstance(fpath, IOBase):
+            reader = csv.reader(fpath, delimiter='\t')
+            rows = [row for row in reader]
+            fpath.close()
+        logger.debug("got rows %i from component file" % len(rows))
+        col_names = rows[0]
+        logger.debug("Got columns names: %s" % str(col_names))
+        logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1])))
+        return DefaultProblemDesc.from_json(rows[1][0])
 
