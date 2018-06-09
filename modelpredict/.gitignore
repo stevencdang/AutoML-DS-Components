@@ -19,6 +19,9 @@ test/output
 ############################################################################
 program
 
+# Component Log folder
+logs
+
 # A local program config file for running the application with system specific settings
 src/settings.cfg
 

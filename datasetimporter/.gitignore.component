@@ -11,6 +11,9 @@
 ###############################
 env
 
+# Component Log folder
+logs
+
 ### Ant runComponent output folder ###
 ######################################
 test/output

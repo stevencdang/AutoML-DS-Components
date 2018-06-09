@@ -15,6 +15,9 @@ env
 ######################################
 test/output
 
+# Component Log folder
+logs
+
 # local settings file 
 settings.cfg
 
