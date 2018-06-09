@@ -62,7 +62,7 @@ output.0.name=datasetDoc.tsv
 option.0.type=FileInputHeader
 option.0.name=ds_name
 option.0.id=DS_Name
-option.0.default=baseball
+option.0.default=*
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model

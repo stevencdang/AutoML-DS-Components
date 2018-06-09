@@ -114,7 +114,6 @@ fi
 # Generate the component
 ./runWCC.sh $dir $wcc
 echo "Completed component generation"
-rm $wcc
 
 ### Perform post generation actions ###
 #######################################
@@ -125,6 +124,7 @@ while read -r k v; do
     [ "$k" == "component.name" ] && cname=$v
 done < $wcc
 cdir="$dir/$cname"
+echo "Copying files to Component directory: " $cdir
 
 # Copy component setup scripts to new component directory
 cp "$srcdir"/install_component.sh "$cdir"/
@@ -166,6 +166,8 @@ done
 #echo "Building and testing component from terminal"
 #ant runComponent
 
+# Cleaning up auto-generated wcc.properties file
+rm $wcc
 # Return to current working directory after completion
 cd "$cwd"
 echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3

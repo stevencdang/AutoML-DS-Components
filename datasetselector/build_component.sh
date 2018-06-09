@@ -161,13 +161,17 @@ for file in $(find "$cdir"/test/components -name "*.xml"); do
     awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/dataset-list.tsv</file_path>";next}1' "$file" > tmp && mv tmp "$file"
     # Inserting name of test file into test xml
     awk -v cdir="$cdir" '/<file_name>/{print "<file_name>dataset-list.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
+    awk -v cdir="$cdir" '/<ds_name>/{print "<ds_name>baseball</ds_name>";next}1' "$file" > tmp && mv tmp "$file"
 done
 
 
 # run 'and runComponent' to buildthe files after installing #
 #############################################################
+#cd "$cdir"
 #echo "Building and testing component from terminal"
-#ant runComponent
+#export ANT_HOME=$(dirname $(which ant))
+#echo "Ant home: " $ANT_HOME
+#ant
 
 # Delete generated wcc file before completed
 rm $wcc
