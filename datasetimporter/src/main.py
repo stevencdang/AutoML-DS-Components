@@ -11,7 +11,7 @@ import csv
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
-from ls_utilities.ls_wf_settings import Settings as stg
+from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 
 __version__ = '0.1'
@@ -25,7 +25,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Get config file
-    config = stg(path.join(args.programDir, 'program', 'settings.cfg'))
+    config = SettingsFactory.get_settings(path.join(args.programDir, 'program', 'settings.cfg'), 
+                                          program_dir=args.programDir,
+                                          working_dir=args.workingDir
+                                          )
 
     # Setup Logging
     setup_logging(config.parse_logging(), args.workingDir, args.is_test == 1)

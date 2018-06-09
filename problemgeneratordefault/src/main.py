@@ -30,11 +30,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Get config file
-    if args.programDir is None:
-        config = stg()
-    else:
-        config = stg(path.join(args.programDir, 'program', 'settings.cfg'))
-
+    config = SettingsFactory.get_settings(path.join(args.programDir, 'program', 'settings.cfg'), 
+                                          program_dir=args.programDir,
+                                          working_dir=args.workingDir
+                                          )
     # Setup Logging
     setup_logging(config.parse_logging(), args.workingDir, args.is_test == 1)
     logger = logging.getLogger('problem_generator_default')
