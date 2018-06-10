@@ -6,3 +6,7 @@
 ### Python files ###
 ####################
 *.pyc
+
+### Configuration for testing ###
+test/*.cfg
+! test/*.cfg.sample
