@@ -35,8 +35,6 @@ class Settings(object):
         else:
             self.cfg.read(cfg_path)
 
-
-
     def parse_config(self):
         """
         Parse a given config file
@@ -69,6 +67,11 @@ class Settings(object):
 
         return cfg
 
+    def get_dataset_path(self):
+        return self.cfg.get('Dataset', 'dataset_dir')
+
+    def get_out_path(self):
+        return self.working_dir
 
     def get(self, sect, key):
         """
@@ -85,7 +88,9 @@ class D3MSettings(Settings):
 
     def __init__(self, cfg_path=None, program_dir=None, working_dir=None):
         super().__init__(cfg_path, program_dir, working_dir)
-
+        self.d3m_config_file = os.environ['D3MCONFIG']
+        self.d3m_cfg = configparser.ConfigParser()
+        self.d3m_cfg.read(self.d3m_config_file)
     
     def parse_logging(self):
         """
@@ -96,3 +101,9 @@ class D3MSettings(Settings):
         # Override logging level settings for deployment to d3m environments
         cfg['log_level'] =logging.INFO
         return cfg
+
+    def get_dataset_path(self):
+        return self.d3m_cfg.get('Data', 'dataset_root')
+
+    def get_out_path(self):
+        return self.d3m_cfg.get('Data', 'out_dir_root')

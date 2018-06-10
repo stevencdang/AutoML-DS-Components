@@ -39,7 +39,7 @@ if __name__ == '__main__':
     logger.debug("Running Dataset Importer with arguments: %s" % str(args))
 
     # Read in the dataset json
-    ds_root = config.get('Dataset', 'dataset_dir')
+    ds_root = config.get_dataset_path()
     datasets = set()
     for root, dirs, files in os.walk(ds_root):
         for f in files:

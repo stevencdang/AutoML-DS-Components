@@ -130,7 +130,7 @@ echo "Copying files to Component directory: " $cdir
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
-cp "$srcdir"/add_component.sql "$cdir"/
+cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
 echo "Copied setup files to new component directory from source directory"
