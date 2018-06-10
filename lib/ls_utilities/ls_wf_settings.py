@@ -99,7 +99,8 @@ class D3MSettings(Settings):
         """
         cfg = super().parse_logging()
         # Override logging level settings for deployment to d3m environments
-        cfg['log_level'] =logging.INFO
+        # cfg['log_level'] =logging.INFO
+        cfg['log_level'] =logging.DEBUG
         return cfg
 
     def get_dataset_path(self):

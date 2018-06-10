@@ -47,16 +47,22 @@ class D3MDataset(LSDataset):
 
         """
         if isinstance(d, str):
+            logger.debug("Loading json string")
             ds_json = json.loads(d)
         else:
+            logger.debug("Handling input with type: %s" % type(d))
             ds_json = d
         
-        logger.debug("got dataset json: %s" % str(ds_json))
-        json_doc = {'about': ds_json['about'],
-                    'dataResources': ds_json['dataResources']
-                    }
-        return D3MDataset(ds_json['dataset_info']['root_path'], 
-                          json_doc)
+        # logger.debug("got dataset json: %s" % str(ds_json))
+        # logger.debug("json about: %s" % ds_json['about'])
+        # logger.debug("json data resources: %s" % ds_json['dataResources'])
+        # json_doc = {'about': ds_json['about'],
+                    # 'dataResources': ds_json['dataResources']
+                    # }
+        # return D3MDataset(ds_json['dataset_info']['root_path'], 
+                          # json_doc)
+        return D3MDataset(ds_json['dataset_info']['root_path'],
+                          ds_json)
 
 
     @staticmethod
@@ -132,10 +138,12 @@ class D3MDataset(LSDataset):
             reader = csv.reader(fpath, delimiter='\t')
             rows = [row for row in reader]
             fpath.close()
-        logger.debug("got rows %i from component file" % len(rows))
         col_names = rows[0]
         logger.debug("Got columns names: %s" % str(col_names))
-        logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1])))
+        # logger.debug("Got dataset row with type %s:\t %s" % (str(type(rows[1][0])), str(rows[1][0])))
+        # logger.debug(len(rows[1]))
+        # logger.debug(rows[1][0])
+        # logger.debug(type(rows[1][0]))
         return D3MDataset.from_json(rows[1][0])
 
 
@@ -145,6 +153,7 @@ class D3MDataset(LSDataset):
         then just returns a string with the json representation of the dataset json
 
         """
+        # logger.debug("D3MDataset to json")
 
         out = json.loads(super().to_json())
         out['about'] = self.about

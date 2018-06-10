@@ -20,7 +20,7 @@ from google.protobuf import json_format
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
-from ls_utilities.ls_wf_settings import Settings as stg
+from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
 from ls_problem_desc.ls_problem import ProblemDesc
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     # Get the Problem Doc to forulate the Pipeline request
     logger.debug("Problem input: %s" % args.file1)
-    prob = DefaultProblemDesc.from_file(args.file1)
+    prob = ProblemDesc.from_file(args.file1)
     logger.debug("Got Problem Description: %s" % prob.print())
 
     # Init the server connection

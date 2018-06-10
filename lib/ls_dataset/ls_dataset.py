@@ -81,6 +81,7 @@ class LSDataset(object):
         then just returns a string with the json representation of the dataset json
 
         """
+        # logger.debug("Dataset to json")
         out = {
             'dataset_info': {
                 'root_path': self.dpath,

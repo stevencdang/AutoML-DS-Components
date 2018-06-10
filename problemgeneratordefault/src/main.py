@@ -12,7 +12,7 @@ import argparse
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
-from ls_utilities.ls_wf_settings import Settings as stg
+from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from ls_problem_desc.ls_problem import ProblemDesc

@@ -1,39 +1,37 @@
-{'about': {'problemDescription': '**Author**: Jeffrey S. Simonoff  \n'
-                                 '**Source**: '
-                                 '[AnalCatData](http://www.stern.nyu.edu/~jsimonof/AnalCatData) '
-                                 '- 2003  \n'
-                                 '**Please cite**: Jeffrey S. Simonoff, '
-                                 'Analyzing Categorical Data, Springer-Verlag, '
-                                 'New York, 2003  \n'
-                                 ' \n'
-                                 'Database of baseball players and play '
-                                 "statistics, including 'Games_played', "
-                                 "'At_bats', 'Runs', 'Hits', 'Doubles', "
-                                 "'Triples', 'Home_runs', 'RBIs', 'Walks', "
-                                 "'Strikeouts', 'Batting_average', "
-                                 "'On_base_pct', 'Slugging_pct' and "
-                                 "'Fielding_ave' \n"
-                                 '\n'
-                                 'Notes:  \n'
-                                 '* Quotes, Single-Quotes and Backslashes were '
-                                 'removed, Blanks replaced with Underscores\n'
-                                 '* Player is an identifier that should be '
-                                 'ignored when modelling the data',
-           'problemID': '185_baseball_problem',
-           'problemName': 'baseball_problem',
-           'problemVersion': '1.0',
-           'taskSubType': 'multiClass',
-           'taskType': 'classification'},
- 'expectedOutputs': {'predictionsFile': 'predictions.csv'},
- 'inputs': {'data': [{'datasetID': '185_baseball_dataset',
-                      'targets': [{'colIndex': 18,
-                                   'colName': 'Hall_of_Fame',
-                                   'resID': '0',
-                                   'targetIndex': 0}]}],
-            'dataSplits': ({'method': 'holdOut',
-                            'numRepeats': 0,
-                            'randomSeed': 42,
-                            'splitsFile': 'dataSplits.csv',
-                            'stratified': True,
-                            'testSize': 0.2},),
-            'performanceMetrics': [{'metric': 'F1_MACRO'}]}}
+{'description': '**Author**: Jeffrey S. Simonoff  \n'
+                '**Source**: '
+                '[AnalCatData](http://www.stern.nyu.edu/~jsimonof/AnalCatData) '
+                '- 2003  \n'
+                '**Please cite**: Jeffrey S. Simonoff, Analyzing Categorical '
+                'Data, Springer-Verlag, New York, 2003  \n'
+                ' \n'
+                'Database of baseball players and play statistics, including '
+                "'Games_played', 'At_bats', 'Runs', 'Hits', 'Doubles', "
+                "'Triples', 'Home_runs', 'RBIs', 'Walks', 'Strikeouts', "
+                "'Batting_average', 'On_base_pct', 'Slugging_pct' and "
+                "'Fielding_ave' \n"
+                '\n'
+                'Notes:  \n'
+                '* Quotes, Single-Quotes and Backslashes were removed, Blanks '
+                'replaced with Underscores\n'
+                '* Player is an identifier that should be ignored when '
+                'modelling the data',
+ 'id': '185_baseball_problem',
+ 'inputs': [{'dataset_id': '185_baseball_dataset',
+             'targets': [{'column_index': 18,
+                          'column_name': 'Hall_of_Fame',
+                          'resource_id': '0',
+                          'target_index': 0}]}],
+ 'metadata': {'dataSplits': ({'method': 'holdOut',
+                              'numRepeats': 0,
+                              'randomSeed': 42,
+                              'splitsFile': 'dataSplits.csv',
+                              'stratified': True,
+                              'testSize': 0.2},),
+              'expectedOutputs': {'predictionsFile': 'predictions.csv'},
+              'schema_version': '3.0'},
+ 'metrics': [{'metric': 'F1_MACRO'}],
+ 'name': 'baseball_problem',
+ 'task_subtype': 'multiClass',
+ 'task_type': 'classification',
+ 'version': '1.0'}
