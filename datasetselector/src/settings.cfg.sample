@@ -1,5 +1,5 @@
 [Dataset]
-out_file = datasetDoc.json
+out_file = datasetDoc.tsv
 dataset_dir = /rdata/dataStore/d3m/datasets/seed_datasets_current
 [Logging]
 log_level = DEBUG
