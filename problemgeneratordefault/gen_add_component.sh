@@ -10,7 +10,7 @@ if [ -f $out_file ]; then
     rm $out_file
 fi
 
-echo "INSERT INTO \`workflow_component\` (" >> $out_file
+echo "REPLACE INTO \`workflow_component\` (" >> $out_file
 echo -e "\t\`component_type\`," >> $out_file
 echo -e "\t\`component_name\`," >> $out_file
 echo -e "\t\`tool_dir\`," >> $out_file
