@@ -143,10 +143,6 @@ else
         exit
 fi
 
-# Copy d3m file to init folder
-cp setup_d3m_components.sh $DS_DIRECTORY/init/
-
-
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/extlib" ]; then
         svn --password ${MYPWD} --username ${MYUSER} export svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/extlib $DS_DIRECTORY/extlib
         svn_success_status=`echo $?`
@@ -178,10 +174,13 @@ git clone --depth 1 https://stevencdang@bitbucket.org/stevencdang/learnsphere_wo
 
 # Grab python 3.6 to build and install
 #cd $DS_DIRECTORY
-wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz 
+wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz  && tar xvf Python-3.6.3.tar.xz
 #cd $DS_DIRECTORY
 
 cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
+
+# Create soft link from datasets dir to ds_directory
+#ln -s /rdata/dataStore/d3m/test_dataset $DS_DIRECTORY/data
 
 ### Copy files for D3m builds ###
 #################################
