@@ -189,7 +189,7 @@ cp $CWD/Dockerfile $DS_DIRECTORY/
 
 docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
 docker build -t ds_image_alpha .
-echo "TO START THE INSTANCE: docker run -p 9000:443 -P --name ds_instance_alpha ds_image_alpha"
+echo "TO START THE INSTANCE: docker run -p 9001:443 -p 9000:22 --mount type=bind,source=<dataset_root>,target=/data -P --name ds_instance_alpha ds_image_alpha"
 echo "TO STOP THE INSTANCE: docker stop ds_instance_alpha"
 echo "TO REMOVE THE INSTANCE: docker rm ds_instance_alpha"
 echo "TO TAG: docker tag ds_image_alpha:latest 016042509432.dkr.ecr.us-east-1.amazonaws.com/ds_image_alpha:latest"
