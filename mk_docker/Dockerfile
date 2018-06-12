@@ -1,0 +1,300 @@
+# Dockerfile: LearnSphere Docker 1.0 alpha
+FROM ubuntu:16.04
+
+# Single process containers are the recommended way to utilize Docker, but this slows response time.
+# Currently, the workflow component execution container runs a web service that listens for requests
+# from anyone in the firewall rules. The component input and XML data provided in the request is enough
+# to execute the component. Machines are behind a load balancer, and each container runs indefinitely,
+# handling as many component execution requests as it can. Amazon allows us to increase the cluster size
+# (number of containers running behind the load balancer) from the Amazon ECS service interface:
+# https://console.aws.amazon.com/ecs/home?region=us-east-1#/clusters/default/services/ls-service/details
+
+# Docker caveat:
+# You should avoid RUN apt-get upgrade or dist-upgrade, as many of the "essential" packages from the parent images won't upgrade inside an unprivileged container.
+# If a package contained in the parent image is out-of-date, you should contact its maintainers. If you know there's a particular package, foo,
+# that needs to be updated, use apt-get install -y foo to update automatically. Always combine RUN apt-get update with apt-get install in the same RUN statement.
+
+# Update OS
+RUN apt-get update \
+ && apt-get install -y \
+# Install Tigris dependencies
+    make \
+    sudo \
+    software-properties-common \
+    # Java
+        ant \
+        openjdk-8-jdk-headless \
+    # Common, useful programs
+        dos2unix \
+        libxml2-dev \
+        vim \
+        screen \
+        unzip \
+        zip \
+        net-tools \
+        wget \
+        git-core \
+    # SSH access
+        openssh-server \
+    # Node JS
+        npm \
+    # Apache
+        libapache2-mod-jk \
+        apache2-dev \
+        openssl \
+        apache2 \
+        libaio1 \
+        libaio-dev \
+    # Install Python 3.x and pip (/usr/bin/python3.5 is the current version as of 1/3/18)
+        python3-pip \
+    # Dependencies to build Python 3.6 from source
+        build-essential \
+        checkinstall \
+        libreadline-gplv2-dev \
+        libncursesw5-dev \
+        libssl-dev \
+        libsqlite3-dev \
+        tk-dev \
+        libgdbm-dev \
+        libc6-dev \
+        libbz2-dev \
+    # Install R dependencies
+        gfortran \
+        g++ \
+        zlib1g-dev \
+        libbz2-dev \
+        liblzma-dev \
+        libpcre3-dev \
+        libcurl3-dev \
+        libcairo2-dev \
+        ghostscript \
+    # Install any OS-specific python dependencies, as well as any packages specified in python_3x_requirements.txt
+        libatlas-dev \
+    # Install OpenJDK 7
+        && add-apt-repository ppa:openjdk-r/ppa \
+        && apt-get update \
+        && apt-get install openjdk-7-jdk -y \
+    # Install mysql server in non-interactive mode
+        && npm install vm2 -g \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server \
+        # Add datashop user and group
+        # To specify skeleton files, use something like -k /datashop/home_files, for example.
+        && groupadd --gid 501 datashop \
+        && adduser --shell /bin/bash --quiet --disabled-password --uid 901 --gid 501 datashop
+
+# Install R to /usr/local/bin/ and its libraries to /usr/local/lib/R/library
+RUN wget https://cran.rstudio.com/src/base/R-3/R-3.4.3.tar.gz && tar -xvzf R-3.4.3.tar.gz && cd R-3.4.3 \
+ && ./configure --with-readline=no --with-x=no && make && make install
+
+# Install R dependencies
+RUN Rscript -e "install.packages('lme4', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('plyr', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('caTools', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('pROC', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('minqa', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('Rcpp', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('XML', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('MuMIn', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('TTR', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('dplyr', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')" \
+ && Rscript -e "install.packages('tibble', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')"
+
+# The package 'nloptr' is not available (for R version 3.4.3)
+# INVESTIGATE: RUN Rscript -e "install.packages('nloptr', repos = 'http://cran.cnr.berkeley.edu/',  lib='/usr/local/lib/R/library')"
+
+# Set the working directory to /datashop
+WORKDIR /datashop
+
+# Copy the current directory contents into the container at /datashop (includes workflow_components/ and dataset_files/workflows/<X>/ directory)
+ADD . /datashop
+
+# Not ideal to install python packages this way, but it's a trade off for ease of use/re-use.
+#RUN pip3 install --upgrade pip==9.0.2 && rm -R /usr/local/lib/python3.5/dist-packages/pip \
+ #&& pip3 install --trusted-host pypi.python.org -r python_3x_requirements.txt \
+## Update perms to python libs/modules
+ #&& chown -R datashop:datashop /usr/local/lib/python3.5/
+# Pinning to pip 9.0.2 because  higher versions are not compatible with ubuntu 16.04
+RUN pip3 install --upgrade pip==9.0.2 && \
+ pip3 install --trusted-host pypi.python.org -r python_3x_requirements.txt && \
+ pip3 install virtualenv
+
+# Install Python 3.6 from source
+RUN tar xvf Python-3.6.3.tar.xz && cd Python-3.6.3/ && ./configure && make && sudo make install 
+
+# Generate D3M Components from into workflow_components directory
+RUN /datashop/d3m_components/mk_docker/gen_d3m_components.sh 2>&1 > \
+    /datashop/d3m_components/mk_docker/gen_all_components.log
+
+
+# Tetrad components have a hard-coded path in the build.xml; accommodate this
+RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
+ && ln -s /usr/bin/java /usr/java/jdk1.8.0_131/bin/java \
+ && ln -s /usr/bin/javac /usr/java/jdk1.8.0_131/bin/javac \
+ && mkdir -p /usr/java/jdk1.8.0_131/jre/bin/ \
+ && ln -s /usr/bin/java /usr/java/jdk1.8.0_131/jre/bin/java \
+ && cp -R /etc/.java/.systemPrefs/ /usr/java/jdk1.8.0_131/jre/ \
+ && chown -R datashop:datashop /usr/java/jdk1.8.0_131/jre/.systemPrefs/ \
+ && chmod ug+rwx /usr/java/jdk1.8.0_131/jre/.systemPrefs/ \
+ && chmod ug+rw-x /usr/java/jdk1.8.0_131/jre/.systemPrefs/.system.lock \
+ && chmod ug+rw-x /usr/java/jdk1.8.0_131/jre/.systemPrefs/.systemRootModFile \
+ && mkdir -p /usr/java/jdk1.8.0_131/jre/.java/.userPrefs \
+ && chown -R datashop:datashop /usr/java/jdk1.8.0_131/jre/.java/ \
+ && chmod ug+rwx /usr/java/jdk1.8.0_131/jre/.java \
+ && chmod ug+rwx /usr/java/jdk1.8.0_131/jre/.java/.userPrefs \
+# Build component wrapper jars
+ && chmod ug+rx /datashop/workflow_components/build.sh \
+ && chmod ug+rx /datashop/tools/workflows/exec_component/update_components_docker.sh \
+ && /datashop/workflow_components/build.sh /datashop/workflow_components \
+ && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!"
+
+# Go through each d3m component and setup virtualenv
+#WORKDIR /datashop/workflow_components/DatasetImporter
+#RUN ./install_component.sh && ant dist
+#WORKDIR /datashop/workflow_components/DatasetSelector
+#RUN ./install_component.sh && ant dist
+
+
+
+# Change /datashop permissions
+RUN chmod ug+rwx,o+rx /datashop \
+ && mkdir /datashop/log \
+ && find /datashop -type f -exec chmod ug+rw,o+r {} \; \
+ && find /datashop -type d -exec chmod ug+rwx,o+rx {} \; \
+ && find /datashop -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.xsd -o -iname \*.xml -o -iname \*.r \) -exec dos2unix {} \; \
+ && find /datashop -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.r -o -iname \*.jar -o -iname \*.exe \) -exec chmod ugo+rx {} \; \
+# Create the workflows processing directory, as well as
+# copy the log4j properties from the AFM component to the wfc directory,
+# replacing all DEBUG with INFO.
+ && mkdir -p /datashop/dataset_files/workflows /datashop/dataset_files/user_uploads \
+ && chown -R datashop:datashop /datashop/ \
+ && cp /datashop/workflow_components/AnalysisAfm/log4j.properties /datashop/dataset_files/workflows/ \
+ && sed -i 's/DEBUG/ERROR/g' /datashop/dataset_files/workflows/log4j.properties \
+ && mkdir /tmp/merge_files \
+ && chmod 777 /tmp/merge_files \
+ && mkdir -p /var/lib/mysql \
+ && chown mysql:datashop /tmp/merge_files \
+ && ln -s /tmp/merge_files /var/lib/mysql/merge_files \
+ && chmod -R g+rw /datashop/dataset_files
+
+RUN unzip jboss-4.2.0.GA_docker.zip && \
+  mv jboss-4.2.0.GA /opt/ && \
+  ln -s /opt/jboss-4.2.0.GA/ /opt/jboss && \
+  adduser --shell /bin/bash --system --no-create-home --quiet --disabled-password -u 900 --gid 501 jboss && \
+  # Unzip the skeleton server deployment (originall built with OLI)
+  unzip /datashop/jboss-server-oli-deployment.zip -d /opt/jboss/server/ && \
+  chown jboss:datashop -R -L /opt/jboss/ && \
+  usermod --home /opt/jboss jboss  2>&1 > /datashop/dockerfile.log && \
+  echo "umask 007" >> /opt/jboss/.bashrc && \
+  cp /opt/jboss/bin/jboss_init_redhat.sh /etc/init.d/jboss && \
+  chmod 755 /etc/init.d/jboss && \
+  find -L /opt/jboss/ -type d -exec chmod g+rwx {} \; && \
+  find -L /opt/jboss/ -type f -exec chmod g+r {} \; && \
+  # Copy necessary OLI files for the OLI-provided logging and authentication EARs
+  cp -R /datashop/etc/oli /etc/ && \
+  mkdir /opt/jboss/server/oli/log && \
+  chown -R -L jboss:datashop /opt/jboss && \
+  chmod ug+x /opt/jboss/bin/run.sh
+
+# Update perms on update.sh
+RUN chmod ug+x /datashop/init/update.sh
+
+# Create a variables.sh with a default "vm" configuration
+RUN cat /datashop/tools/variables.sh.template | \
+  sed "s/MYSQL_HOST=<CHANGEME>/MYSQL_HOST=localhost/g" | \
+  sed "s/SUBDIR=<CHANGEME>/SUBDIR=vm/g" | \
+  sed "s/_PWD=<CHANGEME>/_PWD=datashop/g" | \
+  sed "s/HELP_EMAIL=<CHANGEME>/HELP_EMAIL=root@localhost/g" | \
+  sed "s/DS_URL=<CHANGEME>/DS_URL=localhost/g" | \
+  sed "s/<CHANGEME>/NULL/g" \
+  > /datashop/tools/variables.sh \
+ && dos2unix /datashop/tools/variables.sh \
+# Create a build.properties file from the template
+ && cat /datashop/deploy/build.properties.template | \
+  sed "s/MYSQL_HOST=<CHANGEME>/MYSQL_HOST=localhost/g" | \
+  sed "s/datashop.subdir=<CHANGEME>/datashop.subdir=vm/g" | \
+  sed "s/db.password=<CHANGEME>/db.password=datashop/g" | \
+  sed "s/\.email=<CHANGEME>@lists.andrew.cmu.edu/.email=root@localhost/g" | \
+  sed "s/\.email=<CHANGEME>@lists.andrew.cmu.edu/.email=root@localhost/g" | \
+  sed "s/\.address=<CHANGEME>datashop-help@lists.andrew.cmu.edu/.address=root@localhost/g" | \
+  sed "s#diskimporter.log.server=<CHANGEME>.andrew.cmu.edu/log/server/#diskimporter.log.server=localhost#g" | \
+  sed "s#cachedExportFile.dir=/nfs-root/dataset_files_qa#cachedExportFile.dir=/datashop/dataset_files#g" \
+  > /datashop/deploy/build.properties \
+# Create an instance.properties file from the template
+ && cat /datashop/deploy/instance.properties.template | \
+  sed "s/instance\.is_slave=true/instance.is_slave=false/g" | \
+  sed "s#instance.master.schema=http://samosa.pslc.cs.cmu.edu:8080/pslc_datashop_message.xsd#instance.master.schema=http://localhost/pslc_datashop_message.xsd#g" | \
+  sed "s#instance.master.url=http://samosa.pslc.cs.cmu.edu:8080#instance.master.url=http://localhost#g" | \
+  sed "s#instance.slave.id=datashop-vm#instance.slave.id=${docker_hostname}#g" \
+  > /datashop/deploy/instance.properties
+
+
+# Run only on localhost and use docker to port local 80 to one of docker master's ports
+RUN echo "ServerName localhost" | tee /etc/apache2/conf-available/fqdn.conf && a2enconf fqdn \
+### Update the Mod JK configuration
+ && sed -i "s#workers.java_home=/usr/lib/jvm/default-java#workers.java_home=/usr/lib/jvm/java-7-openjdk-amd64#g" \
+  /etc/libapache2-mod-jk/workers.properties \
+ && sed -i '45i\    JkMount  /*  ajp13_worker\' /etc/apache2/mods-available/jk.conf \
+# Enable HTTPS, create self-signed certificate for https/apache2, and add JK-mod mount definitions.
+ && ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/000-default-ssl.conf \
+ && sed -i 's#^.*DocumentRoot.*$#&\n<IfModule mod_jk.c> \nJkMountFile /etc/libapache2-mod-jk/workers.properties \nJkMount         /*     ajp13_worker \n</IfModule>#' \
+  /etc/apache2/sites-available/000-default.conf \
+ && sed -i 's#^.*DocumentRoot.*$#&\n<IfModule mod_jk.c> \nJkMountFile /etc/libapache2-mod-jk/workers.properties \nJkMount         /*     ajp13_worker \n</IfModule>#' \
+  /etc/apache2/sites-available/default-ssl.conf \
+ && sed -i "s#[ \t]\+SSLCertificateFile[ \t]\+.*#\t\tSSLCertificateFile\t/etc/apache2/ssl/server.crt#g" /etc/apache2/sites-enabled/000-default-ssl.conf \
+ && sed -i "s#[ \t]\+SSLCertificateKeyFile[ \t]\+.*#\t\tSSLCertificateKeyFile\t/etc/apache2/ssl/server.key#g" /etc/apache2/sites-enabled/000-default-ssl.conf \
+ && mkdir /etc/apache2/ssl \
+ && openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key \
+  -subj "/C=US/ST=PA/L=Pittsburgh/O=Carnegie Mellon University/OU=Human Computer Interaction Institute/CN=localhost" \
+ && a2enmod ssl
+
+# Create logging property files from the templates
+RUN cp /datashop/deploy/log4j-discoursedb.properties.template /datashop/deploy/log4j-discoursedb.properties \
+ && cp /datashop/deploy/log4j-ffi.properties.template /datashop/deploy/log4j-ffi.properties \
+ && cp /datashop/deploy/log4j.properties.template /datashop/deploy/log4j.properties \
+ && cp /datashop/deploy/log4j-iq.properties.template /datashop/deploy/log4j-iq.properties \
+### Update JBoss service key
+ && newKeySpec=`hexdump -n 16 -e '4/4 "%08X" 1 "\n"' /dev/urandom` \
+ && sed -i "s#<md5 keySpec=".*"/>#<md5 keySpec="${newKeySpec}"/>#" /etc/oli/oli-log-service.conf
+
+
+# Deploy DataShop and Tigris
+WORKDIR /datashop/deploy
+
+# Creates and populates applicationContext.xml from vm/applicationContext.xml and deploys datashop/tigris
+RUN ant filter.db.password \
+ && ant deployDataStore \
+ && ant deployWar
+
+
+# Define environment variable
+ENV NAME World
+# Add environment variable for D3M runtime
+ENV D3MCONFIG /datashop/workflow_component/D3M/d3m.cfg
+
+# Setup SSH server
+RUN mkdir /var/run/sshd \
+ && mkdir -p /home/datashop/.ssh \
+ && touch /home/datashop/.ssh/authorized_keys \
+ && chown -R datashop:datashop /home/datashop/ \
+ && chmod 770 /home/datashop/ \
+ && chmod 770 /home/datashop/.ssh \
+ && chmod 600 /home/datashop/.ssh/authorized_keys \
+ && cat /datashop/ssh/id_rsa.pub >> /home/datashop/.ssh/authorized_keys \
+ && echo "AuthorizedKeysFile     %h/.ssh/authorized_keys" >> /etc/ssh/sshd_config \
+ && echo 'datashop:datashop8675309' | chpasswd \
+ && sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config \
+# SSH login fix. Otherwise user is kicked off after login
+ && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd \
+# ENV NOTVISIBLE "in users profile"
+# RUN echo "export VISIBLE=now" >> /etc/profile
+ && echo "datashop ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Only if you need to enable passwordless sudo
+# RUN echo "datashop ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Make ports 443 (HTTPS), 80 (HTTP), and 22 (SSH) available to the outside world (0.0.0.0)
+EXPOSE 443 80 22
+CMD ["/bin/bash", "/datashop/start.sh"]
+
+
+# END OF Dockerfile
