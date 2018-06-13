@@ -16,22 +16,28 @@ from ls_dataset.d3m_dataset import D3MDataset
 
 __version__ = '0.1'
 
-logging.basicConfig()
+# logging.basicConfig()
 
 if __name__ == '__main__':
 
     # Parse argumennts
     parser = get_default_arg_parser("Import List of available D3M Datasets")
     args = parser.parse_args()
+    
+    if args.is_test is not None:
+        is_test = args.is_test == 1
+    else:
+        is_test = False
 
     # Get config file
     config = SettingsFactory.get_settings(path.join(args.programDir, 'program', 'settings.cfg'), 
                                           program_dir=args.programDir,
-                                          working_dir=args.workingDir
+                                          working_dir=args.workingDir,
+                                          is_test=is_test
                                           )
 
     # Setup Logging
-    setup_logging(config.parse_logging(), args.workingDir, args.is_test == 1)
+    setup_logging(config)
     logger = logging.getLogger('datasets_importer')
 
     ### Begin Script ###

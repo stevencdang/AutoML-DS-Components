@@ -40,10 +40,11 @@ if __name__ == '__main__':
     # Get config file
     config = SettingsFactory.get_settings(path.join(args.programDir, 'program', 'settings.cfg'), 
                                           program_dir=args.programDir,
-                                          working_dir=args.workingDir
+                                          working_dir=args.workingDir,
+                                          is_test=is_test
                                           )
     # Setup Logging
-    setup_logging(config.parse_logging(), args.workingDir, args.is_test == 1)
+    setup_logging(config)
     logger = logging.getLogger('problem_task_selector')
 
     ### Begin Script ###

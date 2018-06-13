@@ -14,7 +14,7 @@ import sys
 
 # logger = logging.getLogger('ls_logging')
 
-def setup_logging(config, workingDir=None, is_test=False):
+def setup_logging(settings):
     """
     Basic logging configuration. Takes 3 parameters:
 
@@ -31,56 +31,65 @@ def setup_logging(config, workingDir=None, is_test=False):
 
     """
     # Set the workingDir to current Directory if none is given
-    if workingDir is None:
+    if settings.working_dir is None:
         # logger.warning("Not working directory given. Using cwd")
         workingDir = os.getcwd()
+    else:
+        workingDir = settings.working_dir
    
 
     # setup set of handlers to initiate logging config
     lgr = logging.getLogger()
 
     # Setup Logging to file in working directory
-    lgr.setLevel(config['log_level'])
+    lgr.setLevel(settings.get_log_level())
 
     # Set log msg format
     formatter = logging.Formatter('%(levelname)s\t%(name)s\t%(asctime)s\t: %(message)s')
     
     # Write log msgs to sysLog if logging is enabled
-    if config['enable_syslog']:
+    if settings.is_syslog_enabled():
         ch = SysLogHandler()
-        ch.setLevel(config['log_level'])
+        ch.setLevel(settings.get_log_level())
         ch.setFormatter(formatter)
         lgr.addHandler(ch)
 
     # Write log msgs to file if enabled
-    if config['enable_file_log']:
+    if settings.is_file_log_enabled():
         log_id = dt.now().isoformat()
-        if config['file_log_path'] is None:
+        if settings.get_file_log_path() is None:
             log_file = path.join(workingDir, 'log-%s.txt' % log_id)
         else:
-            log_file = path.join(config['file_log_path'], 'log-%s.txt' % log_id)
+            log_file = path.join(settings.get_file_log_path(), 'log-%s.txt' % log_id)
         ch = FileHandler(filename=log_file)
-        ch.setLevel(config['log_level'])
+        ch.setLevel(settings.get_log_level())
         ch.setFormatter(formatter)
         lgr.addHandler(ch)
 
     # Add extra logging to file
-    if is_test:
+    if settings.is_test:
         # logger.debug("not running as a tigris component")
         # Add explicit file log
         log_file = path.join(workingDir, 'test.log')
         # logger.debug("Writing logs to : %s" % str(log_file))
         ch = FileHandler(filename=log_file)
-        ch.setLevel(config['log_level'])
+        ch.setLevel(settings.get_log_level())
         ch.setFormatter(formatter)
         lgr.addHandler(ch)
+
+        # Also add logging to stdout when testing
+        ch = StreamHandler(sys.stdout)
+        ch.setLevel(settings.get_log_level())
+        ch.setFormatter(formatter)
+        lgr.addHandler(ch)
+
 
     # Create stream handler to output error messages to stderr
     ch = StreamHandler(sys.stderr)
     ch.setLevel(logging.ERROR)
     ch.setFormatter(formatter)
     lgr.addHandler(ch)
-    
+
     # logging.basicConfig(handlers=handlers, level=config['log_level'])
    
     # Create separator in log file to make it easier to parse

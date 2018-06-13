@@ -13,22 +13,23 @@ logger = logging.getLogger(__name__)
 class SettingsFactory(object):
 
     @staticmethod
-    def get_settings(cfg_path=None, program_dir=None, working_dir=None):
+    def get_settings(cfg_path=None, program_dir=None, working_dir=None, is_test=False):
         if os.environ.get(D3MSettings.__config_path_var__) is not None:
-            return D3MSettings(cfg_path, program_dir, working_dir)
+            return D3MSettings(cfg_path, program_dir, working_dir, is_test)
         else:
-            return Settings(cfg_path, program_dir, working_dir)
+            return Settings(cfg_path, program_dir, working_dir, is_test)
 
 class Settings(object):
     """
     A generic settings class including a few operators for reading in configuration files
 
     """
-    def __init__(self, cfg_path=None, program_dir=None, working_dir=None):
+    def __init__(self, cfg_path=None, program_dir=None, working_dir=None, is_test=False):
         self.cfg_file = cfg_path
         self.cfg = configparser.ConfigParser()
         self.program_dir = program_dir
         self.working_dir = working_dir
+        self.is_test = is_test
 
         if cfg_path is None:
             self.cfg.read('settings.cfg')
@@ -51,6 +52,27 @@ class Settings(object):
             'file_log_path': self.cfg.get('Logging', 'file_log_path') 
         }
         return cfg
+
+    def get_log_level(self):
+        if self.is_test:
+            return logging.DEBUG
+        else:
+            return logging.getLevelName(self.cfg.get('Logging', 'log_level'))
+
+    def is_syslog_enabled(self):
+        return self.cfg.getboolean('Logging', 'enable_syslog')
+
+    def is_file_log_enabled(self):
+        return self.cfg.getboolean('Logging', 'enable_file_log')
+
+    def get_file_log_path(self):
+        return os.path.join(self.working_dir)
+
+    def get_working_dir(self):
+        return self.working_dir
+
+    def get_program_dir(self):
+        return self.program_dir
 
     def parse_logging(self):
         """
@@ -86,8 +108,8 @@ class D3MSettings(Settings):
 
     __config_path_var__="D3MCONFIG"
 
-    def __init__(self, cfg_path=None, program_dir=None, working_dir=None):
-        super().__init__(cfg_path, program_dir, working_dir)
+    def __init__(self, cfg_path=None, program_dir=None, working_dir=None, is_test=False):
+        super().__init__(cfg_path, program_dir, working_dir, is_test=is_test)
         self.d3m_config_file = os.environ['D3MCONFIG']
         self.d3m_cfg = configparser.ConfigParser()
         self.d3m_cfg.read(self.d3m_config_file)
