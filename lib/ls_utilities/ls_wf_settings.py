@@ -14,7 +14,9 @@ class SettingsFactory(object):
 
     @staticmethod
     def get_settings(cfg_path=None, program_dir=None, working_dir=None, is_test=False):
-        if os.environ.get(D3MSettings.__config_path_var__) is not None:
+        # Force this for now until I figure out how to pass env vars or config to module
+        if True:
+        # if os.environ.get(D3MSettings.__config_path_var__) is not None:
             return D3MSettings(cfg_path, program_dir, working_dir, is_test)
         else:
             return Settings(cfg_path, program_dir, working_dir, is_test)
@@ -110,7 +112,10 @@ class D3MSettings(Settings):
 
     def __init__(self, cfg_path=None, program_dir=None, working_dir=None, is_test=False):
         super().__init__(cfg_path, program_dir, working_dir, is_test=is_test)
-        self.d3m_config_file = os.environ['D3MCONFIG']
+        if 'D3MCONFIG' not in os.environ:
+            self.d3m_config_file = "/datashop/workflow_components/D3M/d3m.cfg"
+        else:
+            self.d3m_config_file = os.environ['D3MCONFIG']
         self.d3m_cfg = configparser.ConfigParser()
         self.d3m_cfg.read(self.d3m_config_file)
     

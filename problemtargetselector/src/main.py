@@ -23,7 +23,6 @@ from ls_problem_desc.ls_problem import *
 
 __version__ = '0.1'
 
-logging.basicConfig()
 
 if __name__ == '__main__':
 

@@ -29,8 +29,6 @@ from d3m_ta2.ta2_v3_client import TA2Client
 
 __version__ = '0.1'
 
-logging.basicConfig()
-
 
 if __name__ == '__main__':
     # Parse argumennts

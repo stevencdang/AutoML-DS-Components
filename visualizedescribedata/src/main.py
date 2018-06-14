@@ -30,8 +30,6 @@ from ls_dataset.d3m_dataset import D3MDataset
 
 __version__ = '0.1'
 
-logging.basicConfig()
-
 
 class LS_Path_Factory(object):
 

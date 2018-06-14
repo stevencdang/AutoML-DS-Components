@@ -32,7 +32,6 @@ from modeling.models import Model, ModelScores, Score
 
 __version__ = '0.1'
 
-logging.basicConfig()
 
 if __name__ == '__main__':
     # Parse argumennts

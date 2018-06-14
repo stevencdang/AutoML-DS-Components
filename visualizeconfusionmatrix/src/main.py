@@ -29,8 +29,6 @@ from ls_dataset.d3m_prediction import D3MPrediction
 
 __version__ = '0.1'
 
-logging.basicConfig()
-
 
 class LS_Path_Factory(object):
 
