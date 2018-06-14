@@ -31,7 +31,7 @@ echo -e ")" >> $out_file
 echo "VALUES (" >> $out_file
 echo -e "\t'Analysis'," >> $out_file
 echo -e "\t'Visualize_Confusion_Matrix'," >> $out_file
-echo -e "\t'$wcc/$comp_dir_name'," >> $out_file
+echo -e "\t'$wcc/$comp_dir_name/'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/schemas/$comp_dir_name""_v1_0.xsd'," >> $out_file
 echo -e "\t'/usr/bin/java -jar'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/dist/$comp_dir_name-1.0.jar', " >> $out_file
