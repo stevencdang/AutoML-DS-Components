@@ -33,26 +33,26 @@ for buildfile in $(find $dir -name "build_component.sh"); do
     cdir=$(dirname $buildfile)
     ccomp=$(basename $cdir)
     #if [ "$ccomp" -ne "visualizationconfusionmatrix" ]; then
-    if [ "$ccomp" == "datasetimporter" ]; then
-        echo "Processing build file from " $ccomp
-        cd $cdir
-        # Create local copy of settings file if it does not exist
-        if [ ! -f "src/settings.cfg" ]; then
-            echo "No Settings file found. Copying from sample"
-            cp src/settings.cfg.sample src/settings.cfg
-        fi
-        ./build_component.sh $wcc wcc.properties.template
-        # Get the directory name of the generated component
-        export IFS="="
-        while read -r k v; do
-            [ "$k" == "component.name" ] && wcname=$v
-        done < wcc.properties.template
-        echo "Entering generated componet directory: " $wcc/$wcname
-        cd $wcc/$wcname
-        ./install_component.sh
-        ./gen_add_component.sh
-        mysql -u root analysis_db < gen_add_component.sh
+    #if [ "$ccomp" == "datasetimporter" ]; then
+    echo "Processing build file from " $ccomp
+    cd $cdir
+    # Create local copy of settings file if it does not exist
+    if [ ! -f "src/settings.cfg" ]; then
+        echo "No Settings file found. Copying from sample"
+        cp src/settings.cfg.sample src/settings.cfg
     fi
+    ./build_component.sh $wcc wcc.properties.template
+    # Get the directory name of the generated component
+    export IFS="="
+    while read -r k v; do
+        [ "$k" == "component.name" ] && wcname=$v
+    done < wcc.properties.template
+    echo "Entering generated componet directory: " $wcc/$wcname
+    cd $wcc/$wcname
+    ./install_component.sh
+    ./gen_add_component.sh
+    mysql -u root analysis_db < gen_add_component.sh
+    #fi
 done
 #for cdir in `find $dir -maxdepth 1  -type d -name "[^.]*"`; do
   #if [ "$cdir" == "$dir/Templates" ]
