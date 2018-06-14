@@ -26,6 +26,6 @@ src/settings.cfg
 gen_component.log
 
 # Ignore copies of wcc.properties for local machine settings
-wcc.properties.*
+wcc.properties*
 !wcc.properties.template
 

@@ -48,11 +48,12 @@ for buildfile in $(find $dir -name "build_component.sh"); do
         [ "$k" == "component.name" ] && wcname=$v
     done < wcc.properties.template
     echo "Entering generated componet directory: " $wcc/$wcname
-    cd $wcc/$wcname
-    ./install_component.sh
-    ./gen_add_component.sh
-    mysql -u root analysis_db < gen_add_component.sh
+    #cd $wcc/$wcname
+    #./install_component.sh
+    #./gen_add_component.sh
+    #mysql -u root analysis_db < gen_add_component.sh
     #fi
+    #cd $dir
 done
 #for cdir in `find $dir -maxdepth 1  -type d -name "[^.]*"`; do
   #if [ "$cdir" == "$dir/Templates" ]

@@ -29,7 +29,8 @@ src/settings.cfg
 gen_component.log
 
 # Local copy of wcc.properties file
-wcc.properties.*
+wcc.properties*
+!wcc.properties.template
 
 # Ignore local versions of test/datasetDoc.json
 test/datasetDoc.json

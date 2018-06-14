@@ -26,7 +26,9 @@ src/settings.cfg
 gen_component.log
 
 # Ignore local machine versions of wcc.properties #
-wcc.properties.*
+wcc.properties*
+!wcc.properties.template
+
 test/dataset_pred.json
 test/dataset_pred.json.*
 !test/dataset_pred.json.sample
