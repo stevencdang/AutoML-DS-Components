@@ -39,6 +39,11 @@ if __name__ == '__main__':
                        help='at tab-delimited list of models to fit')
     args = parser.parse_args()
 
+    if args.is_test is not None:
+        is_test = args.is_test == 1
+    else:
+        is_test = False
+
     # Get config file
     config = SettingsFactory.get_settings(path.join(args.programDir, 'program', 'settings.cfg'), 
                                           program_dir=args.programDir,

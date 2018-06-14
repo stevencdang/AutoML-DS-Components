@@ -52,6 +52,11 @@ if __name__ == '__main__':
     else:
         ds_name = "baseball"
 
+    if args.is_test is not None:
+        is_test = args.is_test == 1
+    else:
+        is_test = False
+
     # Lookup path to dataset from input file and selected datset option
     ds_reader = csv.reader(args.file0, delimiter='\t')
     for row in ds_reader:
