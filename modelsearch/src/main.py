@@ -91,14 +91,14 @@ if __name__ == '__main__':
         logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].model))
 
     # Get Score for each solution
-    score_req_ids = {}
-    for soln_id in solns:
-        soln = solns[soln_id]
-        score_req_ids[soln.id] = serv.score_solution(soln, ds)
-    scores = {}
-    for sid in score_req_ids:
-        results = serv.get_score_solution_results(score_req_ids[sid])
-        scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+    # score_req_ids = {}
+    # for soln_id in solns:
+        # soln = solns[soln_id]
+        # score_req_ids[soln.id] = serv.score_solution(soln, ds)
+    # scores = {}
+    # for sid in score_req_ids:
+        # results = serv.get_score_solution_results(score_req_ids[sid])
+        # scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
 
 
     # serv.end_search_solutions(search_id)
