@@ -148,7 +148,7 @@ RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
  && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!"
 
 # Go through each d3m component and setup virtualenv
-#RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh 2>&1 > /datashop/d3m_components/mk_docker/gen_components.log
+RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh 2>&1 > /datashop/d3m_components/mk_docker/gen_components.log
 #WORKDIR /datashop/workflow_components/DatasetImporter
 #RUN ./install_component.sh && ant dist
 #WORKDIR /datashop/workflow_components/DatasetSelector

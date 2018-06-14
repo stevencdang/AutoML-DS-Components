@@ -179,9 +179,6 @@ wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz  && tar xvf Pyt
 
 cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
 
-# Create soft link from datasets dir to ds_directory
-#ln -s /rdata/dataStore/d3m/test_dataset $DS_DIRECTORY/data
-
 ### Copy files for D3m builds ###
 #################################
 # Copy Dockerfile to override standard one
@@ -189,7 +186,7 @@ cp $CWD/Dockerfile $DS_DIRECTORY/
 
 docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
 docker build -t ds_image_alpha .
-echo "TO START THE INSTANCE: docker run -p 9001:443 -p 9000:22 --mount type=bind,source=<dataset_root>,target=/data -P --name ds_instance_alpha ds_image_alpha"
+echo "TO START THE INSTANCE: docker run -p 9001:443 -p 9000:22 --mount type=bind,source=<dataset_root>,target=/data/datasets --mount type=bind,source=<ta2_write_dir>,target=/data/output -P --name ds_instance_alpha ds_image_alpha"
 echo "TO STOP THE INSTANCE: docker stop ds_instance_alpha"
 echo "TO REMOVE THE INSTANCE: docker rm ds_instance_alpha"
 echo "TO TAG: docker tag ds_image_alpha:latest 016042509432.dkr.ecr.us-east-1.amazonaws.com/ds_image_alpha:latest"
