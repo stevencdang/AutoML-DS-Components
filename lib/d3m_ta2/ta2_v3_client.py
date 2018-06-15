@@ -12,6 +12,7 @@ from .api_v3 import value_pb2
 from .api_v3 import problem_pb2
 
 from ls_problem_desc.d3m_problem import *
+from modeling.models import *
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,9 @@ class TA2Client(object):
         logger.info("Connected to TA2 System, %s, using api version, %s" % (self.user_agent, self.version))
         logger.debug("TA2 allowed values: %s" % str(self.allowed_values))
         logger.debug("TA2 supported extensions: %s" % str(self.supported_extensions))
+        
+        self.search_solution_requests = {}
+        self.fitted_soln_requests = {}
 
     def get_id(self):
         return "%s-%s" % (self.__name__, self.__version__)
@@ -109,6 +113,8 @@ class TA2Client(object):
         logger.debug("Sending Search Solution request: %s" % str(msg))
         reply = self.serv.SearchSolutions(msg)
 
+        # Queue the msg for tracking
+        self.search_solution_requests[reply.search_id] = msg
         return reply.search_id
 
     def get_search_solutions_results(self, sid):
@@ -141,6 +147,13 @@ class TA2Client(object):
     def end_search_solutions(self, sid):
         msg = core_pb2.EndSearchSolutionsRequest(search_id=sid)
         reply = self.serv.EndSearchSolutions(msg)
+        if sid in self.search_solution_requests:
+            try: 
+                del search_solution_requestsi[sid]
+            except KeyError:
+                logger.warning("Can't find search with ID, %s, to end search" % sid)
+        else:
+            logger.warning("Search solution request ID not found. May already have removed this: %s" % sid)
         logger.info("Ended Search for solutions")
 
     def stop_search_solutions(self, sid):
@@ -164,7 +177,9 @@ class TA2Client(object):
         )
         reply = self.serv.DescribeSolution(msg)
         logger.debug("Got describe solution reply: %s" % str(reply))
-        return reply.pipeline, reply.steps
+        model = Model(sid)
+        model.add_description_from_protobuf(reply.pipeline)
+        return model
 
     def score_solution(self, sln, dataset, inputs=None, metrics=None):
         logger.info("Requesting to score solution with id: %s" % sln.id)
@@ -240,6 +255,7 @@ class TA2Client(object):
 
         logger.debug("Sending Fit request msg: %s" % str(msg))
         reply = self.serv.FitSolution(msg)
+        self.fitted_solution_request[reply.request_id] = msg
         return reply.request_id
 
 
@@ -248,26 +264,26 @@ class TA2Client(object):
         msg = core_pb2.GetFitSolutionResultsRequest(
             request_id = rid
         )
-        replies = []
+        results = None
         for reply in self.serv.GetFitSolutionResults(msg):
+
             if reply.progress.state == core_pb2.PENDING:
                 logger.debug("Fitting model to solution is still pending and hasn't begin")
             elif reply.progress.state == core_pb2.RUNNING:
                 logger.debug("Fitting model to solution is currently running and has not completed: %s" % reply.progress.status)
             elif reply.progress.state == core_pb2.COMPLETED:
                 logger.info("Fitting model to solution has completed successfully: %s" % reply.progress.status)
-                replies.append(reply.scores)
+                # logger.debug("Got reply: %s" % str(reply))
+                replies.append(reply)
+                results = reply
             elif reply.progress.state == core_pb2.ERRORED:
                 logger.error("Fitting model to solution has completed in an error state: %s" % reply.progress.status)
             else:
                 logger.warning("Fittin model to solution is in an unknown state: %s" % str(reply.progress))
+       
+        request = self.fitted_solution_request.pop(results.request_id, None)
 
-        logger.debug("Got %i completed responses" % len(replies))
-        fitted_ids = [reply.fitted_solution_id for reply in replies]
-        for reply in replies:
-            logger.debug(reply)
-        logger.debug("Got fitted ids: %s" % fitted_ids)
-        return fitted_ids
+        return results.fitted_solution_id, results.exposed_outputs
         
     def produce_solution(self, soln, ds, inputs=None, outputs=None):
         logger.info("Produce predictions for solution with id: %s" % soln.id)

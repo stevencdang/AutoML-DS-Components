@@ -35,7 +35,7 @@ __version__ = '0.1'
 
 if __name__ == '__main__':
     # Parse argumennts
-    parser = get_default_arg_parser("D3M Pipeline Search")
+    parser = get_default_arg_parser("Model Search")
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json provided for the search')
     parser.add_argument('-file1', type=argparse.FileType('r'),
@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('d3m_pipeline_search')
+    logger = logging.getLogger('model_search')
 
     ### Begin Script ###
     logger.info("Running Pipeline Search on TA2")
@@ -85,10 +85,10 @@ if __name__ == '__main__':
         raise Exception("No solution returned")
     
     # Get Model for each solution returned
-    solns = {soln_id: Model(soln_id) for soln_id in soln_ids}
-    for soln_id in solns:
-        solns[soln_id].add_description(serv.describe_solution(soln_id)[0])
-        logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].model))
+    solns = {}
+    for soln_id in soln_ids:
+        solns[soln_id] = serv.describe_solution(soln_id)
+        logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
 
     # Get Score for each solution
     # score_req_ids = {}
@@ -111,13 +111,16 @@ if __name__ == '__main__':
     # soln_ids = serv.get_search_solutions_results(search_id)
     # if soln_ids is None:
         # raise Exception("No solution returned")
-    # fit_req_ids = {}
-    # for sid, soln in solns.items():
-        # fit_req_ids[sid] = serv.fit_solution(soln, ds)
-    # for sid, rid in fit_req_ids.items():
-        # solns[sid].model = serv.get_fit_solution_results(rid)
+    fit_req_ids = {}
+    fitted_solns = {}
+    fitted_results = {}
+    for sid, soln in solns.items():
+        fit_req_ids[sid] = serv.fit_solution(soln, ds)
+    for sid, rid in fit_req_ids.items():
+        logger.debug("solution id: %s\tfit solution request id: %s" % (sid, rid))
+        fitted_solns[sid], fitted_results[sid] = serv.get_fit_solution_results(rid)
 
-        
+    logger.debug("Got fitted solutions with ids: %s" % str(fitted_solns) )
 
     
 
@@ -126,19 +129,19 @@ if __name__ == '__main__':
     ### End testing code ###
    
     # Write the received solutions to file
-    for sid, soln in solns.items():
-        logger.debug("###########################################")
-        logger.debug("Received solution: %s" % str(soln.to_dict()))
-        logger.debug("###########################################")
+    # for sid, soln in solns.items():
+        # logger.debug("###########################################")
+        # logger.debug("Received solution: %s" % str(soln.to_dict()))
+        # logger.debug("###########################################")
         
     # out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
     # with open(out_file_path, 'w') as out_file:
         # out = csv.writer(out_file, delimiter='\t')
         # out.writerow([solns[sln].id for sln in solns])
         # out.writerow([solns[sln].to_dict() for sln in solns])
-        # # out.writerow([scores[sln].to_dict() for sln in solns])
+        # out.writerow([scores[sln].to_dict() for sln in solns])
 
-    # # Write dataset info to output file
+    # Write dataset info to output file
     # out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
     # ds.to_component_out_file(out_file_path)
     # if args.is_test == 1:

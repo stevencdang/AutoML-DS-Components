@@ -78,17 +78,20 @@ class Model(object):
     def add_description(self, model):
         self.model = model
 
+    def add_description_from_protobuf(self, msg):
+        desc = json_format.MessageToJson(msg)
+        self.model = json.loads(desc)
+
+    def to_protobuf(self):
+        return json_format.Parse(self.model, pipeline_pb2.PipelineDescription())
+
     def get_default_output(self):
         """
         Just returns the first output
 
         """
-        return self.model.outputs[0].name
-
-    def __str__(self):
-        out = json_format.MessageToJson(self.model)
-        return out
-        # return self.model
+        logger.debug("Model outputs: %s" % str(self.model['outputs']))
+        return self.model['outputs'][0]['name']
 
     @staticmethod
     def from_json(data):
@@ -120,6 +123,18 @@ class Model(object):
 
         """
         return fpath
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.desc,
+            'model': self.model
+        }
+
+    def __str__(self):
+        return str(self.to_dict())
+
 
 class SubModelNode(Model, ModelNode):
 
