@@ -46,7 +46,8 @@ class TA2Client(object):
         logger.debug("TA2 supported extensions: %s" % str(self.supported_extensions))
         
         self.search_solution_requests = {}
-        self.fitted_soln_requests = {}
+        self.fitted_solution_requests = {}
+        self.produce_solution_requests = {}
 
     def get_id(self):
         return "%s-%s" % (self.__name__, self.__version__)
@@ -255,7 +256,7 @@ class TA2Client(object):
 
         logger.debug("Sending Fit request msg: %s" % str(msg))
         reply = self.serv.FitSolution(msg)
-        self.fitted_solution_request[reply.request_id] = msg
+        self.fitted_solution_requests[reply.request_id] = msg
         return reply.request_id
 
 
@@ -274,26 +275,25 @@ class TA2Client(object):
             elif reply.progress.state == core_pb2.COMPLETED:
                 logger.info("Fitting model to solution has completed successfully: %s" % reply.progress.status)
                 # logger.debug("Got reply: %s" % str(reply))
-                replies.append(reply)
                 results = reply
             elif reply.progress.state == core_pb2.ERRORED:
                 logger.error("Fitting model to solution has completed in an error state: %s" % reply.progress.status)
             else:
                 logger.warning("Fittin model to solution is in an unknown state: %s" % str(reply.progress))
        
-        request = self.fitted_solution_request.pop(results.request_id, None)
+        request = self.fitted_solution_requests.pop(rid, None)
 
         return results.fitted_solution_id, results.exposed_outputs
         
-    def produce_solution(self, soln, ds, inputs=None, outputs=None):
+    def produce_solution(self, fsid, soln, ds, inputs=None, outputs=None):
         logger.info("Produce predictions for solution with id: %s" % soln.id)
         msg = core_pb2.ProduceSolutionRequest(
-            solution_id = soln.id
+            fitted_solution_id = fsid
         )
         # Add inputs if given
         if inputs is None:
             i = msg.inputs.add()
-            i.dataset_uri = dataset.get_get_schema_uri()
+            i.dataset_uri = ds.get_schema_uri()
         else:
             for inpt in inputs:
                 i = msg.inputs.add()
@@ -306,6 +306,8 @@ class TA2Client(object):
             msg.expose_value_types.extend(self.__allowed_values__)
 
         reply = self.serv.ProduceSolution(msg)
+
+        self.produce_solution_requests[reply.request_id] = msg
 
         return reply.request_id
 
@@ -330,6 +332,7 @@ class TA2Client(object):
 
         # logger.debug("Got %i completed responses" % len(replies))
         # fitted_ids = [reply.fitted_solution_id for reply in replies]
+        request = self.produce_solution_requests.pop(rid, None)
 
 
     def list_primitives(self):

@@ -123,6 +123,18 @@ if __name__ == '__main__':
     logger.debug("Got fitted solutions with ids: %s" % str(fitted_solns) )
 
     
+    req_ids = {}
+    solution_predictions = {}
+    for sid, fsid in fitted_solns.items():
+        # req_ids[mid] = serv.produce_solution(model, ds)
+        req_ids[fsid] = serv.produce_solution(fsid, solns[sid], ds)
+    logger.debug("Created predoce solution requests with ids: %s" % str(req_ids))
+    for fsid, rid in req_ids.items():
+        solution_predictions[fsid] = serv.get_produce_solution_results(rid)
+
+    for fsid, predictions in solution_predictions.items():
+        logger.debug("Got predictions from fitted solution, %s: %s" % (fsid, predictions))
+
 
     # serv.end_search_solutions(search_id)
 
