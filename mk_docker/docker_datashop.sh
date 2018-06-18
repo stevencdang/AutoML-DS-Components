@@ -170,7 +170,7 @@ cd $DS_DIRECTORY
 # Grab d3m specfic branch
 git clone --depth 1 -b d3m --single-branch https://github.com/LearnSphere/WorkflowComponents.git workflow_components
 
-git clone --depth 1 https://stevencdang@bitbucket.org/stevencdang/learnsphere_workflow_components.git d3m_components
+git clone https://stevencdang@bitbucket.org/stevencdang/learnsphere_workflow_components.git d3m_components
 
 # Grab python 3.6 to build and install
 #cd $DS_DIRECTORY

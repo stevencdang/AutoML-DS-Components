@@ -27,9 +27,9 @@ echo "VALUES (" >> $out_file
 echo -e "\t'Analysis'," >> $out_file
 echo -e "\t'Dataset_Selector'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/'," >> $out_file
-echo -e "\t'$wcc/$comp_dir_name/schemas/$comp_dir_name_v1_0.xsd'," >> $out_file
-echo -e "\t'/usr/bin/java -jar'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/schemas/$comp_dir_name""_v1_0.xsd'," >> $out_file
+echo -e "\t'/usr/bin/java -jar'," >> $out_file
+echo -e "\t'$wcc/$comp_dir_name/dist/$comp_dir_name-1.0.jar', " >> $out_file
 echo -e "\t1," >> $out_file
 echo -e "\t'system'," >> $out_file
 echo -e "\t'Steven_C_Dang'," >> $out_file 
