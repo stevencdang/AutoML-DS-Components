@@ -41,17 +41,19 @@ for buildfile in $(find $dir -name "build_component.sh"); do
         echo "No Settings file found. Copying from sample"
         cp src/settings.cfg.sample src/settings.cfg
     fi
-    ./build_component.sh $wcc wcc.properties.template
+    ./build_component.sh $wcc $cdir/wcc.properties.template
     # Get the directory name of the generated component
     export IFS="="
     while read -r k v; do
         [ "$k" == "component.name" ] && wcname=$v
-    done < wcc.properties.template
+    done < $cdir/wcc.properties.template
     echo "Entering generated componet directory: " $wcc/$wcname
-    #cd $wcc/$wcname
-    #./install_component.sh
-    #./gen_add_component.sh
-    #mysql -u root analysis_db < gen_add_component.sh
+    cd $wcc/$wcname
+    chmod -R 775 $wcc/$wcname
+    chown -R datashop:datashop $wcc/$wcname
+    ./install_component.sh
+    ./gen_add_component.sh
+    mysql -u root analysis_db < add_component.sql
     #fi
     #cd $dir
 done

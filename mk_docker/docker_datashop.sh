@@ -183,6 +183,10 @@ cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
 #################################
 # Copy Dockerfile to override standard one
 cp $CWD/Dockerfile $DS_DIRECTORY/
+# OVerwrive component generation script
+cp $CWD/setup_d3m_components.sh $DS_DIRECTORY/d3m_components/mk_docker/ # this is only during dev
+# Overwrite the docker start script
+cp $CWD/start.sh $DS_DIRECTORY/start.sh
 
 docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
 docker build -t ds_image_alpha .

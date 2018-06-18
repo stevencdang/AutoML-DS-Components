@@ -122,8 +122,8 @@ RUN pip3 install --upgrade pip==9.0.2 && \
 RUN tar xvf Python-3.6.3.tar.xz && cd Python-3.6.3/ && ./configure && make && sudo make install 
 
 # Generate D3M Components from into workflow_components directory
-RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh /datashop/d3m_components 2>&1 > \
-    /datashop/d3m_components/mk_docker/gen_all_components.log
+#RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh /datashop/d3m_components 2>&1 > \
+    #/datashop/d3m_components/mk_docker/gen_all_components.log
 
 
 # Tetrad components have a hard-coded path in the build.xml; accommodate this
@@ -148,7 +148,7 @@ RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
  && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!"
 
 # Go through each d3m component and setup virtualenv
-RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh 2>&1 > /datashop/d3m_components/mk_docker/gen_components.log
+#RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh 2>&1 > /datashop/d3m_components/mk_docker/gen_components.log
 #WORKDIR /datashop/workflow_components/DatasetImporter
 #RUN ./install_component.sh && ant dist
 #WORKDIR /datashop/workflow_components/DatasetSelector
@@ -274,7 +274,7 @@ RUN ant filter.db.password \
 WORKDIR /datashop/deploy
 
 # Define environment variable
-ENV NAME="World" D3MCONFIG=/datashop/workflow_component/D3M/d3m.cfg
+ENV NAME="World" D3MCONFIG="/datashop/workflow_component/D3M/d3m.cfg"
 # Add environment variable for D3M runtime
 
 
