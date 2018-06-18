@@ -34,7 +34,7 @@ for buildfile in $(find $dir -name "build_component.sh"); do
     ccomp=$(basename $cdir)
     #if [ "$ccomp" -ne "visualizationconfusionmatrix" ]; then
     #if [ "$ccomp" == "datasetimporter" ]; then
-    echo "Processing build file from " $ccomp
+    echo "Processing build file from " $cdir
     cd $cdir
     # Create local copy of settings file if it does not exist
     if [ ! -f "src/settings.cfg" ]; then
