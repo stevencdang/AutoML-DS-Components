@@ -131,10 +131,11 @@ cdir="$dir/$cname"
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
-cp "$srcdir"/add_component.sql "$cdir"/
+cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
-cp "$srcdir"/test/datasetDoc.json "$cdir"/test/components/
+cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/
+cp "$srcdir"/test/problemDoc.tsv "$cdir"/test/components/
 echo "Copied setup files to new component directory from source directory"
 
 # Create dir for writing logs
