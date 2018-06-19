@@ -117,6 +117,7 @@ done < $wcc
 cdir="$dir/$cname"
 
 # Copy component setup scripts to new component directory
+srcdir=$(dirname "$wcc")
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
