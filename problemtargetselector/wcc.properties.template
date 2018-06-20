@@ -61,7 +61,7 @@ output.0.name=problemTarget.tsv
 # For example, the following option is available to your program as "-kc_model <string>"
 option.0.type=FileInputHeader
 option.0.name=target-name
-option.0.id=target_name
+option.0.id=Target_Name
 option.0.default=1
 
 #option.1.type=Enum(AFM, AFM+S)

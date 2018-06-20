@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=DefaultProblemGenerator
+component.name=ProblemGeneratorDefault
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad

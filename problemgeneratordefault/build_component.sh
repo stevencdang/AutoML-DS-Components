@@ -166,14 +166,16 @@ done
 
 # run 'and runComponent' to buildthe files after installing #
 #############################################################
-#echo "Building and testing component from terminal"
+echo "Building component wiht ant"
+cd $cdir
+ANT_HOME="/usr/bin" buildOutput=`ant dist`
 #ant runComponent
 
 
 # Cleanup wcc.properties generated file before exiting
+cd "$cwd"
 rm wcc.properties
 
 # Return to current working directory after completion
-cd "$cwd"
 echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3
 echo "Build component completed"
