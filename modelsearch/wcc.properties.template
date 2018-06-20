@@ -47,8 +47,8 @@ component.num_outputs=1
 component.num_options=0
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
-input.0.type=d3m-dataset
-input.1.type=modelling-problem
+input.0.type=dataset
+input.1.type=modeling-problem
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 #output.0.type=dataset
