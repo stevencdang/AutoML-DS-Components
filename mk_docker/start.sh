@@ -15,16 +15,27 @@ mysql -u root < /datashop/sql/create_databases.sql
 mysql -u root < /datashop/sql/create_empty_auth_db.sql
 mysql -u root adb_source < /datashop/sql/create/create_adb_10_x.sql
 mysql -u root analysis_db < /datashop/sql/create/create_adb_10_x.sql
-mysql -u root analysis_db  < /datashop/sql/workflow_component_local.sql
 
 # Generate D3M Components
-cd /datashop/d3m_components/mk_docker
-./setup_d3m_components.sh
+# cd /datashop/d3m_components/mk_docker
+# ./setup_d3m_components.sh
 
-
-#mysql -u root analysis_db < /datashop/sql/workflow_component_local.sql
+mysql -u root analysis_db < /datashop/sql/workflow_component_local.sql
 mysql -u root analysis_db < /datashop/sql/workflow_error_translation.sql
 mysql -u root analysis_versions < /datashop/sql/create/create_versions_10_x.sql
+
+# Generate conf script using environment variables'
+if [ -f $D3MCONFIG ]; then
+	rm $D3MCONFIG
+fi
+echo "[Data]" >> $D3MCONFIG
+echo "dataset_root = $D3MINPUTDIR" >> $D3MCONFIG
+echo "out_dir_root = $D3MOUTPUTDIR" >> $D3MCONFIG
+echo "[TA2]" >> $D3MCONFIG
+echo "ta2_url = $TA2ADDR" >> $D3MCONFIG
+chown jboss:datashop $D3MCONFIG
+chmod 775 $D3MCONFIG
+
 
 # MoocDB "core" and "clean" databases
 cd /datashop/sql/create/MOOCdb
