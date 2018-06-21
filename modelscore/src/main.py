@@ -35,7 +35,7 @@ __version__ = '0.1'
 
 if __name__ == '__main__':
     # Parse argumennts
-    parser = get_default_arg_parser("D3M Pipeline Search")
+    parser = get_default_arg_parser("Model Search")
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json provided for the search')
     parser.add_argument('-file1', type=argparse.FileType('r'),
@@ -56,13 +56,13 @@ if __name__ == '__main__':
 
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('d3m_pipeline_search')
+    logger = logging.getLogger('model_score')
 
     ### Begin Script ###
-    logger.info("Running Pipeline Search on TA2")
-    logger.debug("Running D3M Pipeline Search with arguments: %s" % str(args))
+    logger.info("Scoring models with selected metric")
+    logger.debug("Running Model Scoring with arguments: %s" % str(args))
 
-    # Open dataset json
+    # Open dataset json to use for scoring
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
@@ -85,20 +85,20 @@ if __name__ == '__main__':
         raise Exception("No solution returned")
     
     # Get Model for each solution returned
-    solns = {soln_id: Model(soln_id) for soln_id in soln_ids}
-    for soln_id in solns:
-        solns[soln_id].add_description(serv.describe_solution(soln_id)[0])
-        logger.debug("Got pipline descripton for solution id %s: \n%s" % (soln_id, solns[soln_id].model))
+    solns = {}
+    for soln_id in soln_ids:
+        solns[soln_id] = serv.describe_solution(soln_id)
+        logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
 
     # Get Score for each solution
-    score_req_ids = {}
-    for soln_id in solns:
-        soln = solns[soln_id]
-        score_req_ids[soln.id] = serv.score_solution(soln, ds)
-    scores = {}
-    for sid in score_req_ids:
-        results = serv.get_score_solution_results(score_req_ids[sid])
-        scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+    # score_req_ids = {}
+    # for soln_id in solns:
+        # soln = solns[soln_id]
+        # score_req_ids[soln.id] = serv.score_solution(soln, ds)
+    # scores = {}
+    # for sid in score_req_ids:
+        # results = serv.get_score_solution_results(score_req_ids[sid])
+        # scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
 
 
     # serv.end_search_solutions(search_id)
@@ -131,19 +131,19 @@ if __name__ == '__main__':
         logger.debug("Received solution: %s" % str(soln.to_dict()))
         logger.debug("###########################################")
         
-    # out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
-    # with open(out_file_path, 'w') as out_file:
-        # out = csv.writer(out_file, delimiter='\t')
-        # out.writerow([solns[sln].id for sln in solns])
-        # out.writerow([solns[sln].to_dict() for sln in solns])
-        # # out.writerow([scores[sln].to_dict() for sln in solns])
+    out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
+    with open(out_file_path, 'w') as out_file:
+        out = csv.writer(out_file, delimiter='\t')
+        out.writerow([solns[sln].id for sln in solns])
+        out.writerow([solns[sln].to_dict() for sln in solns])
+        # out.writerow([scores[sln].to_dict() for sln in solns])
 
-    # # Write dataset info to output file
-    # out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
-    # ds.to_component_out_file(out_file_path)
-    # if args.is_test == 1:
-        # # Write out human readable version for debugging
-        # ds.to_json_pretty(out_file_path + '.readable')
+    # Write dataset info to output file
+    out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
+    ds.to_component_out_file(out_file_path)
+    if args.is_test == 1:
+        # Write out human readable version for debugging
+        ds.to_json_pretty(out_file_path + '.readable')
 
     # Write Solution workflows to file
 
