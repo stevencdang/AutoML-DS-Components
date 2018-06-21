@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     # Parse argumennts
     parser = get_default_arg_parser("Select Problem Target")
-    parser.add_argument('-target_name', type=str,
+    parser.add_argument('-targetname', type=str,
                        help='the name of the column from the dataset to use')
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the description of the dataset')
@@ -65,13 +65,13 @@ if __name__ == '__main__':
             logger.debug("Got resource columns: %s" % str([str(col) for col in cols]))
             col_names = [col.colName for col in cols]
             logger.debug("Got column names: %s" % col_names)
-            i = col_names.index(args.target_name)
+            i = col_names.index(args.targetname)
             target_col = cols[i]
             target_resource = resource
             logger.debug("Got target column from resource with ID, %s, at index %i: %s" % (target_resource.resID, i, str(target_col)))
 
     if target_col is None:
-        raise Exception("Could not identify column with name %s from dataset" % args.target_name)
+        raise Exception("Could not identify column with name %s from dataset" % args.targetname)
 
     # Initialize a Problem Description and set target info
     prob = ProblemDesc()
