@@ -27,7 +27,11 @@ __version__ = '0.1'
 if __name__ == '__main__':
 
     # Parse argumennts
-    parser = get_default_arg_parser("Select Problem Target")
+    parser = get_default_arg_parser("Initialize a new problem")
+    parser.add_argument('-probname', type=str,
+                       help='the name of the new problem given by the user')
+    parser.add_argument('-probdesc', type=str,
+                       help='the plain text description of the problem supplied by the user')
     parser.add_argument('-targetname', type=str,
                        help='the name of the column from the dataset to use')
     parser.add_argument('-file0', type=argparse.FileType('r'),
@@ -47,11 +51,11 @@ if __name__ == '__main__':
                                           )
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('problem_target_selector')
+    logger = logging.getLogger('problem_creator')
 
     ### Begin Script ###
     logger.info("Initializing Problem Description for a dataset with selected column")
-    logger.debug("Running Problem Target Selection with arguments: %s" % str(args))
+    logger.debug("Running Problem Creator with arguments: %s" % str(args))
 
     # Open dataset json
     ds = D3MDataset.from_component_out_file(args.file0)
@@ -75,8 +79,10 @@ if __name__ == '__main__':
 
     # Initialize a Problem Description and set target info
     prob = ProblemDesc()
-    prob.description = "CMU-Tigris User generated problem"
-    prob.name = "Problem-%s" % str(datetime.now())
+    # prob.description = "CMU-Tigris User generated problem"
+    # prob.name = "Problem-%s" % str(datetime.now())
+    prob.name = args.probname
+    prob.description = args.probdesc
     prob.add_input(ds.id, target_resource, target_col)
 
     # Write Problem Template with selected target to output file

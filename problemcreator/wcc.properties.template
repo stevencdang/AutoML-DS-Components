@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=ProblemTargetSelector
+component.name=ProblemCreator
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -35,7 +35,7 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Allow user to select a problem target from the columns of a dataset from a dataset repository
+component.description=Allow user to create a new problem and select a problem target from the columns of a dataset from a dataset repository
 
 # The number of inputs for the new component. 
 component.num_inputs=1
@@ -44,7 +44,7 @@ component.num_inputs=1
 component.num_outputs=1
 
 # The number of options for the new component. 
-component.num_options=1
+component.num_options=3
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
 input.0.type=dataset
@@ -59,10 +59,20 @@ output.0.name=problemTarget.tsv
 # If the 'default' looks like a regular expression, we'll try to treat it as such.
 # The options will be passed to your program as command-line args using the option name.
 # For example, the following option is available to your program as "-kc_model <string>"
-option.0.type=FileInputHeader
-option.0.name=targetname
-option.0.id=Target_Name
-option.0.default=.*
+option.0.type=xs:string
+option.0.name=probname
+option.0.id=Problem_Name
+option.0.default=Problem 1
+
+option.1.type=xs:string
+option.1.name=probdesc
+option.1.id=Problem_Description
+option.1.default=This is the default descrition of the problem
+
+option.2.type=FileInputHeader
+option.2.name=targetname
+option.2.id=Target_Name
+option.2.default=.*
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model
