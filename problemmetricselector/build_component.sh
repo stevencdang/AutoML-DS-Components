@@ -164,6 +164,16 @@ for file in $(find "$cdir"/test/components -name "*.xml"); do
     awk -v cdir="$cdir" '/<file_name>/{print "<file_name>datasetDoc.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
 done
 
+# Alter the auto-generated component schema to adjust the options #
+###################################################################
+for file in $(find "$cdir"/schemas -name "*.xsd"); do
+    echo "Editing component schema: " $file
+    # Change option to focus on second node onlye to populate options
+    # awk '/FileInputHeader/{ sub(/FileInputHeader/, "Testing") }1' "$file" > tmp && mv tmp "$file"
+    awk '/FileInputHeader/{ sub(/\"FileInputHeader\"/, "\"FileInputHeader\" ls:inputNodeIndex=\"1\" ls:inputFileIndex=\"0\"") }1' "$file" > tmp && mv tmp "$file"
+    # awk '/type="FileInputHeader"/{ sub(/type=\"FileInputHeader\"/, "type=\"FileInputHeader\" ls:inputNodeIndex=\"1\" ls:inputFileIndex=\"0\"") }1' "$file" > tmp && mv tmp "$file"
+    # awk '/type=FileInputHeader/{print "test" }' "$file" > tmp && mv tmp "$file"
+done
 
 # run 'and runComponent' to buildthe files after installing #
 #############################################################

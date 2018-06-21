@@ -122,6 +122,7 @@ cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
+cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/datasetDoc.tsv
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
@@ -166,12 +167,13 @@ done
 
 # run 'and runComponent' to buildthe files after installing #
 #############################################################
-#echo "Building and testing component from terminal"
-#ant runComponent
+echo "Building and testing component from terminal"
+ant clean
+ant dist
 
-# Delete generated wcc file before completed
-rm $wcc
 # Return to current working directory after completion
 cd "$cwd"
+# Delete generated wcc file before completed
+rm $wcc
 echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3
 echo "Build component completed"

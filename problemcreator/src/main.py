@@ -27,8 +27,12 @@ __version__ = '0.1'
 if __name__ == '__main__':
 
     # Parse argumennts
-    parser = get_default_arg_parser("Select Problem Target")
-    parser.add_argument('-target_name', type=str,
+    parser = get_default_arg_parser("Initialize a new problem")
+    parser.add_argument('-probname', type=str,
+                       help='the name of the new problem given by the user')
+    parser.add_argument('-probdesc', type=str,
+                       help='the plain text description of the problem supplied by the user')
+    parser.add_argument('-targetname', type=str,
                        help='the name of the column from the dataset to use')
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the description of the dataset')
@@ -47,11 +51,11 @@ if __name__ == '__main__':
                                           )
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('problem_target_selector')
+    logger = logging.getLogger('problem_creator')
 
     ### Begin Script ###
     logger.info("Initializing Problem Description for a dataset with selected column")
-    logger.debug("Running Problem Target Selection with arguments: %s" % str(args))
+    logger.debug("Running Problem Creator with arguments: %s" % str(args))
 
     # Open dataset json
     ds = D3MDataset.from_component_out_file(args.file0)
@@ -65,18 +69,20 @@ if __name__ == '__main__':
             logger.debug("Got resource columns: %s" % str([str(col) for col in cols]))
             col_names = [col.colName for col in cols]
             logger.debug("Got column names: %s" % col_names)
-            i = col_names.index(args.target_name)
+            i = col_names.index(args.targetname)
             target_col = cols[i]
             target_resource = resource
             logger.debug("Got target column from resource with ID, %s, at index %i: %s" % (target_resource.resID, i, str(target_col)))
 
     if target_col is None:
-        raise Exception("Could not identify column with name %s from dataset" % args.target_name)
+        raise Exception("Could not identify column with name %s from dataset" % args.targetname)
 
     # Initialize a Problem Description and set target info
     prob = ProblemDesc()
-    prob.description = "CMU-Tigris User generated problem"
-    prob.name = "Problem-%s" % str(datetime.now())
+    # prob.description = "CMU-Tigris User generated problem"
+    # prob.name = "Problem-%s" % str(datetime.now())
+    prob.name = args.probname
+    prob.description = args.probdesc
     prob.add_input(ds.id, target_resource, target_col)
 
     # Write Problem Template with selected target to output file

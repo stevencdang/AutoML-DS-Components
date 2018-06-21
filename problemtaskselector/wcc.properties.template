@@ -61,9 +61,9 @@ output.0.name=problemTask.tsv
 # The options will be passed to your program as command-line args using the option name.
 # For example, the following option is available to your program as "-kc_model <string>"
 option.0.type=FileInputHeader
-option.0.name=task-name
+option.0.name=task_name
 option.0.id=task_name
-option.0.default=CLASSIFICATION
+option.0.default=.*
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model

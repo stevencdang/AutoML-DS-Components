@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=ModelSearch
+component.name=ModelScore
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -35,7 +35,7 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Perform a search for a model using D3M TA2 system
+component.description=Evaluate a model with a given performance metric and dataset
 
 # The number of inputs for the new component. 
 component.num_inputs=2
@@ -44,11 +44,11 @@ component.num_inputs=2
 component.num_outputs=1
 
 # The number of options for the new component. 
-component.num_options=0
+component.num_options=1
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
-input.0.type=d3m-dataset
-input.1.type=modelling-problem
+input.0.type=dataset
+input.1.type=model-set
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 #output.0.type=dataset
