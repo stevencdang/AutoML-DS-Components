@@ -63,7 +63,7 @@ output.0.name=problemDoc.json
 option.0.type=FileInputHeader
 option.0.name=metric
 option.0.id=metric
-option.0.default=ACCURACY
+option.0.default=.*
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model
