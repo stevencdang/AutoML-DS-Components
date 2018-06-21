@@ -122,6 +122,7 @@ cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
+cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/
 cp "$srcdir"/test/problemTarget.tsv "$cdir"/test/components/
@@ -162,6 +163,17 @@ for file in $(find "$cdir"/test/components -name "*.xml"); do
     awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/datasetDoc.tsv</file_path>";next}1' "$file" > tmp && mv tmp "$file"
     # Inserting name of test file into test xml
     awk -v cdir="$cdir" '/<file_name>/{print "<file_name>datasetDoc.tsv</file_name>";next}1' "$file" > tmp && mv tmp "$file"
+done
+
+# Alter the auto-generated component schema to adjust the options #
+###################################################################
+for file in $(find "$cdir"/schemas -name "*.xsd"); do
+    echo "Editing component schema: " $file
+    # Change option to focus on second node onlye to populate options
+    # awk '/FileInputHeader/{ sub(/FileInputHeader/, "Testing") }1' "$file" > tmp && mv tmp "$file"
+    awk '/FileInputHeader/{ sub(/\"FileInputHeader\"/, "\"FileInputHeader\" ls:inputNodeIndex=\"1\" ls:inputFileIndex=\"0\"") }1' "$file" > tmp && mv tmp "$file"
+    # awk '/type="FileInputHeader"/{ sub(/type=\"FileInputHeader\"/, "type=\"FileInputHeader\" ls:inputNodeIndex=\"1\" ls:inputFileIndex=\"0\"") }1' "$file" > tmp && mv tmp "$file"
+    # awk '/type=FileInputHeader/{print "test" }' "$file" > tmp && mv tmp "$file"
 done
 
 
