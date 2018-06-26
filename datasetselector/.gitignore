@@ -28,3 +28,8 @@ gen_component.log
 # Ignore copies of wcc.properties for local machine settings
 wcc.properties*
 !wcc.properties.template
+
+# Ignore local versions of test/datasetDoc.json
+test/dataset-list.tsv
+test/dataset-list.tsv*
+!test/dataset-list.tsv.sample
