@@ -18,7 +18,8 @@ import csv
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
-from ls_utilities.ls_wf_settings import Settings as stg
+# from ls_utilities.ls_wf_settings import Settings as stg
+from ls_utilities.ls_wf_settings import SettingsFactory
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
 from d3m_ta2.ta2_v3_client import TA2Client
@@ -66,9 +67,9 @@ if __name__ == '__main__':
     # Read in the the models from tsv
     reader = csv.reader(args.file1, delimiter='\t')
     rows = [row for row in reader]
-    reader.close()
+
     # Initialize the set of models by model id
-    models = {Model(mid) for mid in rows[0]}
+    models = {mid: None for mid in rows[0]}
     for i, mid in enumerate(rows[0]):
         models[mid] = Model.from_json(rows[1][i])
 
@@ -85,7 +86,7 @@ if __name__ == '__main__':
         logger.debug("Fitting model: %s" % str(model))
         fit_req_ids[mid] = serv.fit_solution(model, ds)
     for mid, rid in fit_req_ids.items():
-        logger.debug("Model id: %s\tfit model request id: %s" % (sid, rid))
+        logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
         fitted_models[mid], fitted_results[mid] = serv.get_fit_solution_results(rid)
 
     # for sid, soln in solns.items():
