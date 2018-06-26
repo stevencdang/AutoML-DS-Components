@@ -125,5 +125,5 @@
                     'resPath': 'tables/learningData.csv',
                     'resType': 'table'}],
  'dataset_info': {'dataset_dir': 'baseball_dataset',
-                  'dataset_schema': '/rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball/185_baseball_dataset/datasetDoc.json',
-                  'root_path': '/rdata/dataStore/d3m/datasets/seed_datasets_current/185_baseball'}}
+                  'dataset_schema': '/rdata/dataStore/d3m/test_datasets/185_baseball/185_baseball_dataset/datasetDoc.json',
+                  'root_path': '/rdata/dataStore/d3m/test_datasets/185_baseball'}}
