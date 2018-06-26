@@ -33,9 +33,9 @@ wcc.properties*
 !wcc.properties.template
 
 # Ignore local versions of test/datasetDoc.json
-test/datasetDoc.json
-test/datasetDoc.json.*
+test/datasetDoc.tsv
+test/datasetDoc.tsv.*
 test/model-flows.tsv
 test/model-flows.tsv.*
-!test/datasetDoc.json.sample
+!test/datasetDoc.tsv.sample
 !test/model-flows.tsv.sample

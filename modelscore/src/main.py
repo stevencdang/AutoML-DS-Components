@@ -74,9 +74,9 @@ if __name__ == '__main__':
     # Read in the the models from tsv
     reader = csv.reader(args.file1, delimiter='\t')
     rows = [row for row in reader]
-    reader.close()
+    # reader.close()
     # Initialize the set of models by model id
-    solns = {Model(mid) for mid in rows[0]}
+    solns = {mid: None for mid in rows[0]}
     for i, mid in enumerate(rows[0]):
         solns[mid] = Model.from_json(rows[1][i])
 
