@@ -190,13 +190,13 @@ cp $CWD/start.sh $DS_DIRECTORY/start.sh
 # Overwrite the sql script that adds components
 cp $CWD/workflow_component_local.sql $DS_DIRECTORY/sql/
 
-docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
-docker build -t ds_image_alpha .
-echo "TO START THE INSTANCE: docker run -p 9001:443 -p 9000:22 --mount type=bind,source=<dataset_root>,target=/data/datasets --mount type=bind,source=<ta2_write_dir>,target=/data/output -P --name ds_instance_alpha ds_image_alpha"
-echo "TO STOP THE INSTANCE: docker stop ds_instance_alpha"
-echo "TO REMOVE THE INSTANCE: docker rm ds_instance_alpha"
-echo "TO TAG: docker tag ds_image_alpha:latest 016042509432.dkr.ecr.us-east-1.amazonaws.com/ds_image_alpha:latest"
-echo "TO PUSH TO AWS: docker push 016042509432.dkr.ecr.us-east-1.amazonaws.com/ds_image_alpha:latest"
+#docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
+#docker build -t ds_image_alpha .
+#echo "TO START THE INSTANCE: docker run -p 9001:443 -p 9000:22 --mount type=bind,source=<dataset_root>,target=/data/datasets --mount type=bind,source=<ta2_write_dir>,target=/data/output -P --name ds_instance_alpha ds_image_alpha"
+#echo "TO STOP THE INSTANCE: docker stop ds_instance_alpha"
+#echo "TO REMOVE THE INSTANCE: docker rm ds_instance_alpha"
+#echo "TO TAG: docker tag ds_image_alpha:latest 016042509432.dkr.ecr.us-east-1.amazonaws.com/ds_image_alpha:latest"
+#echo "TO PUSH TO AWS: docker push 016042509432.dkr.ecr.us-east-1.amazonaws.com/ds_image_alpha:latest"
 #docker stop registry.datadrivendiscovery.org/sdang/cmu-ta3 ; docker rm registry.datadrivendiscovery.org/sdang/cmu-ta3 ;
 #docker build -t registry.datadrivendiscovery.org/sdang/cmu-ta3 .
 #echo "TO START THE INSTANCE: docker run -p 9000:443 -P --name registry.datadrivendiscovery.org/sdang/cmu-ta3 ds_image_alpha"
