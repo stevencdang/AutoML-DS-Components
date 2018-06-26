@@ -36,7 +36,7 @@ __version__ = '0.1'
 
 if __name__ == '__main__':
     # Parse argumennts
-    parser = get_default_arg_parser("Model Search")
+    parser = get_default_arg_parser("Model Score")
     parser.add_argument('-metric', type=str,
                        help='the metric to use to compare the models')
     parser.add_argument('-file0', type=argparse.FileType('r'),
