@@ -123,8 +123,9 @@ cp "$srcdir"/README.md "$cdir"/
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
+cp "$srcdir"/build.xml "$cdir"/.gitignore
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
-cp "$srcdir"/test/datasetDoc.json "$cdir"/test/components/
+cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/
 cp "$srcdir"/test/model-flows.tsv "$cdir"/test/components/
 echo "Copied setup files to new component directory from source directory"
 
@@ -144,6 +145,8 @@ echo "component.program.path=program/main.py" >> "$cdir"/build.properties.sample
 cd "$cdir"
 ./install_component.sh
 echo "Ran install script"
+./gen_add_component.sh
+echo "Generated add_component.sql"
 
 # Altering auto generated Java (This will vary for each component) #
 ####################################################################

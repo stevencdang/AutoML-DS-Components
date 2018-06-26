@@ -189,6 +189,8 @@ cp $CWD/setup_d3m_components.sh $DS_DIRECTORY/d3m_components/mk_docker/ # this i
 cp $CWD/start.sh $DS_DIRECTORY/start.sh
 # Overwrite the sql script that adds components
 cp $CWD/workflow_component_local.sql $DS_DIRECTORY/sql/
+# Add a .vimrc file for development
+cp $CWD/.vimrc $DS_DIRECTORY/
 
 #docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
 #docker build -t ds_image_alpha .

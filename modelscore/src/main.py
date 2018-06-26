@@ -69,9 +69,24 @@ if __name__ == '__main__':
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
+    # Decode the models from file
+    logger.debug("Model file input: %s" % args.file1)
     # Read in the the models from tsv
     reader = csv.reader(args.file1, delimiter='\t')
     rows = [row for row in reader]
+    reader.close()
+    # Initialize the set of models by model id
+    #first fow is model IDs
+    solns = {Model(mid) for mid in rows[0]}
+    for i, mid in enumerate(rows[0]):
+        solns[mid] = Model
+
+
+    # second row has model info
+    for
+    solns[
+    prob = ProblemDesc.from_file(args.file1)
+    logger.debug("Got Problem Description: %s" % prob.print())
 
     solns = {}
     for i, mdl in enumerate(rows[1]):
@@ -81,10 +96,11 @@ if __name__ == '__main__':
     # Init the server connection
     address = config.get_ta2_url()
     
+    # Crete the metric(s) to use in the score request
     logger.info("using server at address %s" % address)
     serv = TA2Client(address)
-
-    # Crete the metric(s) to use in the score request
+   
+    # Create the metric(s) to use in the score request
     metric = Metric(args.metric)
 
     # Get Score for each solution

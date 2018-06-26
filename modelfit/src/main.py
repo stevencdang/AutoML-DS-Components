@@ -51,15 +51,15 @@ if __name__ == '__main__':
 
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('d3m_pipeline_search')
+    logger = logging.getLogger('model_fit')
 
     ### Begin Script ###
     logger.info("Fitting models using given dataset")
     logger.debug("Fitting models with arguments: %s" % str(args))
 
     # Open dataset json
-    ds = D3MDataset.from_json(args.file0)
-    logger.debug("Dataset: %s" % str(ds))
+    ds = D3MDataset.from_component_out_file(args.file0)
+    logger.debug("Dataset json parse: %s" % str(ds))
 
     # Import all the models
     reader = csv.reader(args.file1, delimiter='\t')
@@ -73,14 +73,11 @@ if __name__ == '__main__':
     logger.debug("Sample model id: %s\nmodel: \t%s" % (mid, models))
 
     # Init the server connection
-    address = config.get("TA2", 'ta2_url')
-    
+    address = config.get_ta2_url()
     logger.info("using server at address %s" % address)
     serv = TA2Client(address)
     
     # Get fitted solution
-    serv.hello()
-
     fit_req_ids = {}
     for mid, model in models.items():
         logger.debug("Fitting model: %s" % str(model))
