@@ -25,9 +25,9 @@ mysql -u root analysis_db < /datashop/sql/workflow_error_translation.sql
 mysql -u root analysis_versions < /datashop/sql/create/create_versions_10_x.sql
 
 # Generate conf script using environment variables'
-if [ -f $D3MCONFIG ]; then
-	rm $D3MCONFIG
-fi
+#if [ -f $D3MCONFIG ]; then
+	#rm $D3MCONFIG
+#fi
 echo "[Data]" >> $D3MCONFIG
 echo "dataset_root = $D3MINPUTDIR" >> $D3MCONFIG
 echo "out_dir_root = $D3MOUTPUTDIR" >> $D3MCONFIG
