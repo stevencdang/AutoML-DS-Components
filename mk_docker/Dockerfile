@@ -266,16 +266,7 @@ RUN ant filter.db.password \
  && ant deployDataStore \
  && ant deployWar
 
-# Configure directories for Mount Data Directory
-#RUN mkdir /data && mkdir /data/datasets && mkdir /data/output 
-#WORKDIR /rdata/dataStore/d3m/test_datasets
-#ADD /rdata/dataStore/d3m/test_datasets /data/datasets
-
 WORKDIR /datashop/deploy
-
-# Define environment variable
-ENV NAME="World" D3MCONFIG="/datashop/workflow_component/D3M/d3m.cfg"
-# Add environment variable for D3M runtime
 
 
 # Setup SSH server
