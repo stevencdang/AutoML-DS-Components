@@ -61,16 +61,16 @@ if __name__ == '__main__':
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
-    # Import all the models
+    # Decode the models from file
+    logger.debug("Model file input: %s" % args.file1)
+    # Read in the the models from tsv
     reader = csv.reader(args.file1, delimiter='\t')
     rows = [row for row in reader]
-    models =  {mid: Model.from_json(rows[1][i]) for i, mid in enumerate(rows[0])}
-    scores =  {mid: ModelScores.from_json(rows[2][i]) for i, mid in enumerate(rows[0])}
-    logger.info("Got %i models to fit" % len(models))
-    # Print sampel model
-    mid = list(models.keys())[0]
-    model = models[mid]
-    logger.debug("Sample model id: %s\nmodel: \t%s" % (mid, models))
+    reader.close()
+    # Initialize the set of models by model id
+    models = {Model(mid) for mid in rows[0]}
+    for i, mid in enumerate(rows[0]):
+        models[mid] = Model.from_json(rows[1][i])
 
     # Init the server connection
     address = config.get_ta2_url()
@@ -79,12 +79,21 @@ if __name__ == '__main__':
     
     # Get fitted solution
     fit_req_ids = {}
+    fitted_solns = {}
+    fitted_results = {}
     for mid, model in models.items():
         logger.debug("Fitting model: %s" % str(model))
         fit_req_ids[mid] = serv.fit_solution(model, ds)
     for mid, rid in fit_req_ids.items():
-        models[mid].fit = serv.get_fit_solution_results(rid)
+        logger.debug("Model id: %s\tfit model request id: %s" % (sid, rid))
+        fitted_models[mid], fitted_results[mid] = serv.get_fit_solution_results(rid)
 
+    # for sid, soln in solns.items():
+        # fit_req_ids[sid] = serv.fit_solution(soln, ds)
+    # for sid, rid in fit_req_ids.items():
+        # logger.debug("solution id: %s\tfit solution request id: %s" % (sid, rid))
+        # fitted_solns[sid], fitted_results[sid] = serv.get_fit_solution_results(rid)
+# 
     # serv.end_search_solutions(search_id)
 
     
@@ -92,8 +101,8 @@ if __name__ == '__main__':
     out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
     with open(out_file_path, 'w') as out_file:
         writer = csv.writer(out_file, delimiter='\t')
-        writer.writerow([model.id for model in models])
-        writer.writerow([str(model.model) for model in models])
-        writer.writerow([model.fit for model in models])
+        writer.writerow([mid for mid in models])
+        writer.writerow([models[mid].to_dict() for mid in models])
+        writer.writerow([fitted_models[mid].to_dict() for mid in fitted_models])
 
 

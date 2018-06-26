@@ -32,11 +32,11 @@ __version__ = '0.1'
 
 if __name__ == '__main__':
     # Parse argumennts
-    parser = get_default_arg_parser("Fit Models")
+    parser = get_default_arg_parser("Model Predict")
     parser.add_argument('-file0', type=argparse.FileType('r'),
-                       help='the dataset json provided for the search')
+                       help='the dataset json provided for making predictions')
     parser.add_argument('-file1', type=argparse.FileType('r'),
-                       help='at tab-delimited list of models to fit')
+                       help='at tab-delimited list of the fitted models')
     args = parser.parse_args()
 
     if args.is_test is not None:
@@ -53,11 +53,11 @@ if __name__ == '__main__':
 
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('d3m_pipeline_search')
+    logger = logging.getLogger('model_predict')
 
     ### Begin Script ###
-    logger.info("Fitting models using given dataset")
-    logger.debug("Fitting models with arguments: %s" % str(args))
+    logger.info("Making predictions with models on given dataset")
+    logger.debug("Predicting with models with arguments: %s" % str(args))
 
     # Open dataset json
     ds = D3MDataset.from_json(args.file0)
@@ -75,14 +75,18 @@ if __name__ == '__main__':
     logger.info("using server at address %s" % address)
     serv = TA2Client(address)
     
-    # Get fitted solution
-    serv.hello()
-
+    # Get Model Predictions
     req_ids = {}
-    for mid, model in models.items():
-        req_ids[mid] = serv.produce_solution(model, ds)
-    for mid, rid in req_ids.items():
-        models[mid].add_result(serv.get_produce_solution_results(rid))
+    predictions = {}
+    for sid, fsid in fitted_solns.items():
+        # req_ids[mid] = serv.produce_solution(model, ds)
+        req_ids[fsid] = serv.produce_solution(fsid, solns[sid], ds)
+    logger.debug("Created predict solution requests with ids: %s" % str(req_ids))
+    for fsid, rid in req_ids.items():
+        predictions[fsid] = serv.get_produce_solution_results(rid)
+
+    for fsid, predictions in solution_predictions.items():
+        logger.debug("Got predictions from fitted solution, %s: %s" % (fsid, predictions))
 
     
     # # Write model fit id info to output file
