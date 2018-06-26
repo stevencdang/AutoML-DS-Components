@@ -28,6 +28,7 @@ from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from d3m_ta2.ta2_v3_client import TA2Client
 # from ls_workflow.workflow import Workflow as Solution
 from modeling.models import Model, ModelScores, Score
+from modeling.scores import *
 
 
 __version__ = '0.1'
@@ -36,10 +37,12 @@ __version__ = '0.1'
 if __name__ == '__main__':
     # Parse argumennts
     parser = get_default_arg_parser("Model Search")
+    parser.add_argument('-metric', type=str,
+                       help='the metric to use to compare the models')
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json provided for the search')
     parser.add_argument('-file1', type=argparse.FileType('r'),
-                       help='the problem json provided for the search')
+                       help='the set of models to score')
     args = parser.parse_args()
 
     if args.is_test is not None:
@@ -66,39 +69,33 @@ if __name__ == '__main__':
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
-    # Get the Problem Doc to forulate the Pipeline request
-    logger.debug("Problem input: %s" % args.file1)
-    prob = ProblemDesc.from_file(args.file1)
-    logger.debug("Got Problem Description: %s" % prob.print())
+    # Read in the the models from tsv
+    reader = csv.reader(args.file1, delimiter='\t')
+    rows = [row for row in reader]
 
+    solns = {}
+    for i, mdl in enumerate(rows[1]):
+        solns[rows[0][i]] = Model.from_json(mdl)
+	
+    
     # Init the server connection
-    address = config.get("TA2", 'ta2_url')
+    address = config.get_ta2_url()
     
     logger.info("using server at address %s" % address)
     serv = TA2Client(address)
-    serv.hello()
 
-    # Search for solutions
-    search_id = serv.search_solutions(prob, ds)
-    soln_ids = serv.get_search_solutions_results(search_id)
-    if soln_ids is None:
-        raise Exception("No solution returned")
-    
-    # Get Model for each solution returned
-    solns = {}
-    for soln_id in soln_ids:
-        solns[soln_id] = serv.describe_solution(soln_id)
-        logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
+    # Crete the metric(s) to use in the score request
+    metric = Metric(args.metric)
 
     # Get Score for each solution
-    # score_req_ids = {}
-    # for soln_id in solns:
-        # soln = solns[soln_id]
-        # score_req_ids[soln.id] = serv.score_solution(soln, ds)
-    # scores = {}
-    # for sid in score_req_ids:
-        # results = serv.get_score_solution_results(score_req_ids[sid])
-        # scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+    score_req_ids = {}
+    for soln_id in solns:
+        soln = solns[soln_id]
+        score_req_ids[soln.id] = serv.score_solution(soln, ds, metrics=[metric])
+    scores = {}
+    for sid in score_req_ids:
+        results = serv.get_score_solution_results(score_req_ids[sid])
+        scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
 
 
     # serv.end_search_solutions(search_id)
@@ -121,29 +118,20 @@ if __name__ == '__main__':
 
     
 
-    # serv.end_search_solutions(search_id)
-
-    ### End testing code ###
-   
-    # Write the received solutions to file
-    for sid, soln in solns.items():
-        logger.debug("###########################################")
-        logger.debug("Received solution: %s" % str(soln.to_dict()))
-        logger.debug("###########################################")
         
-    out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
+    out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
     with open(out_file_path, 'w') as out_file:
         out = csv.writer(out_file, delimiter='\t')
-        out.writerow([solns[sln].id for sln in solns])
-        out.writerow([solns[sln].to_dict() for sln in solns])
-        # out.writerow([scores[sln].to_dict() for sln in solns])
-
-    # Write dataset info to output file
-    out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
-    ds.to_component_out_file(out_file_path)
-    if args.is_test == 1:
-        # Write out human readable version for debugging
-        ds.to_json_pretty(out_file_path + '.readable')
+        out.writerow([sid for sid in scores])
+        out.writerow([scores[sid].to_dict() for sid in scores])
+        # # out.writerow([scores[sln].to_dict() for sln in solns])
+# 
+    # # Write dataset info to output file
+    # out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
+    # ds.to_component_out_file(out_file_path)
+    # if args.is_test == 1:
+        # # Write out human readable version for debugging
+        # ds.to_json_pretty(out_file_path + '.readable')
 
     # Write Solution workflows to file
 

@@ -54,14 +54,18 @@ input.1.type=model-set
 #output.0.type=dataset
 #output.0.name=datasetDoc.json
 
-output.0.type=model-fitter-set
-output.0.name=model-flows.tsv
+output.0.type=model-scores
+output.0.name=model-scores.tsv
 # For each option, specify the type, name, id and default.
 # Common option types include: FileInputHeader, Enum, xs:string, xs:double
 # If using an enum, the syntax is "Enum(Foo, Bar, Baz)"
 # If the 'default' looks like a regular expression, we'll try to treat it as such.
 # The options will be passed to your program as command-line args using the option name.
 # For example, the following option is available to your program as "-kc_model <string>"
+option.0.type=Enum(METRIC_UNDEFINED, ACCURACY, F1, F1_MICRO, F1_MACRO, ROC_AUC, ROC_AUC_MICRO, ROC_AUC_MACRO, MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR_AVG, MEAN_ABSOLUTE_ERROR, R_SQUARED, NORMALIZED_MUTUAL_INFORMATION, JACCARD_SIMILARITY_SCORE, PRECISION_AT_TOP_K, LOSS)
+option.0.name=metric
+option.0.id=metric
+option.0.default=ACCURACY
 #option.0.type=FileInputHeader
 #option.0.name=kc_model
 #option.0.id=KC_Model
