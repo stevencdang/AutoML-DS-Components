@@ -76,23 +76,10 @@ if __name__ == '__main__':
     rows = [row for row in reader]
     reader.close()
     # Initialize the set of models by model id
-    #first fow is model IDs
     solns = {Model(mid) for mid in rows[0]}
     for i, mid in enumerate(rows[0]):
-        solns[mid] = Model
+        solns[mid] = Model.from_json(rows[1][i])
 
-
-    # second row has model info
-    for
-    solns[
-    prob = ProblemDesc.from_file(args.file1)
-    logger.debug("Got Problem Description: %s" % prob.print())
-
-    solns = {}
-    for i, mdl in enumerate(rows[1]):
-        solns[rows[0][i]] = Model.from_json(mdl)
-	
-    
     # Init the server connection
     address = config.get_ta2_url()
     
