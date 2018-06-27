@@ -258,3 +258,29 @@ VALUES (
 	'1.0', 
 	'Allow user to generate predictions on a dataset given a fitted model'
 );
+REPLACE INTO `workflow_component` (
+	`component_type`,
+	`component_name`,
+	`tool_dir`,
+	`schema_path`,
+	`interpreter_path`,
+	`tool_path`,
+	`enabled`,
+	`author`,
+	`citation`,
+	`version`,
+	`info`
+)
+VALUES (
+	'Analysis',
+	'Model_Selector',
+	'/datashop/workflow_components/ModelSelector/',
+	'/datashop/workflow_components/ModelSelector/schemas/ModelSelector_v1_0.xsd',
+	'/usr/bin/java -jar',
+	'/datashop/workflow_components/ModelSelector/dist/ModelSelector-1.0.jar', 
+	1,
+	'system',
+	'Steven_C_Dang',
+	'1.0', 
+	'Allow user to select a model from a list of models'
+);
