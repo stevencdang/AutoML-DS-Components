@@ -3,6 +3,7 @@
       <!--<xs:element name="model-fitter-set" substitutionGroup="json" />-->
       <xs:element name="fit-model" substitutionGroup="json" />
       <xs:element name="modeling-problem" substitutionGroup="json" />
+      <xs:element name="model" substitutionGroup="json" />
 
   <xs:element name="dataset" substitutionGroup="tab-delimited" />
   <xs:element name="dataset-list" substitutionGroup="tab-delimited" />

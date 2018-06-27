@@ -124,7 +124,7 @@ cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
-cp "$srcdir"/test/dataset-list.tsv "$cdir"/test/components/dataset-list.tsv
+cp "$srcdir"/test/model-flows.tsv "$cdir"/test/components/
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
 echo "Copied setup files to new component directory from source directory"
 
