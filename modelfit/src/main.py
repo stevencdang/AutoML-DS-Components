@@ -111,3 +111,8 @@ if __name__ == '__main__':
         writer.writerow(row4)
 
 
+    out_file_path = path.join(args.workingDir, config.get('Output', 'data_out_file'))
+    # Just write out original dataset for now without adding in the fitted data
+    ds.to_component_out_file(out_file_path)
+    if args.is_test == 1:
+        ds.to_json_pretty(out_file_path + '.readable')
