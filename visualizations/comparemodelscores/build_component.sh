@@ -10,20 +10,25 @@
 #       and the runWCC.sh script [default is cwd]
 #   2. The name of the properties file that the runWCC consumes
 
-# Write all echo statements to gen_component.log
-dir=$(pwd)
-LOG_FILE="$dir"/gen_component.log
-# Remove the log file if it exists
-if [ -f "$LOG_FILE" ]; then
-    rm $LOG_FILE
-fi
-exec 3>&1 1>>${LOG_FILE} 2>&1
-
 # Handle help request
 if [ "$1" == "--help" ]; then
     echo "Usage: build_component.sh [path_to_parent_of_runWCC.sh] [propFile]"
     exit 0
 fi
+
+# Check if correct numer of arguments are given
+if [ "$#" != 2 ]; then
+    ( >&2 echo "Extra Usage: build_component.sh [path_to_parent_of_runWCC.sh] [propFile]" )
+    exit 0
+fi
+
+# Write all echo statements to gen_component.log
+dir=$(pwd)
+LOG_FILE="$dir"/gen_component.log
+if [ -f $LOG_FILE ]; then
+    rm $LOG_FILE
+fi
+exec 3>&1 1>>${LOG_FILE} 2>&1
 
 # Handle the path argument to the runWCC.sh
 if [ "$#" -gt 0 ]; then
@@ -60,34 +65,49 @@ else
 fi
 
 # Handle the argument specifying where the wcc.properties file is
-wcctemp=$(pwd)/wcc.properties.template
-#wccdir=$(pwd)
+wcc=$(pwd)/wcc.properties
 
 if [ "$#" -gt 1 ]; then
     if [[ "$2" = /* ]]; then
-        wcctemp="$2"
+        wcc="$2"
     else
-        wcctemp="$(pwd)/$2"
+        wcc="$(pwd)/$2"
     fi
 fi
 
-if [ ! -f "$wcctemp" ]; then
+if [ ! -f "$wcc" ]; then
     echo "ERROR: Could not find wcc.properties file at $wcc"
     exit 1
 else
     echo "Running using properties file: $wcc"
 fi
 
-# Generate wcc from wcc template
-wccdir=$(dirname "$wcctemp")
-wcc=$wccdir/wcc.properties
-awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir "/program";next}1' "$wcctemp" > tmp && mv tmp "$wcc"
-
-
 ### Perform pre generation actions ###
 #######################################
+srcdir=$(dirname "$wcc")
+echo "Packaging python source to be built into 'program' directory: $srcdir/program"
+if [ ! -d "$srcdir"/program ]; then
+    mkdir "$srcdir"/program
+else
+    # Clean out the old source before continuing
+    rm -R "$srcdir"/program
+    mkdir "$srcdir"/program
+fi
+
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-./setup_run.sh
+cwd=$(pwd)
+cd $srcdir/src
+# Replicate directory structure
+find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
+# Copy files
+find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.html"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.css"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.js"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src/html -type f -printf %P\\n | xargs -I {} cp "$srcdir"/src/html/{} "$srcdir"/program/html/{}
+
 
 ### Generating new component ###
 ################################
@@ -117,16 +137,13 @@ done < $wcc
 cdir="$dir/$cname"
 
 # Copy component setup scripts to new component directory
-srcdir=$(dirname "$wcc")
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
-cp "$srcdir"/build.xml "$cdir"/
+cp "$srcdir"/test/dataset_pred.json.sample "$cdir"/test/components/dataset_pred.json
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
-cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/
-cp "$srcdir"/test/model-flows.tsv "$cdir"/test/components/
 echo "Copied setup files to new component directory from source directory"
 
 # Create dir for writing logs
@@ -136,7 +153,6 @@ for file in $(find "$cdir"/program -name "settings.cfg"); do
     awk -v cdir=$cdir '/file_log_path/{print "file_log_path = " cdir "/logs";next}1' "$file" > tmp && mv tmp "$file"
 done
 
-
 # Create build.properties.sample
 echo "component.interpreter.path=/usr/local/bin/python" > "$cdir"/build.properties.sample
 echo "component.program.path=program/main.py" >> "$cdir"/build.properties.sample
@@ -145,16 +161,14 @@ echo "component.program.path=program/main.py" >> "$cdir"/build.properties.sample
 cd "$cdir"
 ./install_component.sh
 echo "Ran install script"
-./gen_add_component.sh
-echo "Generated add_component.sql"
 
 # Altering auto generated Java (This will vary for each component) #
 ####################################################################
 # Getting path to java
-for file in $(find "$cdir"/source -name "*.java"); do
-    echo "Editing java file: " $file
+for file in $(find "$cdir"/program -name "settings.cfg"); do
+    echo $file
     # Adding line to expose metadata to downstream components
-    awk '/The addMetaData/{print $0 RS "\t\tthis.addMetaData(\"d3m-dataset\", 0, META_DATA_LABEL, \"label0\", 0, null);" RS;next}1' "$file" > tmp && mv tmp "$file"
+    #awk '/The addMetaData/{print $0 RS "\t\tthis.addMetaData(\"d3m-dataset\", 0, META_DATA_LABEL, \"label0\", 0, null);" RS;next}1' "$file" > tmp && mv tmp "$file"
 done
 
 # Altering auto generated test xml (This will vary for each component) #
@@ -162,19 +176,19 @@ done
 for file in $(find "$cdir"/test/components -name "*.xml"); do
     echo "Editing test xml: " $file
     # Inserting path to test file into test xml
-    awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/datasetDoc.json</file_path>";next}1' "$file" > tmp && mv tmp "$file"
+    awk -v cdir="$cdir" '/<file_path>/{print "<file_path>" cdir "/test/components/dataset_pred.json</file_path>";next}1' "$file" > tmp && mv tmp "$file"
     # Inserting name of test file into test xml
-    awk -v cdir="$cdir" '/<file_name>/{print "<file_name>datasetDoc.json</file_name>";next}1' "$file" > tmp && mv tmp "$file"
+    awk -v cdir="$cdir" '/<file_name>/{print "<file_name>dataset_pred.json</file_name>";next}1' "$file" > tmp && mv tmp "$file"
 done
 
-# Run a test of the component using ant #
-#########################################
-#echo "Running 'ant runComponent' to test the component install"
-#`ant runComponent`
+# run 'and runComponent' to buildthe files after installing #
+#############################################################
+#echo "Building and testing component from terminal"
+#ant runComponent
 
-# Remove generated wcc.properties before completing
-rm $wcc
+
 # Return to current working directory after completion
 cd "$cwd"
-echo "Make sure to look at <ComponentDir>/program/settings.cfg to ensure all settings are correct for the local machine" 1>&3
-echo "Build component completed"
+
+# Clean up generated files
+rm wcc.properties

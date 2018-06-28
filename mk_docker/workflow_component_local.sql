@@ -117,32 +117,6 @@ REPLACE INTO `workflow_component` (
 )
 VALUES (
 	'Analysis',
-	'Problem_Target_Selector',
-	'/datashop/workflow_components/ProblemTargetSelector/',
-	'/datashop/workflow_components/ProblemTargetSelector/schemas/ProblemTargetSelector_v1_0.xsd',
-	'/usr/bin/java -jar',
-	'/datashop/workflow_components/ProblemTargetSelector/dist/ProblemTargetSelector-1.0.jar', 
-	1,
-	'system',
-	'Steven_C_Dang',
-	'1.0', 
-	'Allow user to select problem target from columns of a dataset from a dataset repository'
-);
-REPLACE INTO `workflow_component` (
-	`component_type`,
-	`component_name`,
-	`tool_dir`,
-	`schema_path`,
-	`interpreter_path`,
-	`tool_path`,
-	`enabled`,
-	`author`,
-	`citation`,
-	`version`,
-	`info`
-)
-VALUES (
-	'Analysis',
 	'Problem_Task_Selector',
 	'/datashop/workflow_components/ProblemTaskSelector/',
 	'/datashop/workflow_components/ProblemTaskSelector/schemas/ProblemTaskSelector_v1_0.xsd',
@@ -283,4 +257,56 @@ VALUES (
 	'Steven_C_Dang',
 	'1.0', 
 	'Allow user to select a model from a list of models'
+);
+REPLACE INTO `workflow_component` (
+	`component_type`,
+	`component_name`,
+	`tool_dir`,
+	`schema_path`,
+	`interpreter_path`,
+	`tool_path`,
+	`enabled`,
+	`author`,
+	`citation`,
+	`version`,
+	`info`
+)
+VALUES (
+	'Analysis',
+	'Problem_Creator',
+	'/datashop/workflow_components/ProblemCreator/',
+	'/datashop/workflow_components/ProblemCreator/schemas/ProblemCreator_v1_0.xsd',
+	'/usr/bin/java -jar',
+	'/datashop/workflow_components/ProblemCreator/dist/ProblemCreator-1.0.jar', 
+	1,
+	'system',
+	'Steven_C_Dang',
+	'1.0', 
+	'Allow user to select problem target from columns of a dataset from a dataset repository'
+);
+REPLACE INTO `workflow_component` (
+	`component_type`,
+	`component_name`,
+	`tool_dir`,
+	`schema_path`,
+	`interpreter_path`,
+	`tool_path`,
+	`enabled`,
+	`author`,
+	`citation`,
+	`version`,
+	`info`
+)
+VALUES (
+	'Visualization',
+	'Compare_Model_Scores',
+	'/datashop/workflow_components/CompareModelScores/',
+	'/datashop/workflow_components/CompareModelScores/schemas/CompareModelScores_v1_0.xsd',
+	'/usr/bin/java -jar',
+	'/datashop/workflow_components/CompareModelScores/dist/CompareModelScores-1.0.jar', 
+	1,
+	'system',
+	'Steven_C_Dang',
+	'1.0', 
+	'Generates an interactive html barplot comparing given model scores'
 );

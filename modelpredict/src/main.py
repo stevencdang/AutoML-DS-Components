@@ -96,9 +96,7 @@ if __name__ == '__main__':
     
     # # Write model fit id info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
-    with open(out_file_path, 'w') as out_file:
-        writer = csv.writer(out_file, delimiter='\t')
-        writer.writerow([model.id for model in models])
-        writer.writerow([model.fit for model in models])
-
-
+    logger.info("Writing dataset json to: %s" % out_file_path)
+    ds.to_component_out_file(out_file_path)
+    if args.is_test == 1:
+        ds.to_json_pretty(out_file_path + '.readable')
