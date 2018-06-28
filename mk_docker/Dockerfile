@@ -105,28 +105,32 @@ RUN Rscript -e "install.packages('lme4', repos = 'http://cran.cnr.berkeley.edu/'
 # Set the working directory to /datashop
 WORKDIR /datashop
 
-# Copy the current directory contents into the container at /datashop (includes workflow_components/ and dataset_files/workflows/<X>/ directory)
-ADD . /datashop
-
 # Not ideal to install python packages this way, but it's a trade off for ease of use/re-use.
 #RUN pip3 install --upgrade pip==9.0.2 && rm -R /usr/local/lib/python3.5/dist-packages/pip \
  #&& pip3 install --trusted-host pypi.python.org -r python_3x_requirements.txt \
 ## Update perms to python libs/modules
  #&& chown -R datashop:datashop /usr/local/lib/python3.5/
 # Pinning to pip 9.0.2 because  higher versions are not compatible with ubuntu 16.04
+ADD python_3x_requirements.txt /datashop/python_3x_requirements.txt
 RUN pip3 install --upgrade pip==9.0.2 && \
  pip3 install --trusted-host pypi.python.org -r python_3x_requirements.txt && \
  pip3 install virtualenv
 
 # Install Python 3.6 from source
-RUN tar xvf Python-3.6.3.tar.xz && cd Python-3.6.3/ && ./configure && make && sudo make install 
+ADD Python-3.6.3 /datashop/Python-3.6.3
+RUN cd Python-3.6.3/ && ./configure && make && sudo make install 
 
 # Generate D3M Components from into workflow_components directory
 #RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh /datashop/d3m_components 2>&1 > \
     #/datashop/d3m_components/mk_docker/gen_all_components.log
 
+# Copy the current directory contents into the container at /datashop (includes workflow_components/ and dataset_files/workflows/<X>/ directory)
+# ADD . /datashop
+
 
 # Tetrad components have a hard-coded path in the build.xml; accommodate this
+ADD workflow_components /datashop/workflow_components
+ADD tools /datashop/tools
 RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
  && ln -s /usr/bin/java /usr/java/jdk1.8.0_131/bin/java \
  && ln -s /usr/bin/javac /usr/java/jdk1.8.0_131/bin/javac \
@@ -157,6 +161,12 @@ RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
 
 
 # Change /datashop permissions
+ADD sql /datashop/sql
+ADD no-ssl-10_1_10_patch /datashop/no-ssl-10_1_10_patch
+ADD init /datashop/init
+ADD extlib /datashop/extlib
+ADD example_data /datashop/example_data
+ADD docker_datashop /datashop/docker_datashop
 RUN chmod ug+rwx,o+rx /datashop \
  && mkdir /datashop/log \
  && find /datashop -type f -exec chmod ug+rw,o+r {} \; \
@@ -177,6 +187,9 @@ RUN chmod ug+rwx,o+rx /datashop \
  && ln -s /tmp/merge_files /var/lib/mysql/merge_files \
  && chmod -R g+rw /datashop/dataset_files
 
+ADD jboss-4.2.0.GA_docker.zip /datashop/jboss-4.2.0.GA_docker.zip
+ADD jboss-server-oli-deployment.zip /datashop/jboss-server-oli-deployment.zip
+ADD etc /datashop/etc
 RUN unzip jboss-4.2.0.GA_docker.zip && \
   mv jboss-4.2.0.GA /opt/ && \
   ln -s /opt/jboss-4.2.0.GA/ /opt/jboss && \
@@ -200,6 +213,7 @@ RUN unzip jboss-4.2.0.GA_docker.zip && \
 RUN chmod ug+x /datashop/init/update.sh
 
 # Create a variables.sh with a default "vm" configuration
+ADD deploy /datashop/deploy
 RUN cat /datashop/tools/variables.sh.template | \
   sed "s/MYSQL_HOST=<CHANGEME>/MYSQL_HOST=localhost/g" | \
   sed "s/SUBDIR=<CHANGEME>/SUBDIR=vm/g" | \
@@ -236,17 +250,17 @@ RUN echo "ServerName localhost" | tee /etc/apache2/conf-available/fqdn.conf && a
   /etc/libapache2-mod-jk/workers.properties \
  && sed -i '45i\    JkMount  /*  ajp13_worker\' /etc/apache2/mods-available/jk.conf \
 # Enable HTTPS, create self-signed certificate for https/apache2, and add JK-mod mount definitions.
- && ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/000-default-ssl.conf \
+ #&& ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/000-default-ssl.conf \
  && sed -i 's#^.*DocumentRoot.*$#&\n<IfModule mod_jk.c> \nJkMountFile /etc/libapache2-mod-jk/workers.properties \nJkMount         /*     ajp13_worker \n</IfModule>#' \
   /etc/apache2/sites-available/000-default.conf \
  && sed -i 's#^.*DocumentRoot.*$#&\n<IfModule mod_jk.c> \nJkMountFile /etc/libapache2-mod-jk/workers.properties \nJkMount         /*     ajp13_worker \n</IfModule>#' \
   /etc/apache2/sites-available/default-ssl.conf \
- && sed -i "s#[ \t]\+SSLCertificateFile[ \t]\+.*#\t\tSSLCertificateFile\t/etc/apache2/ssl/server.crt#g" /etc/apache2/sites-enabled/000-default-ssl.conf \
- && sed -i "s#[ \t]\+SSLCertificateKeyFile[ \t]\+.*#\t\tSSLCertificateKeyFile\t/etc/apache2/ssl/server.key#g" /etc/apache2/sites-enabled/000-default-ssl.conf \
+ && sed -i "s#[ \t]\+SSLCertificateFile[ \t]\+.*#\t\tSSLCertificateFile\t/etc/apache2/ssl/server.crt#g" /etc/apache2/sites-available/default-ssl.conf \
+ && sed -i "s#[ \t]\+SSLCertificateKeyFile[ \t]\+.*#\t\tSSLCertificateKeyFile\t/etc/apache2/ssl/server.key#g" /etc/apache2/sites-available/default-ssl.conf \
  && mkdir /etc/apache2/ssl \
  && openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key \
-  -subj "/C=US/ST=PA/L=Pittsburgh/O=Carnegie Mellon University/OU=Human Computer Interaction Institute/CN=localhost" \
- && a2enmod ssl
+  -subj "/C=US/ST=PA/L=Pittsburgh/O=Carnegie Mellon University/OU=Human Computer Interaction Institute/CN=localhost" 
+ #&& a2enmod ssl
 
 # Create logging property files from the templates
 RUN cp /datashop/deploy/log4j-discoursedb.properties.template /datashop/deploy/log4j-discoursedb.properties \
@@ -269,14 +283,15 @@ RUN ant filter.db.password \
 WORKDIR /datashop/deploy
 
 ############ For Development ################
-RUN cp /datashop/.vimrc /home/datashop/ \
-    && echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
+ADD .vimrc /home/datashop
+RUN echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
     && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile
     
 ############ End Development ################
 
 
 # Setup SSH server
+ADD ssh /datashop/ssh
 RUN mkdir /var/run/sshd \
  && mkdir -p /home/datashop/.ssh \
  && touch /home/datashop/.ssh/authorized_keys \
@@ -298,6 +313,12 @@ RUN mkdir /var/run/sshd \
 # RUN echo "datashop ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Make ports 443 (HTTPS), 80 (HTTP), and 22 (SSH) available to the outside world (0.0.0.0)
+ADD start.sh /datashop/start.sh
+RUN chmod ug+rwx,o+rx /datashop/start.sh \
+    && chown datashop:datashop /datashop/start.sh
+
+ADD d3m_components /datashop/d3m_components
+
 EXPOSE 443 80 22
 CMD ["/bin/bash", "/datashop/start.sh"]
 
