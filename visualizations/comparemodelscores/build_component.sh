@@ -186,8 +186,9 @@ done
 #echo "Building and testing component from terminal"
 #ant runComponent
 
-# Clean up generated files
-rm $wcc
 
 # Return to current working directory after completion
 cd "$cwd"
+
+# Clean up generated files
+rm wcc.properties

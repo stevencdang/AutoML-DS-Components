@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=VisualizationDescribeData
+component.name=CompareModelScores
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -35,7 +35,7 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Generates an interactive html app that can generate descriptive statistics of each column in a dataset
+component.description=Generates an interactive html boxplot of the given model scores
 
 # The number of inputs for the new component. 
 component.num_inputs=1
@@ -47,7 +47,7 @@ component.num_outputs=1
 component.num_options=0
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
-input.0.type=d3m-dataset
+input.0.type=model-scores
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 output.0.type=inline-html
