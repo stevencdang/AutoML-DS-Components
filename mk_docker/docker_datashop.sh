@@ -177,34 +177,22 @@ git clone https://stevencdang@bitbucket.org/stevencdang/learnsphere_workflow_com
 wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz  && tar xvf Python-3.6.3.tar.xz
 #cd $DS_DIRECTORY
 
-echo "#####################################################"
-echo "#####################################################"
-echo "#####################################################"
 cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
 
-echo "#####################################################"
 cp $DS_DIRECTORY/docker_datashop/no-ssl-10_1_10_patch/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
 
-echo "#####################################################"
-echo "#####################################################"
-echo "#####################################################"
-### Copy files for D3m builds ###
 #################################
 # Copy Dockerfile to override standard one
 cp $CWD/Dockerfile $DS_DIRECTORY/
-echo "#####################################################"
 # OVerwrive component generation script
 cp $CWD/setup_d3m_components.sh $DS_DIRECTORY/d3m_components/mk_docker/ # this is only during dev
-echo "#####################################################"
 # Overwrite the docker start script
 cp $CWD/start.sh $DS_DIRECTORY/start.sh
-echo "#####################################################"
 # Overwrite the sql script that adds components
 cp $CWD/workflow_component_local.sql $DS_DIRECTORY/sql/
-echo "#####################################################"
 # Add a .vimrc file for development
 cp $CWD/.vimrc $DS_DIRECTORY/
-echo "#####################################################"
+cp $CWD/.gitconfig $DS_DIRECTORY/
 
 #docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
 #docker build -t ds_image_alpha .

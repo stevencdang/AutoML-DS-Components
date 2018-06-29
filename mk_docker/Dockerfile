@@ -283,7 +283,8 @@ RUN ant filter.db.password \
 WORKDIR /datashop/deploy
 
 ############ For Development ################
-ADD .vimrc /home/datashop
+ADD .vimrc /home/datashop/
+ADD .gitconfig /home/datashop/
 RUN echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
     && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile
     

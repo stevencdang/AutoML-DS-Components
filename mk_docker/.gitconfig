@@ -1,0 +1,12 @@
+[push]
+	default = matching
+[user]
+    email = stevencdang@gmail.com
+    name = Steven C Dang
+[core]
+	editor = vim
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
