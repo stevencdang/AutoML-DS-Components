@@ -141,6 +141,7 @@ cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
+cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 cp "$srcdir"/test/dataset_pred.json.sample "$cdir"/test/components/dataset_pred.json
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
@@ -191,4 +192,5 @@ done
 cd "$cwd"
 
 # Clean up generated files
-rm wcc.properties
+rm $wcc
+

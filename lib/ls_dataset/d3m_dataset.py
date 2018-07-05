@@ -9,7 +9,6 @@ import os
 from io import IOBase
 import json
 import csv
-import ast
 
 from ls_dataset.ls_dataset import LSDataset
 from ls_dataset.dsr_factory import DatasetResourceFactory

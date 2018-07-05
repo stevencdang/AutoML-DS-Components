@@ -12,6 +12,10 @@ import argparse
 import itertools
 from shutil import copytree, rmtree, copyfile
 import requests
+import pandas as pd
+import plotly as py
+import plotly.graph_objs as go
+
 
 # import pandas as pd
 # import numpy as np
@@ -29,6 +33,7 @@ from ls_utilities.ls_wf_settings import *
 
 from ls_dataset.d3m_dataset import D3MDataset
 from modeling.models import *
+from modeling.component_out import *
 from modeling.scores import *
 
 __version__ = '0.1'
@@ -73,18 +78,47 @@ if __name__ == '__main__':
     logger.info("Generating an interactive interface for getting single variable descriptive statistics")
     logger.debug("Running Describe Data with arguments: %s" % str(args))
 
-    # Get html from Viz Server
-    server_addr = "http://glacier.andrew.cmu.edu:8050"
-    viz_url = server_addr + "/viz/viz1"
-    html = requests.get(viz_url)
+    # Read in model scores
+    logger.debug("Model Score file: %s" % args.file0)
+    m_index, scores, models = ModelScoreSetIO.from_file(args.file0)
 
-    # Write html to output file
+    ### Parse through model scores to get dataframe of scores
+    # Determine number of scores to  plot:
+    sample_scores = len(scores[m_index[0]].scores)
+    score_data = {score.metric.type: [] for score in scores[m_index[0]].scores}
+    metrics = [score.metric.type for score in scores[m_index[0]].scores]
+    score_data['index'] = range(len(m_index))
+
+    for sid in scores:
+        score_set = scores[sid]
+        logger.debug("Adding score data for model with id: %s" % score_set.mid)
+        for score in score_set.scores:
+            logger.debug("appending score for metric: %s\tvalue: %s" % 
+                    (score.metric.type, score.value.value))
+            logger.debug("Score value tyep: %s" % type(score.value.value))
+            score_data[score.metric.type].append(score.value.value)
+            
+    data = pd.DataFrame(score_data)
+    logger.debug("Converted Score data to dataframe: %s" % str(data.head(20)))
+    # Sort models by metric
+    sorted_data = data.sort_values(by=[metrics[0]])
+    logger.debug(sorted_data[metrics[0]])
+    logger.debug(sorted_data['index'])
+
+
+    # Format data for plot
+    plot_data = [go.Bar(
+        x=sorted_data['index'],
+        y=sorted_data[metrics[0]]
+        )]
+
+    # Get  html to output file path
     out_file_path = path.join(args.workingDir, 
                               config.get('Output', 'out_file')
                               )
     logger.info("Writing output html to: %s" % out_file_path)
-    with open(out_file_path, 'w') as out_file:
-        out_file.write(html.text)
+    plot_url = py.offline.plot(plot_data, filename=out_file_path)
+
     
 
     # Generate html from template and write to output file
