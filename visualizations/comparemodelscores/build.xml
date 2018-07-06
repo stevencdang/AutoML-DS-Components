@@ -1,73 +1,106 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<!-- By default, only the Clean and Build commands use this build script. -->
-<!-- Commands such as Run, Debug, and Test only use this build script if -->
-<!-- the Compile on Save feature is turned off for the project. -->
-<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
-<!-- in the project's Project Properties dialog box.-->
-<project name="WorkflowComponents" default="default" basedir=".">
-    <description>Builds, tests, and runs the project WorkflowComponents.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
+<project name="CompareModelScores" default="dist" basedir=".">
+    <description>
+        Python-based CompareModelScores workflow component.
+    </description>
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+    <!-- set global properties for this build -->
+    <property file="build.properties" />
+    <property name="source" location="${basedir}/source" />
+    <property name="build" location="${basedir}/build" />
+    <property name="dist" location="${basedir}/dist" />
+    <property name="lib" location="../CommonLibraries" />
+    <property name="javadoc" location="${basedir}/javadoc" />
+    <property name="env" location="${basedir}/env" />
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
+    <property name="version" value="1.0" />
 
-    (Targets beginning with '-' are not intended to be called on their own.)
+    <property name="component.id" value="CompareModelScores" />
+    <property name="component.version" value="v${version} 2018" />
 
-    Example of inserting an obfuscator after compilation could look like this:
+    <property name="ToolTemplate.jar" value="${dist}/${component.id}-${version}.jar" />
 
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
+    <path id="lib.path">
+        <fileset dir="${lib}">
+            <include name="**/**.jar" />
+        </fileset>
+    </path>
 
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
+    <target name="dist" depends="compile" description="generate the distribution">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}" />
 
+        <path id="build-classpath">
+            <fileset dir="${lib}">
+                <include name="*.jar" />
+            </fileset>
+        </path>
+        <manifestclasspath property="lib.list" jarfile="${ToolTemplate.jar}">
+            <classpath refid="build-classpath" />
+        </manifestclasspath>
+        <jar jarfile="${ToolTemplate.jar}" basedir="${build}" includes="edu/cmu/learnsphere/d3m/visualization/**">
+            <manifest>
+                <attribute name="Main-Class" value="edu.cmu.learnsphere.d3m.visualization.CompareModelScoresMain" />
+                <attribute name="Class-Path" value="${lib.list}" />
+            </manifest>
+        </jar>
+    </target>
 
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
+    <path id="run.classpath">
+        <pathelement path="${ToolTemplate.jar}" />
+        <path refid="lib.path" />
+        <pathelement path="." />
+    </path>
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar:                  JAR building
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
+    <target name="init" depends="env">
+        <!-- Create the time stamp in DSTAMP -->
+        <tstamp />
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}" />
+        <mkdir dir="${dist}" />
+    </target>
 
-    An example of overriding the target for project execution could look like this:
+    <target name="env" description="setup the local component python env">
+        <exec executable="/bin/bash" >
+            <arg value="${basedir}/install_component.sh"/>
+        </exec>
+    </target>
 
-        <target name="run" depends="WorkflowComponents-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
+    <target name="compile" depends="init" description="compile the source ">
+        <!-- Compile the java code from ${source} into ${build} -->
+        <javac srcdir="${source}" destdir="${build}" debug="on">
+            <classpath refid="lib.path" />
+        </javac>
+    </target>
 
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
+    <!-- Delete the temporary directories. -->
+    <target name="clean" description="clean up">
+        <delete dir="${build}" />
+        <delete dir="${dist}" />
+        <delete dir="${javadoc}" />
+        <delete dir="${env}" />
+    </target>
 
-    -->
+    <target name="javadoc" depends="compile" description="Create javadoc documentation">
+        <mkdir dir="${javadoc}" />
+        <javadoc sourcepath="${source}" destdir="${javadoc}" packagenames="*.*" author="true" private="true" version="true" doctitle="&lt;h1&gt;${component.id} (Version ${component.version})&lt;/h1&gt;" windowtitle="${component.id} (Version ${component.version})">
+            <classpath refid="lib.path" />
+        </javadoc>
+    </target>
+
+    <target name="runComponent" depends="clean, compile, dist" description="executes CompareModelScores">
+        <java classname="edu.cmu.learnsphere.d3m.visualization.CompareModelScoresMain" fork="true">
+            <classpath refid="run.classpath" />
+            <arg value="-componentXmlFile" />
+            <arg value="${basedir}/test/components/ComponentCompareModelScores.xml" />
+            <arg value="-workflowDir" />
+            <arg value="${basedir}/test/" />
+            <arg value="-toolDir" />
+            <arg value="${basedir}/" />
+            <arg value="-schemaFile" />
+            <arg value="${basedir}/schemas/CompareModelScores_v1_0.xsd" />
+            <jvmarg value="-Xmx1048m"/>
+            <!-- <arg value="-preprocess" /> Use this flag to test component pre-processing. -->
+
+        </java>
+    </target>
 </project>
