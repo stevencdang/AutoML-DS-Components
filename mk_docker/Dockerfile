@@ -34,6 +34,7 @@ RUN apt-get update \
         net-tools \
         wget \
         git-core \
+        ed \
     # SSH access
         openssh-server \
     # Node JS
@@ -319,6 +320,10 @@ RUN chmod ug+rwx,o+rx /datashop/start.sh \
     && chown datashop:datashop /datashop/start.sh
 
 ADD d3m_components /datashop/d3m_components
+RUN chown -R datashop:datashop /datashop/d3m_components
+
+# Remove IPv6 lookups 
+RUN printf ",g/ip6/d\nw\nq\n" | ed /etc/hosts
 
 EXPOSE 443 80 22
 CMD ["/bin/bash", "/datashop/start.sh"]

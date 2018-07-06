@@ -70,6 +70,8 @@ cat >> /etc/security/limits.conf << EOF
 
 EOF
 
+# Remote ipv6 lines from /etc/hosts
+sudo printf ",g/ip6/d\nw\nq\n" | sudo ed /etc/hosts
 
 service apache2 start
 
