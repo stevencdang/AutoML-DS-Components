@@ -122,6 +122,7 @@ cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
+cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 cp "$srcdir"/test/datasetDoc.tsv "$cdir"/test/components/datasetDoc.tsv
 cp "$srcdir"/test/problemTask.tsv "$cdir"/test/components/
