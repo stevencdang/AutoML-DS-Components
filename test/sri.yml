@@ -1,0 +1,28 @@
+version: "2"
+services:
+    tigris:
+        image: 
+            registry.datadrivendiscovery.org/sdang/cmu-ta3:live-7-7
+        ports:
+            - "9002:80"
+            - "9001:443"
+            - "9000:22"
+        environment:
+            - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
+            - D3MINPUTDIR=/input
+            - D3MOUPUTDIR=/output
+            - TA2ADDR=ta2:45042
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_datasets:/output
+     sri-tpot:
+        image:
+          registry.datadrivendiscovery.org/j18_ta2eval/sri_tpot:latest
+        ports:
+            - "45042:45042"
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/datasets
+            - /rdata/dataStore/d3m/test_datasets:/output
+        command:
+          - ta2_server
+          - /config/search_config.json
