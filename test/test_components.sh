@@ -3,6 +3,12 @@
 # This script will run all the components in a simple test setup. Can be used 
 # to configure the directory after a fresh pull
 
+if [ -z ${D3mCONFIG+x} ]; then 
+    echo "D3MCONFIG not set. setting to:\t"$WCC"/D3M/d3m.cfg"
+    export D3MCONFIG=$WCC/D3M/d3m.cfg
+fi
+
+
 # look of arguments for which components to test were given
 if [ "$#" -gt 0 ]; then
     test_comps="$@"
@@ -24,118 +30,212 @@ fi
 
 echo "Testing components:" $test_comps
 
-cd ..
+cwd=$(pwd)
+echo "Current working directory" $cwd
+log_dir=$cwd/run
+echo "Writing logs to" $log_dir
 
+cd ..
 
 if [[ " ${test_comps[@]} " =~ " datasetimporter " ]]; then
     # Test DatasetImporter
-    cd datasetimporter
-    echo "Running datasetimporter"
-    ./run_component.sh > ../test/run/datasetimporter.log
+    cname=datasetimporter
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " datasetselector " ]]; then
     # Test DatasetSelector
-    cd datasetselector
-    echo "Running datasetselector"
+    cname=datasetselector
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetimporter/test/output/dataset-list.tsv test/
-    ./run_component.sh > ../test/run/datasetselector.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " problemgeneratordefault " ]]; then
     # Test ProblemGeneratorDefault
-    cd problemgeneratordefault
-    echo "Running problemgeneratordefault"
+    cname=problemgeneratordefault
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
-    ./run_component.sh > ../test/run/problemgeneratordefault.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " problemcreator " ]]; then
     # Test ProblemCreator
-    cd problemcreator
-    echo "Running problemcreator"
+    cname=problemcreator
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
-    ./run_component.sh > ../test/run/problemcreator.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " problemtaskselector " ]]; then
     # Test ProblemTaskSelector
-    cd problemtaskselector
-    echo "Running problemtaskselector"
+    cname=problemtaskselector
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
     cp ../problemcreator/test/output/problemTarget.tsv test/
-    ./run_component.sh > ../test/run/problemtaskselector.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " problemmetricselector " ]]; then
     # Test ProblemMetricSelector
-    cd problemmetricselector
-    echo "Running problemmetricselector"
+    cname=problemmetricselector
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
     cp ../problemtaskselector/test/output/problemTask.tsv test/
-    ./run_component.sh > ../test/run/problemmetricselector.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " modelsearch " ]]; then
     # Test modelSearch
-    cd modelsearch
-    echo "Running modelsearch"
+    cname=modelsearch
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
-    cp ../problemmetricselector/test/output/problemDoc.tsv test/
-    ./run_component.sh > ../test/run/modelsearch.log
+    if [ -f ../problemgeneratordefault/test/output/problemDoc.json ]; then
+        cp ../problemgeneratordefault/test/output/problemDoc.json test/
+    elif [ -f ../problemmetricselector/test/output/problemDoc.json ]; then
+        cp ../problemmetricselector/test/output/problemDoc.json test/
+    else
+        echo "Can't run component need to run problem generation components first"
+    fi
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " modelfit " ]]; then
     # Test modelFit
-    cd modelfit
-    echo "Running modelfit"
+    cname=modelfit
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
     cp ../modelsearch/test/output/model-flows.tsv test/
-    ./run_component.sh > ../test/run/modelfit.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " modelpredict " ]]; then
     # Test modelpredict
-    cd modelpredict
-    echo "Running modelpredict"
+    cname=modelpredict
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
     cp ../modelfit/test/output/fit-models.tsv test/
-    ./run_component.sh > ../test/run/modelpredict.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " modelscore " ]]; then
     # Test modelscore
-    cd modelscore
-    echo "Running modelscore"
+    cname=modelscore
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
     cp ../modelsearch/test/output/model-flows.tsv test/
-    ./run_component.sh > ../test/run/modelscore.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " modelselector " ]]; then
     # Test modelselector
-    cd modelselector
-    echo "Running modelselector"
+    cname=modelselector
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../modelsearch/test/output/model-flows.tsv test/
-    ./run_component.sh > ../test/run/modelselector.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ..
 fi
 
 if [[ " ${test_comps[@]} " =~ " comparemodelscores " ]]; then
     # Test comparemodelscores
-    cd visualizations/comparemodelscores
-    echo "Running comparemodelscores"
+    cname=comparemodelscores
+    cd visualizations/$cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
     cp ../modelscore/test/output/model-scores.tsv test/
-    ./run_component.sh > ../test/run/comparemodelscores.log
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
     cd ../..
 fi
