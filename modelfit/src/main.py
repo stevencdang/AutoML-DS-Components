@@ -78,7 +78,10 @@ if __name__ == '__main__':
     # Init the server connection
     address = config.get_ta2_url()
     logger.info("using server at address %s" % address)
-    serv = TA2Client(address)
+    if is_test:
+        serv = TA2Client(address, debug=True, out_dir=args.workingDir)
+    else:
+        serv = TA2Client(address)
     
     # Get fitted solution
     fit_req_ids = {}

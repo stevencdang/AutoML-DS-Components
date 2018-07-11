@@ -93,7 +93,8 @@ class Model(object):
 
         """
         logger.debug("Model outputs: %s" % str(self.model['outputs']))
-        return self.model['outputs'][0]['name']
+        # return self.model['outputs'][0]['name']
+        return self.model['outputs'][0]['data']
 
     @staticmethod
     def from_json(data):
