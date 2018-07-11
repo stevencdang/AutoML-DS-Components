@@ -1,1 +1,0 @@
-{"id": "7168480718650738609", "version": 1.0, "metrics": [{"metric": "ACCURACY"}], "inputs": [{"dataset_id": "185_baseball_dataset", "targets": [{"target_index": 0, "column_index": 18, "column_name": "Hall_of_Fame", "resource_id": "0"}]}], "name": "Test Problem", "description": "Default Problem Description", "task_type": "CLASSIFICATION"}
