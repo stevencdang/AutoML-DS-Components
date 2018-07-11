@@ -291,7 +291,6 @@ class TA2Client(object):
 
         # Add list of outputs to expose
         if outputs is None:
-            logger.debug("ta2 name is %s" % self.name)
             if 'mit' in self.name:
                 logger.debug("Using pipeline format 'describe'")
                 msg.expose_outputs.extend([soln.get_default_output(format='describe')])
@@ -355,8 +354,15 @@ class TA2Client(object):
 
         # Add list of outputs to expose
         if outputs is None:
-            msg.expose_outputs.extend([soln.get_default_output()])
-            msg.expose_value_types.extend(self.__allowed_values__)
+            if 'mit' in self.name:
+                logger.debug("Using pipeline format 'describe'")
+                msg.expose_outputs.extend([soln.get_default_output(format='describe')])
+            else:
+                logger.debug("Using pipeline format 'name'")
+                msg.expose_outputs.extend([soln.get_default_output(format='name')])
+            allowed_vals = [val for val in self.allowed_values if val in self.__allowed_values__]
+            msg.expose_value_types.extend(allowed_vals)
+        
         logger.info("****************************************")
         msg_js = json_format.MessageToJson(msg)
         logger.info("Sending produce solution with msg: %s" % msg_js)
