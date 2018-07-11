@@ -76,14 +76,6 @@ wf_comps=( DatasetImporter \
     CompareModelScores \
 )
 
-cd $dir
-for comp in "${wf_comps[@]}"; do
-    if [ -d $comp ]; then
-        echo "Removing Component:" $comp
-        # rm -Rf $comp
-    fi
-done
-
 do_not_build=( \
     VisualizationDescribeData \
     VisualizationConfusionMatrix \
@@ -119,9 +111,9 @@ for f in $(find . -name "build_component.sh"); do
         cdir="$wcc/$cname"
         if [ -d $cdir ]; then
             echo "Removing old generated WC directory" $cdir
-            # rm -Rf $cdir
+            rm -Rf $cdir
         fi
-        # ./build_component.sh $wcc wcc.properties.template
+        ./build_component.sh $wcc wcc.properties.template
         cd $cdir
         # ant -version
         ant dist -buildfile $cdir/build.xml
@@ -132,7 +124,6 @@ for f in $(find . -name "build_component.sh"); do
         # echo "ANT: Return code is: \""$antReturnCode"\""
 
     fi
-    ant -version
     echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
     cd $cwd
 done
