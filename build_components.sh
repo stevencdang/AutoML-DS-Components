@@ -119,7 +119,10 @@ for f in $(find . -name "build_component.sh"); do
         ant dist -buildfile $cdir/build.xml
         # buildOutput=`ant dist`
         # echo ${buildOutput} >> build_errors_info.txt
-        # antReturnCode=$?
+        antReturnCode=$?
+        if [ $antReturnCode -ne 0 ]; then
+            echo "Error encountered while genarating component: " $cname
+        fi
 
         # echo "ANT: Return code is: \""$antReturnCode"\""
 
