@@ -28,7 +28,7 @@ class TA2Client(object):
     __protocol_version__ = core_pb2.DESCRIPTOR.GetOptions().Extensions[core_pb2.protocol_version]
     __allowed_values__ = [value_pb2.RAW, value_pb2.DATASET_URI, value_pb2.CSV_URI]
     
-    def __init__(self, addr, debug=False, out_dir=None):
+    def __init__(self, addr, debug=False, out_dir=None, name=None):
         logger.info("Initializing TA2 Client with address: %s" % addr)
         self.addr = addr
         self.debug = debug
@@ -36,6 +36,7 @@ class TA2Client(object):
             self.out_dir = out_dir
         else:
             self.out_dir = ""
+        self.name = name
 
         channel = grpc.insecure_channel(addr)
         self.serv = core_pb2_grpc.CoreStub(channel)
@@ -290,8 +291,15 @@ class TA2Client(object):
 
         # Add list of outputs to expose
         if outputs is None:
-            msg.expose_outputs.extend([soln.get_default_output()])
-            msg.expose_value_types.extend(self.__allowed_values__)
+            logger.debug("ta2 name is %s" % self.name)
+            if 'mit' in self.name:
+                logger.debug("Using pipeline format 'describe'")
+                msg.expose_outputs.extend([soln.get_default_output(format='describe')])
+            else:
+                logger.debug("Using pipeline format 'name'")
+                msg.expose_outputs.extend([soln.get_default_output(format='name')])
+            allowed_vals = [val for val in self.allowed_values if val in self.__allowed_values__]
+            msg.expose_value_types.extend(allowed_vals)
         
         if self.debug:
             with open(os.path.join(self.out_dir, 'model.json'), 'w') as model_file:
