@@ -36,4 +36,5 @@ wcc.properties*
 test/datasetDoc.tsv
 test/datasetDoc.tsv.*
 !test/datasetDoc.tsv.sample
+test/problemDoc.json
 !test/problemDoc.json.sample

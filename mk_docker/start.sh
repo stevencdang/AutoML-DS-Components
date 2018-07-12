@@ -33,6 +33,7 @@ echo "dataset_root = $D3MINPUTDIR" >> $D3MCONFIG
 echo "out_dir_root = $D3MOUTPUTDIR" >> $D3MCONFIG
 echo "[TA2]" >> $D3MCONFIG
 echo "ta2_url = $TA2ADDR" >> $D3MCONFIG
+echo "ta2_name = $TA2NAME" >> $D3MCONFIG
 chown jboss:datashop $D3MCONFIG
 chmod 775 $D3MCONFIG
 
