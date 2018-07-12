@@ -12,6 +12,7 @@ services:
             - D3MINPUTDIR=/datasets
             - D3MOUPUTDIR=/output
             - TA2ADDR=sri-tpot:45042
+            - TA2NAME=sri
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/datasets
             - /rdata/dataStore/d3m/test_datasets:/output
