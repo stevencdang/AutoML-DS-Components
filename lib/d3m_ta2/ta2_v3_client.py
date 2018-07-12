@@ -260,9 +260,13 @@ class TA2Client(object):
                 logger.debug("Scoring solution is currently running and has not completed: %s" % reply.progress.status)
             elif reply.progress.state == core_pb2.COMPLETED:
                 logger.info("Scoring solution has completed successfully: %s" % reply.progress.status)
+                if self.debug:
+                    self.write_msg_to_file(reply, 'score_solution_result_reply.json')
                 return reply.scores
             elif reply.progress.state == core_pb2.ERRORED:
                 logger.error("Scoring solution has completed in an error state: %s" % reply.progress.status)
+                if self.debug:
+                    self.write_msg_to_file(reply, 'score_solution_result_reply.json')
             else:
                 logger.warning("Scoring solution is in an unknown state: %s" % str(reply.progress))
         
