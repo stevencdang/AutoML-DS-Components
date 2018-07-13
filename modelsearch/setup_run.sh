@@ -56,6 +56,13 @@ mkdir "$srcdir"/program/modeling
 find "$libdir"/modeling -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/modeling/{}"
 # Copy source files
 find "$libdir"/modeling -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/modeling/{} "$srcdir"/program/modeling/{}
+### Copy D3m_Eval dir
+# Replicate directory structure
+mkdir "$srcdir"/program/d3m_eval
+find "$libdir"/d3m_eval -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/d3m_eval/{}"
+# Copy source files
+find "$libdir"/d3m_eval -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/d3m_eval/{} "$srcdir"/program/d3m_eval/{}
+
 
 cd $cwd
 
