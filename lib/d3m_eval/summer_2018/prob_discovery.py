@@ -48,11 +48,17 @@ class ProblemDiscoveryWriter(object):
                 raise Exception("Could not initialize problem list file, labels.csv")
             self.prob_list = pd.DataFrame(columns=["problem_id","system","meaningful"])
         else:
-            self.prob_list = pd.read_csv(self.prob_list_file, sep=',')
+            self.prob_list = pd.read_csv(self.prob_list_file, sep=',', index_col=False)
+            # Ensure even numerical id only column is treated as a string
+            self.prob_list['problem_id'] = self.prob_list.problem_id.astype(str)
 
 
     def write_output(self):
         try:
+            logger.debug("#############################################")
+            if path.exists(self.prob_list_file):
+                logger.info("Removing old problem list file")
+                os.remove(self.prob_list_file)
             self.prob_list.to_csv(self.prob_list_file, sep=',', index=False)
         except IOError as e:
             logger.error("Could not write problem list to file %s\n%s" % 
@@ -61,9 +67,14 @@ class ProblemDiscoveryWriter(object):
 
 
     def add_problem(self, prob, search):
-        if prob.id not in self.prob_list['problem_id']:
+        logger.debug("Problem ID to add: %s\t%s" % (prob.id, type(prob.id)))
+        # logger.debug("Current problem list: %s" % str(self.prob_list['problem_id']))
+        logger.debug("Current problem list: %s" % str(self.prob_list.problem_id))
+        logger.debug("Is in list? %s" % str(prob.id in self.prob_list.problem_id.values))
+        # if prob.id not in self.prob_list.problem_id.astype(str).values:
+        if prob.id not in self.prob_list.problem_id.values:
             logger.debug("Adding new problem to problem list with id: %s" % prob.id)
-            self.prob_list.append({'problem_id': prob.id,
+            self.prob_list = self.prob_list.append({'problem_id': prob.id,
                                    'system': 'user',
                                    'meaningful': 'not_asked'
                                    }, ignore_index=True)
