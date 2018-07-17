@@ -15,7 +15,7 @@ services:
             - TA2NAME=sri
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/datasets
-            - /rdata/dataStore/d3m/test_datasets:/output
+            - /rdata/dataStore/d3m/test_data_out:/output
 
     sri-tpot:
         image:
@@ -24,7 +24,7 @@ services:
             - "45042:45042"
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/datasets
-            - /rdata/dataStore/d3m/test_datasets:/output
+            - /rdata/dataStore/d3m/test_data_out:/output
         command:
           - ta2_server
           - /config/search_config.json

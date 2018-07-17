@@ -15,7 +15,7 @@ services:
             - TA2NAME=mit
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
-            - /rdata/dataStore/d3m/test_datasets:/output
+            - /rdata/dataStore/d3m/test_data_out:/output
 
     ta2:
         image: 
@@ -30,4 +30,4 @@ services:
             - D3MTIMEOUT=60
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
-            - /rdata/dataStore/d3m/test_datasets:/output
+            - /rdata/dataStore/d3m/test_data_out:/output
