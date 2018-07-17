@@ -28,27 +28,45 @@ class ProblemDesc(object):
     """
 
     __task_types__ =  [
-        'CLASSIFICATION',
-        'REGRESSION',
-        'CLUSTERING',
-        'LINK_PREDICTION',
-        'VERTEX_NOMINATION',
-        'COMMUNITY_DETECTION',
-        'GRAPH_CLUSTERING',
-        'GRAPH_MATCHING',
-        'TIME_SERIES_FORECASTING',
-        'COLLABORATIVE_FILTERING ',
-        'OBJECT_DETECTION '
+			"classification",
+			"regression",
+			"clustering",
+			"linkPrediction",
+			"vertexNomination",
+			"communityDetection",
+			"graphClustering",
+			"graphMatching",
+			"timeSeriesForecasting",
+			"collaborativeFiltering",
+			"objectDetection"
+        # 'CLASSIFICATION',
+        # 'REGRESSION',
+        # 'CLUSTERING',
+        # 'LINK_PREDICTION',
+        # 'VERTEX_NOMINATION',
+        # 'COMMUNITY_DETECTION',
+        # 'GRAPH_CLUSTERING',
+        # 'GRAPH_MATCHING',
+        # 'TIME_SERIES_FORECASTING',
+        # 'COLLABORATIVE_FILTERING ',
+        # 'OBJECT_DETECTION '
     ]
     __task_subtypes__ =  [
-        'NONE',
-        'BINARY',
-        'MULTICLASS',
-        'MULTILABEL',
-        'UNIVARIATE',
-        'MULTIVARIATE',
-        'OVERLAPPING',
-        'NONOVERLAPPING'
+			"binary",
+			"multiClass",
+			"multiLabel",
+			"univariate",
+			"multivariate",
+			"overlapping",
+			"nonOverlapping"
+        # 'NONE',
+        # 'BINARY',
+        # 'MULTICLASS',
+        # 'MULTILABEL',
+        # 'UNIVARIATE',
+        # 'MULTIVARIATE',
+        # 'OVERLAPPING',
+        # 'NONOVERLAPPING'
     ]
 
     __ignore_chars__=['-','_']
