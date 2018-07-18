@@ -3,7 +3,7 @@
 # This script will run all the components in a simple test setup. Can be used 
 # to configure the directory after a fresh pull
 
-if [ -z ${D3mCONFIG+x} ]; then 
+if [ -z ${D3MCONFIG+x} ]; then 
     echo "D3MCONFIG not set. setting to:\t"$WCC"/D3M/d3m.cfg"
     export D3MCONFIG=$WCC/D3M/d3m.cfg
 fi
