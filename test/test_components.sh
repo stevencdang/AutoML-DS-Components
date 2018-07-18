@@ -239,3 +239,19 @@ if [[ " ${test_comps[@]} " =~ " comparemodelscores " ]]; then
     echo "#########################################################"
     cd ../..
 fi
+
+if [[ " ${test_comps[@]} " =~ " modelrank " ]]; then
+    # Test comparemodelscores
+    cname=modelrank
+    cd visualizations/$cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
+    cp ../modelscore/test/output/model-scores.tsv test/
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
+    cd ../..
+fi
