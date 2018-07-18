@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=ModelScore
+component.name=ModelRank
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -35,7 +35,7 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Evaluate a model with a given performance metric and dataset
+component.description=Rank models according to a given metric
 
 # The number of inputs for the new component. 
 component.num_inputs=2
@@ -54,8 +54,8 @@ input.1.type=model-set
 #output.0.type=dataset
 #output.0.name=datasetDoc.json
 
-output.0.type=model-scores
-output.0.name=model-scores.tsv
+output.0.type=ranked-models
+output.0.name=ranked-models.tsv
 # For each option, specify the type, name, id and default.
 # Common option types include: FileInputHeader, Enum, xs:string, xs:double
 # If using an enum, the syntax is "Enum(Foo, Bar, Baz)"

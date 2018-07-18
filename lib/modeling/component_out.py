@@ -172,3 +172,55 @@ class ModelScoreSetIO(object):
         return model_index, scores, models
 
 
+class ModelRankSetIO(object):
+
+    @staticmethod
+    def to_file(fpath, scores, models, model_index=None):
+        """
+        Write model scores to file
+
+        """
+        logger.info("Writing Model Scores to file: %s" % fpath)
+
+        rows = []
+        if model_index is not None:
+            if len(model_index) != len(scores):
+                logger.warning("Invalid model index given. index has %i entries, \
+                        but %i models were given" % (len(model_index), len(fitted_models)))
+                rows.append(range(len(models)))
+                model_index = [mid for mid in models]
+            else:
+                rows.append(range(len(model_index)))
+
+        rows.append(model_index)
+        rows.append([scores[mid].to_dict() for mid in model_index])
+        rows.append([models[mid] for mid in model_index])
+
+        with open(fpath, 'w') as out_file:
+            out = csv.writer(out_file, delimiter='\t')
+            for row in rows:
+                out.writerow(row)
+    
+    @staticmethod
+    def from_file(fpath):
+        """
+        Read Model scores from file
+
+        """
+        logger.info("Reading Model Scores from file: %s" % fpath)
+
+        # Read in the scores from tsv
+        reader = csv.reader(fpath, delimiter='\t')
+        rows = [row for row in reader]
+
+        # Initialize the set of models by model id
+        model_index = rows[1]
+        models = {mid: None for mid in model_index}
+        scores = {mid: None for mid in model_index}
+        for i, mid in enumerate(model_index):
+            scores[mid] = ModelScores.from_json(rows[2][i])
+            models[mid] = Model.from_json(rows[3][i])
+
+        return model_index, scores, models
+
+

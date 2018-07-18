@@ -28,28 +28,28 @@ class ProblemDesc(object):
     """
 
     __task_types__ =  [
-			"classification",
-			"regression",
-			"clustering",
-			"linkPrediction",
-			"vertexNomination",
-			"communityDetection",
-			"graphClustering",
-			"graphMatching",
-			"timeSeriesForecasting",
-			"collaborativeFiltering",
-			"objectDetection"
-        # 'CLASSIFICATION',
-        # 'REGRESSION',
-        # 'CLUSTERING',
-        # 'LINK_PREDICTION',
-        # 'VERTEX_NOMINATION',
-        # 'COMMUNITY_DETECTION',
-        # 'GRAPH_CLUSTERING',
-        # 'GRAPH_MATCHING',
-        # 'TIME_SERIES_FORECASTING',
-        # 'COLLABORATIVE_FILTERING ',
-        # 'OBJECT_DETECTION '
+            # "classification",
+            # "regression",
+            # "clustering",
+            # "linkPrediction",
+            # "vertexNomination",
+            # "communityDetection",
+            # "graphClustering",
+            # "graphMatching",
+            # "timeSeriesForecasting",
+            # "collaborativeFiltering",
+            # "objectDetection"
+        'CLASSIFICATION',
+        'REGRESSION',
+        'CLUSTERING',
+        'LINK_PREDICTION',
+        'VERTEX_NOMINATION',
+        'COMMUNITY_DETECTION',
+        'GRAPH_CLUSTERING',
+        'GRAPH_MATCHING',
+        'TIME_SERIES_FORECASTING',
+        'COLLABORATIVE_FILTERING ',
+        'OBJECT_DETECTION '
     ]
     __task_subtypes__ =  [
 			"binary",

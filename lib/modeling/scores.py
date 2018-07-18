@@ -143,9 +143,9 @@ class Metric(object):
                 return problem_pb2.ACCURACY
             elif m == 'F1':
                 return problem_pb2.F1
-            elif m == 'F1_MICRO' or m.lower() == 'f1macro':
+            elif m == 'F1_MICRO' or m.lower() == 'f1micro':
                 return problem_pb2.F1_MICRO
-            elif m == 'F1_MACRO':
+            elif m == 'F1_MACRO' or m.lower() == 'f1macro':
                 return problem_pb2.F1_MACRO
             elif m == 'ROC_AUC':
                 return problem_pb2.ROC_AUC
