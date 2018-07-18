@@ -105,12 +105,16 @@ if __name__ == '__main__':
     # Determine number of scores to  plot:
     sample_scores = len(scores[m_index[0]].scores)
     score_data = {score.metric.type: [] for score in scores[m_index[0]].scores}
+    score_data['model_id'] = []
+    score_data['model_num'] = []
     metrics = [score.metric.type for score in scores[m_index[0]].scores]
     score_data['index'] = range(len(m_index))
 
     for mid in scores:
         score_set = scores[mid]
         logger.debug("Adding score data for model with id: %s" % score_set.mid)
+        score_data['model_id'].append(mid)
+        score_data['model_num'].append(m_index[m_index.index(mid)])
         for score in score_set.scores:
             logger.debug("appending score for metric: %s\tvalue: %s" % 
                     (score.metric.type, score.value.value))
@@ -123,6 +127,13 @@ if __name__ == '__main__':
     sorted_data = data.sort_values(by=[metrics[0]])
     logger.debug(sorted_data[metrics[0]])
     logger.debug(sorted_data['index'])
+    sorted_data['rank'] = range(1, sorted_data.shape[0] + 1)
+    logger.debug(sorted_data[['rank', metrics[0], 'model_id']])
+    logger.debug("###############################################")
+    logger.debug(sorted_data)
+    logger.debug(data)
+    logger.debug("###############################################")
+
 
         
 

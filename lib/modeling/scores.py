@@ -377,3 +377,8 @@ class Fit(object):
         self.dataset = dataset
         self.fit = fit
 
+class Rank(object):
+
+    def __init__(self, mdl, rank):
+        self.mdl = mdl
+        self.rank = rank
