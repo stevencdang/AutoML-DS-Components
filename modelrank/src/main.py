@@ -14,6 +14,8 @@ from os import path
 import argparse
 import pprint
 import csv
+import pandas as pd
+
 
 from google.protobuf import json_format
 
@@ -116,23 +118,30 @@ if __name__ == '__main__':
         score_data['model_id'].append(mid)
         score_data['model_num'].append(m_index[m_index.index(mid)])
         for score in score_set.scores:
+            metric_val = list(score.value.value.values())[0]
             logger.debug("appending score for metric: %s\tvalue: %s" % 
-                    (score.metric.type, score.value.value))
-            logger.debug("Score value tyep: %s" % type(score.value.value))
-            score_data[score.metric.type].append(score.value.value)
+                    (score.metric.type, metric_val))
+            logger.debug("Score value tyep: %s" % type(metric_val))
+            score_data[score.metric.type].append(metric_val)
             
     data = pd.DataFrame(score_data)
     logger.debug("Converted Score data to dataframe: %s" % str(data.head(20)))
+    logger.debug("###############################################")
+    logger.debug(data.columns)
+    logger.debug(data.shape)
+    logger.debug(data.head)
+    logger.debug("###############################################")
     # Sort models by metric
     sorted_data = data.sort_values(by=[metrics[0]])
+    logger.debug("###############################################")
+    logger.debug(sorted_data.columns)
+    logger.debug(sorted_data.shape)
+    logger.debug(sorted_data)
+    logger.debug("###############################################")
     logger.debug(sorted_data[metrics[0]])
     logger.debug(sorted_data['index'])
     sorted_data['rank'] = range(1, sorted_data.shape[0] + 1)
     logger.debug(sorted_data[['rank', metrics[0], 'model_id']])
-    logger.debug("###############################################")
-    logger.debug(sorted_data)
-    logger.debug(data)
-    logger.debug("###############################################")
 
 
         

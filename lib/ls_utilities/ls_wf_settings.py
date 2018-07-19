@@ -151,6 +151,7 @@ class D3MSettings(Settings):
     def get_ta2_name(self):
         try:
             name = self.d3m_cfg.get('TA2', 'ta2_name')
+            return name
         except:
             logger.warning("No name provided, using name = ''")
             return ''
