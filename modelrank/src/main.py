@@ -42,6 +42,8 @@ if __name__ == '__main__':
     parser = get_default_arg_parser("Model Rank")
     parser.add_argument('-metric', type=str,
                        help='the metric to use to compare the models')
+    parser.add_argument('-ordering', type=str,
+                       help='the sort order use to rank the models')
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json provided for the search')
     parser.add_argument('-file1', type=argparse.FileType('r'),
@@ -74,7 +76,7 @@ if __name__ == '__main__':
 
     # Decode the models from file
     logger.debug("Model file input: %s" % args.file1)
-    m_index, models = ModelSetIO.from_file(args.file1)
+    m_index, fitted_models, models = FittedModelSetIO.from_file(args.file1)
 
     # Init the server connection
     address = config.get_ta2_url()
@@ -116,7 +118,7 @@ if __name__ == '__main__':
         score_set = scores[mid]
         logger.debug("Adding score data for model with id: %s" % score_set.mid)
         score_data['model_id'].append(mid)
-        score_data['model_num'].append(m_index[m_index.index(mid)])
+        score_data['model_num'].append(m_index.index(mid))
         for score in score_set.scores:
             metric_val = list(score.value.value.values())[0]
             logger.debug("appending score for metric: %s\tvalue: %s" % 
@@ -124,30 +126,67 @@ if __name__ == '__main__':
             logger.debug("Score value tyep: %s" % type(metric_val))
             score_data[score.metric.type].append(metric_val)
             
+    logger.debug("###############################################")
+    logger.debug("Score_data keys: %s" % str([key for key in score_data.keys()]))
+    logger.debug("Score_data model_id: %s" % str(score_data['model_id']))
+    logger.debug("Score_data model_num: %s" % str(score_data['model_num']))
+    logger.debug("Score_data model_index: %s" % str(score_data['index']))
+    logger.debug("Score_data metric: %s" % str(score_data[metrics[0]]))
     data = pd.DataFrame(score_data)
     logger.debug("Converted Score data to dataframe: %s" % str(data.head(20)))
     logger.debug("###############################################")
-    logger.debug(data.columns)
-    logger.debug(data.shape)
-    logger.debug(data.head)
     logger.debug("###############################################")
+    logger.debug("###############################################")
+    logger.debug(data.columns)
+    logger.debug("#############")
+    logger.debug(data.shape)
+    logger.debug("#############")
+    logger.debug(data.head())
+    logger.debug("###############################################")
+
     # Sort models by metric
-    sorted_data = data.sort_values(by=[metrics[0]])
+    if args.ordering.lower() is 'higher_is_better':
+        logger.info("Sorting models in descending order")
+        sorted_data = data.sort_values(by=[metrics[0]], ascending=False)
+    elif args.ordering.lower() is "lower_is_better":
+        logger.info("Sorting models in ascending order")
+        sorted_data = data.sort_values(by=[metrics[0]], ascending=True)
+    else:
+        logger.warning("'%s' ordering given. Using ascending order by default." % args.ordering)
+        sorted_data = data.sort_values(by=[metrics[0]], ascending=True)
+    sorted_data['rank'] = range(1, sorted_data.shape[0] + 1)
+
     logger.debug("###############################################")
     logger.debug(sorted_data.columns)
+    logger.debug("#############")
     logger.debug(sorted_data.shape)
-    logger.debug(sorted_data)
-    logger.debug("###############################################")
+    logger.debug("#############")
+    logger.debug(sorted_data.head())
+    logger.debug("#############")
     logger.debug(sorted_data[metrics[0]])
+    logger.debug("#############")
+    logger.debug(sorted_data['model_id'])
+    logger.debug("#############")
+    logger.debug(sorted_data['model_num'])
+    logger.debug("#############")
     logger.debug(sorted_data['index'])
-    sorted_data['rank'] = range(1, sorted_data.shape[0] + 1)
-    logger.debug(sorted_data[['rank', metrics[0], 'model_id']])
+    logger.debug("#############")
+    logger.debug(sorted_data['rank'])
+    logger.debug("###############################################")
+    logger.debug("###############################################")
+    logger.debug("###############################################")
+    logger.debug(sorted_data[['rank', metrics[0], 'index', 'model_num']])
+    logger.debug("###############################################")
 
+    # create ranked model list 
+    ranked_models = {
+            row[1]['model_id']: RankedModel(
+                mdl=models[row[1]['model_id']],
+                rank=row[1]['rank']
+            ) for row in sorted_data.iterrows()
+    }
 
-        
-
-    
 
         
     out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
-    ModelRankSetIO.to_file(out_file_path, scores, models, m_index)
+    ModelRankSetIO.to_file(out_file_path, ranked_models, m_index)

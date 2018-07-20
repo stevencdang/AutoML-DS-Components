@@ -22,5 +22,5 @@ fi
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -model_id='0' -new_rank='1' -file0=$cwd/test/ranked-models.tsv -userId=' ' -is_test=1
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0=$cwd/test/ranked-models.tsv -userId=' ' -is_test=1
 

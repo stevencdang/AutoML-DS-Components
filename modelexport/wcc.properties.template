@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=ModelRank
+component.name=ModelExport
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -15,7 +15,7 @@ component.type=analysis
 component.lang=Python
 
 # The Java package for the generated Main class. [Default = edu.cmu.learnsphere]
-component.pkg=edu.cmu.learnsphere.d3m.analysis
+component.pkg=edu.cmu.learnsphere.d3m.data
 
 # The author of the new component. [Default = system]
 component.author=stevenda
@@ -35,46 +35,29 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Rank models according to a given metric
+component.description=Export a set of models for evaluation
 
 # The number of inputs for the new component. 
-component.num_inputs=2
+component.num_inputs=1
 
 # The number of outputs for the new component. 
-component.num_outputs=1
+component.num_outputs=0
 
 # The number of options for the new component. 
-component.num_options=2
+component.num_options=0
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
-input.0.type=dataset
-input.1.type=fitted-model-set
+input.0.type=ranked-models
+input.0.type=ranked-models
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
-#output.0.type=dataset
-#output.0.name=datasetDoc.json
 
-output.0.type=ranked-models
-output.0.name=ranked-models.tsv
 # For each option, specify the type, name, id and default.
 # Common option types include: FileInputHeader, Enum, xs:string, xs:double
 # If using an enum, the syntax is "Enum(Foo, Bar, Baz)"
 # If the 'default' looks like a regular expression, we'll try to treat it as such.
 # The options will be passed to your program as command-line args using the option name.
 # For example, the following option is available to your program as "-kc_model <string>"
-option.0.type=Enum(ACCURACY, F1, F1_MICRO, F1_MACRO, ROC_AUC, ROC_AUC_MICRO, ROC_AUC_MACRO, MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR_AVG, MEAN_ABSOLUTE_ERROR, R_SQUARED, NORMALIZED_MUTUAL_INFORMATION, JACCARD_SIMILARITY_SCORE, PRECISION_AT_TOP_K, LOSS)
-option.0.name=metric
-option.0.id=metric
-option.0.default=ACCURACY
-
-option.0.type=Enum(Higher_is_Better, Lower_is_Better)
-option.0.name=ordering
-option.0.id=Ranking_Sort_Order
-option.0.default=Higher_is_Better
-#option.0.type=FileInputHeader
-#option.0.name=kc_model
-#option.0.id=KC_Model
-#option.0.default=\\s*KC\\s*\\((.*)\\)\\s*
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model

@@ -30,6 +30,6 @@ wcc.properties*
 !wcc.properties.template
 
 # Ignore local versions of test/datasetDoc.json
-test/dataset-list.tsv
-test/dataset-list.tsv*
-!test/dataset-list.tsv.sample
+test/ranked-models.tsv
+test/ranked-models.tsv.*
+!test/ranked-models.tsv.sample

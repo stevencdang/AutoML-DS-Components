@@ -241,7 +241,6 @@ if [[ " ${test_comps[@]} " =~ " comparemodelscores " ]]; then
 fi
 
 if [[ " ${test_comps[@]} " =~ " modelrank " ]]; then
-    # Test comparemodelscores
     cname=modelrank
     cd $cname
     echo "#########################################################"
@@ -251,8 +250,39 @@ if [[ " ${test_comps[@]} " =~ " modelrank " ]]; then
         rm $log_file
     fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
-    cp ../modelsearch/test/output/model-flows.tsv test/
+    cp ../modelfit/test/output/fit-models.tsv test/
     ./run_component.sh &> $log_file
     echo "#########################################################"
     cd ..
 fi
+
+if [[ " ${test_comps[@]} " =~ " modelrerank " ]]; then
+    cname=modelrerank
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
+    cp ../modelrank/test/output/ranked-models.tsv test/
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
+    cd ..
+fi
+
+if [[ " ${test_comps[@]} " =~ " modelexport " ]]; then
+    cname=modelexport
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
+    cp ../modelrank/test/output/ranked-models.tsv test/
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
+    cd ..
+fi
+

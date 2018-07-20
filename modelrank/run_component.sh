@@ -27,6 +27,6 @@ fi
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -metric "Accuracy" -file0="$cwd/test/datasetDoc.tsv" -file1=$cwd/test/model-flows.tsv -userId=' ' -is_test=1
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -metric "Accuracy" -ordering "Lower_is_Better" -file0="$cwd/test/datasetDoc.tsv" -file1=$cwd/test/fit-models.tsv -userId=' ' -is_test=1
 
 deactivate

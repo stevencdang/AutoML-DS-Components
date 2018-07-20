@@ -9,8 +9,9 @@ from json import JSONDecodeError
 import ast
 from google.protobuf import json_format
 
-
 from d3m_ta2.api_v3 import problem_pb2
+
+from .models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -377,8 +378,34 @@ class Fit(object):
         self.dataset = dataset
         self.fit = fit
 
-class Rank(object):
+class RankedModel(object):
 
     def __init__(self, mdl, rank):
         self.mdl = mdl
         self.rank = rank
+
+    def update_rank(self, rank):
+        self.rank = rank
+
+    def to_dict(self):
+        return {
+            'model': self.mdl.to_dict(),
+            'rank': self.rank
+        }
+
+    def __str__(self):
+        return str(self.to_dict())
+
+    @staticmethod
+    def from_json(inpt):
+        if isinstance(inpt, str):
+            try: 
+                data = json.loads(inpt)
+            except JSONDecodeError:
+                data = ast.literal_eval(inpt)
+        elif isinstance(inpt, dict):
+            data = inpt
+
+        logger.debug("Creating RankedModel from %s: %s" % (str(type(data)), str(data)))
+        model = Model.from_json(data['model'])
+        return RankedModel(model, data['rank'])
