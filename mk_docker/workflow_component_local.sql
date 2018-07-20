@@ -336,3 +336,81 @@ VALUES (
 	'1.0', 
 	'Allow user to select a model from a list of models'
 );
+REPLACE INTO `workflow_component` (
+	`component_type`,
+	`component_name`,
+	`tool_dir`,
+	`schema_path`,
+	`interpreter_path`,
+	`tool_path`,
+	`enabled`,
+	`author`,
+	`citation`,
+	`version`,
+	`info`
+)
+VALUES (
+	'Analysis',
+	'Rank_Models',
+	'/datashop/workflow_components/ModelRank/',
+	'/datashop/workflow_components/ModelRank/schemas/ModelRank_v1_0.xsd',
+	'/usr/bin/java -jar',
+	'/datashop/workflow_components/ModelRank/dist/ModelRank-1.0.jar', 
+	1,
+	'system',
+	'Steven_C_Dang',
+	'1.0', 
+	'Allow user to rank a set of models using performance along a metric'
+);
+REPLACE INTO `workflow_component` (
+	`component_type`,
+	`component_name`,
+	`tool_dir`,
+	`schema_path`,
+	`interpreter_path`,
+	`tool_path`,
+	`enabled`,
+	`author`,
+	`citation`,
+	`version`,
+	`info`
+)
+VALUES (
+	'Analysis',
+	'Model_Rerank',
+	'/datashop/workflow_components/ModelRerank/',
+	'/datashop/workflow_components/ModelRerank/schemas/ModelRerank_v1_0.xsd',
+	'/usr/bin/java -jar',
+	'/datashop/workflow_components/ModelRerank/dist/ModelRerank-1.0.jar', 
+	1,
+	'system',
+	'Steven_C_Dang',
+	'1.0', 
+	'Allow user to manually specify the rank of a model from an ordered list of ranked models'
+);
+REPLACE INTO `workflow_component` (
+	`component_type`,
+	`component_name`,
+	`tool_dir`,
+	`schema_path`,
+	`interpreter_path`,
+	`tool_path`,
+	`enabled`,
+	`author`,
+	`citation`,
+	`version`,
+	`info`
+)
+VALUES (
+	'Analysis',
+	'Model_Export',
+	'/datashop/workflow_components/ModelExport/',
+	'/datashop/workflow_components/ModelExport/schemas/ModelExport_v1_0.xsd',
+	'/usr/bin/java -jar',
+	'/datashop/workflow_components/ModelExport/dist/ModelExport-1.0.jar', 
+	1,
+	'system',
+	'Steven_C_Dang',
+	'1.0', 
+	'Export models for D3M Evaluation'
+);

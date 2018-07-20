@@ -67,10 +67,10 @@ option.0.name=metric
 option.0.id=metric
 option.0.default=ACCURACY
 
-option.0.type=Enum(Higher_is_Better, Lower_is_Better)
-option.0.name=ordering
-option.0.id=Ranking_Sort_Order
-option.0.default=Higher_is_Better
+option.1.type=Enum(Higher_is_Better, Lower_is_Better)
+option.1.name=ordering
+option.1.id=Ranking_Sort_Order
+option.1.default=Higher_is_Better
 #option.0.type=FileInputHeader
 #option.0.name=kc_model
 #option.0.id=KC_Model
