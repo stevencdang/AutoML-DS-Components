@@ -64,10 +64,10 @@ option.0.name=model_id
 option.0.id=Model_ID
 option.0.default=.*
 
-option.0.type=xs:integer
-option.0.name=new_rank
-option.0.id=New_rank
-option.0.default=1
+option.1.type=xs:integer
+option.1.name=new_rank
+option.1.id=New_rank
+option.1.default=1
 
 #option.1.type=Enum(AFM, AFM+S)
 #option.1.name=model
