@@ -18,7 +18,6 @@ fi
 # Packaging source into "program" directory
 ./setup_run.sh
 
-
 # Add program directory to pythonpath
 path="$PYTHONPATH":"$cwd/program"
 
