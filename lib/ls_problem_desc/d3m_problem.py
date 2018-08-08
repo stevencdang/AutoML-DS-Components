@@ -344,8 +344,12 @@ class DefaultProblemDesc(ProblemDesc):
         logger.debug("Getting problem from dataset: %s" % str(ds))
         dname = ds.name
         dpath = path.dirname(ds.dpath)
-        logger.debug("Looking for prolem in dataset path: %s" % dpath)
-        dir_name = path.split(dpath)[1]
+        logger.debug("Looking for problem in dataset path: %s" % dpath)
+        ds_dir_name = path.split(ds.dpath)[1]
+        if ds_dir_name.endswith('_dataset'):
+            dir_name = ds_dir_name[:-8]
+        else:
+            dir_name = ds_dir_name
         logger.debug("Getting problem for dataset with name, %s, and dataset_dir: %s" % (dname, dir_name))
         # for root, dirs, files in os.walk(ds.dpath):
         result = None
@@ -354,6 +358,7 @@ class DefaultProblemDesc(ProblemDesc):
                 if f == DefaultProblemDesc.__default_schema__:
                     parent = path.split(root)[1]
                     result = path.join(root, f)
+                    logger.debug("Found problem doc at path: %s" % result)
                     if parent == dir_name + '_problem':
                         logger.debug("Getting problem schema at path: %s" % result)
                         return result
