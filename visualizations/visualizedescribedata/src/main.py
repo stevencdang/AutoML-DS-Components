@@ -46,7 +46,7 @@ class LS_Path_Factory(object):
 
 if __name__ == '__main__':
     # Parse argumennts
-    parser = get_default_arg_parser("D3M Visualize Confusion Matrix")
+    parser = get_default_arg_parser("Visualize Describe Data")
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json including pipeline search result')
     args = parser.parse_args()
@@ -71,51 +71,18 @@ if __name__ == '__main__':
     logger.debug("Running Describe Data with arguments: %s" % str(args))
 
     # Open dataset json
-    ds = D3MDataset.from_json(args.file0)
+    ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
-    # Get html from Viz Server
-    server_addr = "http://glacier.andrew.cmu.edu:8050"
-    viz_url = server_addr + "/viz/viz1"
-    html = requests.get(viz_url)
+    # Add a plot for each valid data column
+    ds.get_data_columns()
 
-    # Write html to output file
+
+
+    # Get html to output file path
     out_file_path = path.join(args.workingDir, 
                               config.get('Output', 'out_file')
                               )
     logger.info("Writing output html to: %s" % out_file_path)
-    with open(out_file_path, 'w') as out_file:
-        out_file.write(html.text)
-    
+    plot_url = py.offline.plot(plot_data, filename=out_file_path)
 
-    # Generate html from template and write to output file
-    # path_factory = LS_Path_Factory(args.workingDir, args.programDir)
-    # env = Environment(
-        # loader=PackageLoader("ls_iviz", "templates"),
-        # autoescape=select_autoescape(['html'])
-    # )
-    # template_info = {
-        # 'resource_path': path_factory.get_hosted_path(
-            # path.join('resources')),
-        # 'viz_img_path': path_factory.get_hosted_path(
-            # path.join('resources', 'plot.png')),
-        # 'raw_data': cm.tolist(),
-        # 'data_classes': str([str(cls) for cls in class_names]),
-        # 'd3_dashboard_css': env.get_template('dashboard.css').render(),
-        # 'component_css': env.get_template('confusion_matrix.css').render(),
-        # 'component_js': env.get_template('confusion_matrix.js').render(),
-    # }
-    # viz_template = env.get_template("confusion_matrix.html")
-    # out_file_path = path.join(args.workingDir, 
-                              # config.get('Output', 'out_file')
-                              # )
-    # logger.info("Writing output html to: %s" % out_file_path)
-    # with open(out_file_path, 'w') as out_file:
-        # out_file.write(viz_template.render(template_info))
-    
-
-    # Write output html to file
-    # src_html = path.join(args.programDir, 'program', 'html', 'index.html')
-    # out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
-    # logger.info("Writing output html to: %s" % out_file_path)
-    # copyfile(src_html, out_file_path)

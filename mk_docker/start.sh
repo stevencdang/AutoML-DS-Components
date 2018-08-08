@@ -38,6 +38,7 @@ echo "mode = D3M" >> $D3MCONFIG
 chown jboss:datashop $D3MCONFIG
 chmod 775 $D3MCONFIG
 chgrp -R datashop $D3MOUTPUTDIR
+chmod g+w -R $D3MOUTPUTDIR
 
 
 # MoocDB "core" and "clean" databases

@@ -184,3 +184,8 @@ class D3MDataset(LSDataset):
 
     def __str__(self):
         return self.to_json()
+
+    def get_data_columns(self):
+        for dr in [dr for dr in self.dataResources if dr.resType == 'table']:
+            logger.debug("Found data resource with ID: %s\tpath: %s" % (dr.resID, dr.resPath))
+
