@@ -1,4 +1,4 @@
-# <Comonent Name> Tigris Component
+# Describe Data Tigris Component
 
 Carnegie Mellon University, Massachusetts Institute of Technology, Stanford University, University of Memphis.
 Copyright 2016. All Rights Reserved.

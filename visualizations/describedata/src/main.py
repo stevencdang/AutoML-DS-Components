@@ -11,9 +11,9 @@ import os
 import argparse
 import itertools
 from shutil import copytree, rmtree, copyfile
-import requests
+# import requests
 
-# import pandas as pd
+import pandas as pd
 # import numpy as np
 # import matplotlib
 # matplotlib.use("agg")
@@ -25,7 +25,8 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
-from ls_utilities.ls_wf_settings import Settings as stg
+from ls_utilities.ls_wf_settings import *
+
 from ls_dataset.d3m_dataset import D3MDataset
 
 __version__ = '0.1'
@@ -75,7 +76,15 @@ if __name__ == '__main__':
     logger.debug("Dataset json parse: %s" % str(ds))
 
     # Add a plot for each valid data column
-    ds.get_data_columns()
+    columns = ds.get_data_columns()
+    data = ds.load_dataset()
+    logger.debug(data.head())
+
+    for col in columns:
+        logger.debug("Getting column: %s" % col.colName)
+        # logger.debug(data[col.colName])
+
+
 
 
 
@@ -84,5 +93,5 @@ if __name__ == '__main__':
                               config.get('Output', 'out_file')
                               )
     logger.info("Writing output html to: %s" % out_file_path)
-    plot_url = py.offline.plot(plot_data, filename=out_file_path)
+    # plot_url = py.offline.plot(plot_data, filename=out_file_path)
 

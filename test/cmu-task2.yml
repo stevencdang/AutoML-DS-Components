@@ -14,7 +14,7 @@ services:
             - TA2ADDR=ta2:45042
             - TA2NAME=cmu
         volumes:
-            - /rdata/dataStore/d3m/datasets/seed_datasets_user_eval/Task1/LL0_USER_EVAL_TASK1_1100_popularkids:/input
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current/6_70_com_amazon:/input
             - /rdata/dataStore/d3m/test_data_out:/output
 
     ta2:
@@ -29,5 +29,5 @@ services:
             - D3MCPU=8
             - D3MTIMEOUT=5
         volumes:
-            - /rdata/dataStore/d3m/datasets/seed_datasets_user_eval/Task1/LL0_USER_EVAL_TASK1_1100_popularkids:/input
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current/6_70_com_amazon:/input
             - /rdata/dataStore/d3m/test_data_out:/output

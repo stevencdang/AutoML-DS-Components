@@ -10,7 +10,7 @@ services:
         environment:
             - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
             - D3MINPUTDIR=/input
-            - D3MOUPUTDIR=/output
+            - D3MOUTPUTDIR=/output
             - TA2ADDR=ta2:45042
             - TA2NAME=cmu
         volumes:

@@ -21,7 +21,7 @@ stty echo
 printf "\n"
 printf "Bitbucket Password(stevencdang@gmail.com): "
 read BBPWD
-stty echo
+stty -echo
 
 CWD=$(pwd)
 DS_DIRECTORY="$CWD"/DataShopDocker

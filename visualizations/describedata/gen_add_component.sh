@@ -3,7 +3,7 @@
 wcc=$WCC 
 
 out_file="add_component.sql"
-comp_dir_name="VisualizationDescribeData"
+comp_dir_name="DescribeData"
 
 # Remove add_component.sql if it exists
 if [ -f $out_file ]; then

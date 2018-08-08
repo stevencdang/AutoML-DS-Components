@@ -10,7 +10,7 @@ services:
         environment:
             - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
             - D3MINPUTDIR=/datasets
-            - D3MOUPUTDIR=/output
+            - D3MOUTPUTDIR=/output
             - TA2ADDR=sri-tpot:45042
             - TA2NAME=sri
         volumes:
