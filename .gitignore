@@ -2,6 +2,9 @@
 #################
 .*.*.sw*
 
+### System specific generated files for each component ###
+#########################################################
+add_component.sql
 
 ### Python files ###
 ####################
