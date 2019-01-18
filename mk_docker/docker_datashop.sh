@@ -11,17 +11,12 @@ if [ "$whoami" == "root" ]; then
   exit
 fi
 
-
-printf "SVN User: "
-read MYUSER
-stty -echo
-printf "SVN Password: "
-read MYPWD
-stty echo
-printf "\n"
-printf "Bitbucket Password(stevencdang@gmail.com): "
-read BBPWD
-stty -echo
+read -p "SVN User: " MYUSER
+read -s -p "SVN Password: " MYPWD
+echo ""
+read -p "Bitbucket User: " BBUSR
+read -s -p "Bitbucket Password: " BBPWD
+echo ""
 
 CWD=$(pwd)
 DS_DIRECTORY="$CWD"/DataShopDocker
@@ -173,7 +168,8 @@ cd $DS_DIRECTORY
 # Grab d3m specfic branch
 git clone --depth 1 -b d3m --single-branch https://github.com/LearnSphere/WorkflowComponents.git workflow_components
 
-git clone https://stevencdang:${BBPWD}@bitbucket.org/stevencdang/learnsphere_workflow_components.git d3m_components
+# Grab d3m component code library for development
+git clone https://${BBUSR}:${BBPWD}@bitbucket.org/stevencdang/learnsphere_workflow_components.git d3m_components
 
 # Grab python 3.6 to build and install
 #cd $DS_DIRECTORY

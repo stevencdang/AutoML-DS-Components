@@ -6,6 +6,7 @@
       <xs:element name="model" substitutionGroup="json" />
 
   <xs:element name="dataset" substitutionGroup="tab-delimited" />
+  <xs:element name="predictions" substitutionGroup="tab-delimited" />
   <xs:element name="dataset-list" substitutionGroup="tab-delimited" />
   <xs:element name="model-set" substitutionGroup="tab-delimited" />
   <xs:element name="model-scores" substitutionGroup="tab-delimited" />
