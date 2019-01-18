@@ -15,9 +15,12 @@ import argparse
 import pprint
 import csv
 
+import pandas as pd
+
 from google.protobuf import json_format
 
 # Workflow component specific imports
+from ls_utilities.ls_wf_settings import SettingsFactory
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import *
@@ -110,7 +113,9 @@ if __name__ == '__main__':
 
     out_file_path = path.join(args.workingDir, out_file_name)
     ModelSetIO.to_file(out_file_path, solns)
-    m_index, models = ModelSetIO.from_file(out_file_path)
+    logger.info(out_file_path)
+    with open(out_file_path, 'r') as ofile:
+        m_index, models = ModelSetIO.from_file(ofile)
 
     # Get fitted solution
     fit_req_ids = {}
@@ -126,10 +131,23 @@ if __name__ == '__main__':
     for mid in models:
         logger.debug("Got fitted model with model id: %s" % mid)
         logger.debug("Model: %s\tFitted Model: %s" % (mid, models[mid].fitted_id))
+
+    result_df = None
+    for mid in fitted_results:
+        rdf = fitted_results[mid].copy()
+        rdf.rename(columns={rdf.columns[-1]: mid}, inplace=True)
+        if result_df is None:
+            result_df = rdf.copy()
+            result_df.index = rdf['d3mIndex']
+        else:
+            result_df = pd.merge(result_df, rdf, on='d3mIndex')
+        logger.debug("********************************")
+        logger.debug(result_df.columns)
+        logger.debug("********************************")
     
         
     # # Write model fit id info to output file
-    out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
+    out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
 
     FittedModelSetIO.to_file(out_file_path, models, m_index)
 
@@ -139,6 +157,10 @@ if __name__ == '__main__':
     if args.is_test == 1:
         # Write out human readable version for debugging
         ds.to_json_pretty(out_file_path + '.readable')
+
+    # # Write model predictions to output file
+    out_file_path = path.join(args.workingDir, config.get('Output', 'pred_out_file'))
+    result_df.to_csv(out_file_path, sep='\t', index=True, header=True)
 
     # Write Solution workflows to file
 
