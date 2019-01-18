@@ -105,70 +105,33 @@ if __name__ == '__main__':
         solns[soln_id] = serv.describe_solution(soln_id)
         logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
 
-    # Get Score for each solution
-    # score_req_ids = {}
-    # for soln_id in solns:
-        # soln = solns[soln_id]
-        # score_req_ids[soln.id] = serv.score_solution(soln, ds)
-    # scores = {}
-    # for sid in score_req_ids:
-        # results = serv.get_score_solution_results(score_req_ids[sid])
-        # scores[sid] = ModelScores(solns[sid].id, [ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+    ### Temp patch of writing to file and reading back in to simulate passing between components
+    out_file_name = "model_data.tsv"
 
-
-    # serv.end_search_solutions(search_id)
-
-    # ### For testing only ###
-    # serv.hello()
-    # serv.list_primitives()
-
-    # search_id = serv.search_solutions(prob, ds)
-    # soln_ids = serv.get_search_solutions_results(search_id)
-    # if soln_ids is None:
-        # raise Exception("No solution returned") 
-
-    # fit_req_ids = {}
-    # fitted_solns = {}
-    # fitted_results = {}
-    # for sid, soln in solns.items():
-        # fit_req_ids[sid] = serv.fit_solution(soln, ds)
-    # for sid, rid in fit_req_ids.items():
-        # logger.debug("solution id: %s\tfit solution request id: %s" % (sid, rid))
-        # fitted_solns[sid], fitted_results[sid] = serv.get_fit_solution_results(rid)
-# 
-    # logger.debug("Got fitted solutions with ids: %s" % str(fitted_solns) )
-# 
-   #  
-    # req_ids = {}
-    # solution_predictions = {}
-    # for sid, fsid in fitted_solns.items():
-        # # req_ids[mid] = serv.produce_solution(model, ds)
-        # req_ids[fsid] = serv.produce_solution(fsid, solns[sid], ds)
-    # logger.debug("Created predoce solution requests with ids: %s" % str(req_ids))
-    # for fsid, rid in req_ids.items():
-        # solution_predictions[fsid] = serv.get_produce_solution_results(rid)
-# 
-    # for fsid, predictions in solution_predictions.items():
-        # logger.debug("Got predictions from fitted solution, %s: %s" % (fsid, predictions))
-
-
-    # serv.end_search_solutions(search_id)
-
-    ### End testing code ###
-   
-    # Write the received solutions to file
-    # for sid, soln in solns.items():
-        # logger.debug("###########################################")
-        # logger.debug("Received solution: %s" % str(soln.to_dict()))
-        # logger.debug("###########################################")
-        
-    out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
+    out_file_path = path.join(args.workingDir, out_file_name)
     ModelSetIO.to_file(out_file_path, solns)
-    # with open(out_file_path, 'w') as out_file:
-        # out = csv.writer(out_file, delimiter='\t')
-        # out.writerow([solns[sln].id for sln in solns])
-        # out.writerow([solns[sln].to_dict() for sln in solns])
-        # out.writerow([scores[sln].to_dict() for sln in solns])
+    m_index, models = ModelSetIO.from_file(out_file_path)
+
+    # Get fitted solution
+    fit_req_ids = {}
+    #fitted_models = {}
+    fitted_results = {}
+    for mid, model in models.items():
+        logger.debug("Fitting model: %s" % str(model))
+        fit_req_ids[mid] = serv.fit_solution(model, ds)
+    for mid, rid in fit_req_ids.items():
+        logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
+        models[mid].fitted_id, fitted_results[mid] = serv.get_fit_solution_results(rid)
+
+    for mid in models:
+        logger.debug("Got fitted model with model id: %s" % mid)
+        logger.debug("Model: %s\tFitted Model: %s" % (mid, models[mid].fitted_id))
+    
+        
+    # # Write model fit id info to output file
+    out_file_path = path.join(args.workingDir, config.get('Output', 'out_file'))
+
+    FittedModelSetIO.to_file(out_file_path, models, m_index)
 
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'dataset_out_file'))
