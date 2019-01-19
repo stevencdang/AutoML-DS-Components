@@ -42,5 +42,5 @@ cd $cwd
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId=' ' -is_test=1 -file0 "$cwd/test/dataset_pred.json"
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId=' ' -is_test=1 -file0="$cwd/test/datasetDoc.tsv" -file1=$cwd/test/problemDoc.json" -file2="$cwd/test/fit-models.tsv" -file3=$cwd/test/predictions.tsv"
 
