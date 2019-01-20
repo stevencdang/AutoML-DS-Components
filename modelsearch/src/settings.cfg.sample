@@ -8,3 +8,4 @@ ta2_url = localhost:45042
 [Output]
 dataset_out_file = datasetDoc.tsv
 model_out_file = model-flows.tsv
+pred_out_file = predictions.tsv
