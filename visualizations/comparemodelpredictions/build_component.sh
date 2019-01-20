@@ -65,17 +65,18 @@ else
 fi
 
 # Handle the argument specifying where the wcc.properties file is
-wcc=$(pwd)/wcc.properties
+wcctemp=$(pwd)/wcc.properties.template
+#wccdir=$(pwd)
 
 if [ "$#" -gt 1 ]; then
     if [[ "$2" = /* ]]; then
-        wcc="$2"
+        wcctemp="$2"
     else
-        wcc="$(pwd)/$2"
+        wcctemp="$(pwd)/$2"
     fi
 fi
 
-if [ ! -f "$wcc" ]; then
+if [ ! -f "$wcctemp" ]; then
     echo "ERROR: Could not find wcc.properties file at $wcc"
     exit 1
 else
@@ -84,30 +85,14 @@ fi
 
 ### Perform pre generation actions ###
 #######################################
-srcdir=$(dirname "$wcc")
-echo "Packaging python source to be built into 'program' directory: $srcdir/program"
-if [ ! -d "$srcdir"/program ]; then
-    mkdir "$srcdir"/program
-else
-    # Clean out the old source before continuing
-    rm -R "$srcdir"/program
-    mkdir "$srcdir"/program
-fi
+wccdir=$(dirname "$wcctemp")
+wcc=$wccdir/wcc.properties
+awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir "/program";next}1' "$wcctemp" > tmp && mv tmp "$wcc"
 
+### Perform pre generation actions ###
+#######################################
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-cwd=$(pwd)
-cd $srcdir/src
-# Replicate directory structure
-find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
-# Copy files
-find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.cfg"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.cfg.sample"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.html"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.css"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src -type f -name "*.js"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
-find "$srcdir"/src/html -type f -printf %P\\n | xargs -I {} cp "$srcdir"/src/html/{} "$srcdir"/program/html/{}
-
+./setup_run.sh
 
 ### Generating new component ###
 ################################
@@ -141,6 +126,7 @@ cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
+cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
 cp "$srcdir"/test/dataset_pred.json.sample "$cdir"/test/components/dataset_pred.json
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample

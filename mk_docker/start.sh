@@ -11,7 +11,6 @@ service mysql start
 
 # DataShop and Tigris Databases
 mysql -u root < /datashop/sql/create_databases.sql
-mysql -u root < /datashop/sql/create_databases.sql
 mysql -u root < /datashop/sql/create_empty_auth_db.sql
 mysql -u root adb_source < /datashop/sql/create/create_adb_10_x.sql
 mysql -u root analysis_db < /datashop/sql/create/create_adb_10_x.sql
