@@ -286,6 +286,31 @@ if [[ " ${test_comps[@]} " =~ " modelexport " ]]; then
     cd ..
 fi
 
+if [[ " ${test_comps[@]} " =~ " comparemodelpredictions " ]]; then
+    # Test describedata
+    cname=comparemodelpredictions
+    cd visualizations/$cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
+    cp ../../datasetselector/test/output/datasetDoc.tsv test/
+    if [ -f ../../problemgeneratordefault/test/output/problemDoc.json ]; then
+        cp ../../problemgeneratordefault/test/output/problemDoc.json test/
+    elif [ -f ../../problemmetricselector/test/output/problemDoc.json ]; then
+        cp ../../problemmetricselector/test/output/problemDoc.json test/
+    else
+        echo "Can't run component need to run problem generation components first"
+    fi
+    cp ../../modelsearch/test/output/fit-models.tsv test/
+    cp ../../modelsearch/test/output/predictions.tsv test/
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
+    cd ../..
+fi
+
 if [[ " ${test_comps[@]} " =~ " describedata " ]]; then
     # Test describedata
     cname=describedata

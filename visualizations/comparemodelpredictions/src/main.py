@@ -32,8 +32,15 @@ from pandas.api.types import is_numeric_dtype
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
-from ls_utilities.ls_wf_settings import Settings as stg
+from ls_utilities.ls_wf_settings import SettingsFactory
+from ls_utilities.ls_wf_settings import *
+from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
+from ls_problem_desc.ls_problem import ProblemDesc
+from ls_problem_desc.d3m_problem import DefaultProblemDesc
+
+from modeling.models import *
+from modeling.component_out import *
 
 __version__ = '0.1'
 
@@ -107,8 +114,7 @@ if __name__ == '__main__':
     config = SettingsFactory.get_settings(path.join(args.programDir, 'program', 'settings.cfg'), 
                                           program_dir=args.programDir,
                                           working_dir=args.workingDir,
-                                          is_test=is_test
-                                          )
+                                          is_test=is_test)
     # Setup Logging
     setup_logging(config)
     logger = logging.getLogger('d3m_vis_compare_predictions')
@@ -124,7 +130,7 @@ if __name__ == '__main__':
     # Get the Problem Doc to forulate the Pipeline request
     logger.debug("Problem input: %s" % args.file1)
     prob = ProblemDesc.from_file(args.file1)
-    logger.debug("Got Problem Description: %s" % prob.print())
+    # logger.debug("Got Problem Description: %s" % (prob.print()))
 
     # Import all the fitted models
     logger.debug("Fitted Model file input: %s" % args.file2)
@@ -132,7 +138,7 @@ if __name__ == '__main__':
 
     # Import the predictions data
     logger.debug("Predicions data file input: %s" % args.file3)
-    pred_data = pd.read_csv(args.file3, sep='\t')
+    pred_data = pd.read_csv(args.file3, sep='\t', index_col=0)
     logger.debug("Prediction data: %s" % str(pred_data.head()))
     logger.debug("Prediction data: %s" % str(pred_data.head()))
 
@@ -157,43 +163,49 @@ if __name__ == '__main__':
     # Get column info
     target_col = None
     for col in dr.columns:
-	logger.debug("Comparing to columns: %s" % str(col))
-	if col.colIndex == ptarget.column_index:
-		logger.debug("Found matching for %s column with %s column" % (ptarget.column_name, col.colName))
-		target_col = col	
+        logger.debug("Comparing to columns: %s" % str(col))
+        if col.colIndex == ptarget.column_index:
+            logger.debug("Found matching for %s column with %s column" % (ptarget.column_name, col.colName))
+            target_col = col	
 
-    coltype = target_col.resType
+    logger.debug("Target col: %s" % str(target_col))
+    coltype = target_col.colType
     plot_type = None
     if any([coltype.lower() == ctype for ctype in ['integer', 'real']]):
-	logger.info("Data is numeric, using scatter plots")
-	plot_type = "scatter"
+        logger.info("Data is numeric, using scatter plots")
+        plot_type = "scatter"
     else:
-	logger.info("Data is not numeric. Using confusion matric")
-	plot_type = "confusion matrix"
+        logger.info("Data is not numeric. Using confusion matric")
+        plot_type = "confusion matrix"
 
     # Setup subplots
     num_plots = pred_data.shape[1] - 2
-    fig = tools.make_subplots(rows,num_plots, cols=1)
+    fig = tools.make_subplots(rows=num_plots, cols=1)
     plots = []
 
     # Iterate over columns of predictions
-    truth_col = list(pred_data.columns[1])
+    logger.debug("Columns: %s" % str(pred_data.columns))
+    truth_col = pred_data.columns[1]
     np.set_printoptions(precision=2)
     for i, col in enumerate(pred_data.columns[2:]):
-	logger.info("Generating plot for columns:\t %s" % col)
+        logger.info("Generating plot for columns:\t %s" % col)
 	
 	# pdata = pred_data.loc[:,truth_col + [col]]
- 	if plot_type == "scatter":
-	    fig.append_trace(go.Scatter(
-		x=pred_data.loc[:,truth_col],
-		y=pred_data.loc[:,col],
-		mode='markers'),
-		i, 1)
-	else:
-	    # Compute confusion matrix
-	    cm = confusion_matrix(pred_data[truth_col], pred_data[col]
-	    fig.append_trace(go.Heatmap(cm),
-		i, 1)
+    if plot_type == "scatter":
+        fig.append_trace(go.Scatter(
+        x=pred_data.loc[:,truth_col],
+        y=pred_data.loc[:,col],
+        mode='markers'),
+        i + 1, 1)
+    else:
+        # Compute confusion matrix
+        data_labels = pred_data[truth_col].unique()
+        cm = confusion_matrix(pred_data[truth_col], pred_data[col], 
+                labels=data_labels)
+        logger.debug("Confusion Matrix: %s" % str(cm))
+        logger.debug("Data Labels: %s" % str(data_labels))
+        fig.append_trace(go.Heatmap(z=cm),
+            i + 1, 1)   
 		
 
 

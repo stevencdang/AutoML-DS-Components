@@ -74,6 +74,7 @@ wf_comps=( DatasetImporter \
     ModelScore \
     ModelSelector \
     CompareModelScores \
+    CompareModelPredictions \
 )
 
 do_not_build=( \
