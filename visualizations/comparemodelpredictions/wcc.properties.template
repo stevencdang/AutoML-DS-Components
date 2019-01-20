@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=VisualizationConfusionMatrix
+component.name=CompareModelPredictions
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -25,7 +25,7 @@ component.author.email=stevenda@cs.cmu.edu
 
 # If the component lang is not Java, you must specify the directory
 # which contains the component program files, e.g., example.R
-component.program.dir=/rdata/Sandbox/learnsphere/d3m/learnsphereComponents/visualizeconfusionmatrix/program
+component.program.dir=
 
 # If the component lang is not Java, you must specify the file to be run.
 # This file is expected to be found in the component.program.dir.
@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Generates a confusion matrix given a d3m dataset with prediction results
 
 # The number of inputs for the new component. 
-component.num_inputs=1
+component.num_inputs=4
 
 # The number of outputs for the new component. 
 component.num_outputs=1
