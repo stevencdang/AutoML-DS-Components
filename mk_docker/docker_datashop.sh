@@ -183,6 +183,8 @@ cp $DS_DIRECTORY/docker_datashop/no-ssl-10_1_10_patch/datashop.war $DS_DIRECTORY
 #################################
 # Copy Dockerfile to override standard one
 cp $CWD/Dockerfile $DS_DIRECTORY/
+# Overwrite component config script to handle build bug on unused component
+cp $CWD/update_components_docker.sh $DS_DIRECTORY/tool/workflows/exec_component/
 # OVerwrive component generation script
 #cp $CWD/setup_d3m_components.sh $DS_DIRECTORY/d3m_components/mk_docker/ # this is only during dev
 # Overwrite the docker start script
