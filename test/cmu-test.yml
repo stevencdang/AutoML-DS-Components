@@ -17,6 +17,20 @@ services:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
             - /rdata/dataStore/d3m/test_data_out:/output
 
+    appserver:
+        image:
+            tigris.appserver
+        ports:
+            - "5000:5000"
+        environment:
+            - D3MINPUTDIR=/input
+            - D3MOUTPUTDIR=/output
+            - TA2ADDR=ta2:45042
+            - TA2NAME=cmu
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output
+
     ta2:
         image: 
             registry.datadrivendiscovery.org/sheath/cmu-ta2:live
