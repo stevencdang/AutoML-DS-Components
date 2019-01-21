@@ -91,6 +91,57 @@ if __name__ == '__main__':
         logger.debug("Data resource type: %s" % dr.resType)
         if dr.resType.lower() == "table":
             logger.info("Proccessing data resource table with ID: %s" % dr.resID)
+            columns = []
+
+            for col in dr.columns:
+                # Ignore index columns
+                if ('index' not in col.colName.lower()) and \
+                        ('id' not in col.colName.lower()):
+                    # logger.debug("Processing columns with name: %s" % col.colName)
+                    if any([col.colType == ctype for ctype in ['integer', 'real']]):
+                        logger.info("Adding continuous variable: %s\t with type %s" % (col.colName, col.colType))
+                        columns.append(col)
+                    elif any([col.colType == ctype for ctype in ['categorical']]):
+                        logger.info("Adding categorical variable: %s" % col.colName)
+                        columns.append(col)
+
+            # Loading data for resource
+            data_path = path.join(ds.get_ds_path(), dr.resPath)
+            logger.debug("Got data path from dataset with ds root path: %s\t total path: %s" % (ds.get_ds_path(), data_path))
+            data = pd.read_csv(data_path, sep=',')
+            logger.debug(data.head())
+            logger.info("Adding charts for %i columns" % len(columns))
+            num_plots = len(columns)
+            titles = tuple(col.colName for col in columns)
+            fig = tools.make_subplots(rows=num_plots, cols=1,
+                                      subplot_titles=titles)
+            dim = 600
+            height = dim * num_plots
+            fig['layout'].update(height=height, width=dim)
+
+            for i, col in enumerate(columns):
+                if any([col.colType == ctype for ctype in ['integer', 'real']]):
+                    logger.debug("Adding histogram for continuous variable")
+                    fig.append_trace(go.Histogram(x=data.loc[:,col.colName], 
+                                                name=col.colName),
+                        i + 1, 1)
+
+                elif any([col.colType == ctype for ctype in ['categorical']]):
+                    logger.debug("*****************************************")
+                    logger.debug("Adding bar chart for categorical variable")
+                    d = data[col.colName].value_counts()
+                    xdata = list(d.keys())
+                    ydata = [d[key] for key in xdata]
+                    logger.info("counts: %s" % str(d))
+                    logger.info("Keys: %s" % str(xdata))
+                    logger.info("values: %s" % str(ydata))
+
+                    fig.append_trace(go.Bar(x=xdata,
+                                            y=ydata,
+                                            name=col.colName),
+                        i + 1, 1)
+
+
 
     # Go through each tabular data resource
     # data_resource = None
@@ -238,8 +289,9 @@ if __name__ == '__main__':
     
 
     # Get  html to output file path
-    # out_file_path = path.join(args.workingDir, 
-                              # config.get('Output', 'out_file')
-                              # )
-    # logger.info("Writing output html to: %s" % out_file_path)
-    # plot_url = py.offline.plot(fig, filename=out_file_path)
+    out_file_path = path.join(args.workingDir, 
+                              config.get('Output', 'out_file')
+                              )
+    logger.info("Writing output html to: %s" % out_file_path)
+    plot_url = py.offline.plot(fig, filename=out_file_path)
+
