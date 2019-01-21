@@ -1,0 +1,33 @@
+version: "2"
+services:
+    tigris:
+        image: 
+            test
+        ports:
+            - "9002:80"
+            - "9001:443"
+            - "9000:22"
+        environment:
+            - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
+            - D3MINPUTDIR=/input
+            - D3MOUTPUTDIR=/output
+            - TA2ADDR=ta2:45042
+            - TA2NAME=cmu
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output
+
+    ta2:
+        image: 
+            registry.datadrivendiscovery.org/sheath/cmu-ta2:live
+        ports:
+            - "45042:45042"
+        environment:
+            - D3MOUTPUTDIR=/output
+            - D3MINPUTDIR=/input
+            - D3MRUN=ta2ta3
+            - D3MCPU=8
+            - D3MTIMEOUT=5
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output

@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# Author: Steven C. Dang
+
+# script to generate add_component.sql using local system config
+
 # Ensure this is pointing to where WorkflowComponents is cloned
 wcc=$WCC 
 

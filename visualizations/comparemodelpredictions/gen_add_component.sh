@@ -29,7 +29,7 @@ echo -e "\t\`version\`," >> $out_file
 echo -e "\t\`info\`" >> $out_file
 echo -e ")" >> $out_file
 echo "VALUES (" >> $out_file
-echo -e "\t'Analysis'," >> $out_file
+echo -e "\t'Visualization'," >> $out_file
 echo -e "\t'Compare_Model_Predictions'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/schemas/$comp_dir_name""_v1_0.xsd'," >> $out_file

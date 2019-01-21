@@ -18,8 +18,9 @@ fi
 # Packaging source into "program" directory
 ./setup_run.sh
 
-# Add program directory to pythonpath
+# Add all src subdirectories to python path (This emulates the flat heirarch that 
+# will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId=' ' -is_test=1 -file0 "$cwd/test/datasetDoc.tsv"
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId=' ' -is_test=1 -file0="$cwd/test/datasetDoc.tsv" 
 

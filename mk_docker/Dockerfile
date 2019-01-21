@@ -119,7 +119,7 @@ RUN pip3 install --upgrade pip==9.0.2 && \
 
 # Install Python 3.6 from source
 ADD Python-3.6.3 /datashop/Python-3.6.3
-RUN cd Python-3.6.3/ && ./configure && make && sudo make install 
+RUN cd Python-3.6.3/ && ./configure && make && sudo make install
 
 # Generate D3M Components from into workflow_components directory
 #RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh /datashop/d3m_components 2>&1 > \
@@ -129,8 +129,21 @@ RUN cd Python-3.6.3/ && ./configure && make && sudo make install
 # ADD . /datashop
 
 
-# Tetrad components have a hard-coded path in the build.xml; accommodate this
-ADD workflow_components /datashop/workflow_components
+# Go through each d3m component and setup virtualenv
+#RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh 2>&1 > /datashop/d3m_components/mk_docker/gen_components.log
+#WORKDIR /datashop/workflow_components/DatasetImporter
+#RUN ./install_component.sh && ant dist
+#WORKDIR /datashop/workflow_components/DatasetSelector
+#RUN ./install_component.sh && ant dist
+
+# Create the workflows processing directory
+# Change /datashop permissions
+ADD sql /datashop/sql
+ADD no-ssl-10_1_10_patch /datashop/no-ssl-10_1_10_patch
+ADD init /datashop/init
+ADD extlib /datashop/extlib
+ADD example_data /datashop/example_data
+ADD docker_datashop /datashop/docker_datashop
 ADD tools /datashop/tools
 RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
  && ln -s /usr/bin/java /usr/java/jdk1.8.0_131/bin/java \
@@ -145,42 +158,16 @@ RUN mkdir -p /usr/java/jdk1.8.0_131/bin/ \
  && mkdir -p /usr/java/jdk1.8.0_131/jre/.java/.userPrefs \
  && chown -R datashop:datashop /usr/java/jdk1.8.0_131/jre/.java/ \
  && chmod ug+rwx /usr/java/jdk1.8.0_131/jre/.java \
- && chmod ug+rwx /usr/java/jdk1.8.0_131/jre/.java/.userPrefs \
-# Build component wrapper jars
- && chmod ug+rx /datashop/workflow_components/build.sh \
- && chmod ug+rx /datashop/tools/workflows/exec_component/update_components_docker.sh \
- && /datashop/workflow_components/build.sh /datashop/workflow_components \
- && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!"
-
-# Go through each d3m component and setup virtualenv
-#RUN /datashop/d3m_components/mk_docker/setup_d3m_components.sh 2>&1 > /datashop/d3m_components/mk_docker/gen_components.log
-#WORKDIR /datashop/workflow_components/DatasetImporter
-#RUN ./install_component.sh && ant dist
-#WORKDIR /datashop/workflow_components/DatasetSelector
-#RUN ./install_component.sh && ant dist
-
-
-
-# Change /datashop permissions
-ADD sql /datashop/sql
-ADD no-ssl-10_1_10_patch /datashop/no-ssl-10_1_10_patch
-ADD init /datashop/init
-ADD extlib /datashop/extlib
-ADD example_data /datashop/example_data
-ADD docker_datashop /datashop/docker_datashop
+ && chmod ug+rwx /usr/java/jdk1.8.0_131/jre/.java/.userPrefs
 RUN chmod ug+rwx,o+rx /datashop \
  && mkdir /datashop/log \
  && find /datashop -type f -exec chmod ug+rw,o+r {} \; \
  && find /datashop -type d -exec chmod ug+rwx,o+rx {} \; \
  && find /datashop -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.xsd -o -iname \*.xml -o -iname \*.r \) -exec dos2unix {} \; \
  && find /datashop -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.r -o -iname \*.jar -o -iname \*.exe \) -exec chmod ugo+rx {} \; \
-# Create the workflows processing directory, as well as
-# copy the log4j properties from the AFM component to the wfc directory,
-# replacing all DEBUG with INFO.
+# Create the workflows processing directory
  && mkdir -p /datashop/dataset_files/workflows /datashop/dataset_files/user_uploads \
  && chown -R datashop:datashop /datashop/ \
- && cp /datashop/workflow_components/AnalysisAfm/log4j.properties /datashop/dataset_files/workflows/ \
- && sed -i 's/DEBUG/ERROR/g' /datashop/dataset_files/workflows/log4j.properties \
  && mkdir /tmp/merge_files \
  && chmod 777 /tmp/merge_files \
  && mkdir -p /var/lib/mysql \
@@ -272,6 +259,42 @@ RUN cp /datashop/deploy/log4j-discoursedb.properties.template /datashop/deploy/l
  && newKeySpec=`hexdump -n 16 -e '4/4 "%08X" 1 "\n"' /dev/urandom` \
  && sed -i "s#<md5 keySpec=".*"/>#<md5 keySpec="${newKeySpec}"/>#" /etc/oli/oli-log-service.conf
 
+# Tetrad components have a hard-coded path in the build.xml; accommodate this
+ADD workflow_components /datashop/workflow_components
+# Add d3m source code to generate components
+ADD d3m_components /datashop/d3m_components
+RUN chown -R datashop:datashop /datashop/d3m_components \
+    # Setup some docker dev env for testing with docker image
+    && cp /datashop/d3m_components/mk_docker/.vimrc /home/datashop/ \
+    && cp /datashop/d3m_components/mk_docker/.gitconfig /home/datashop/ \
+    && echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
+    && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile \
+    # Copy workflow component init script from d3m directory
+    && cp /datashop/d3m_components/mk_docker/workflow_component_local.sql /datashop/sql/ \
+    && chmod ug+rwx,o+rx /datashop/sql/workflow_component_local.sql \
+    # ADD start.sh /datashop/start.sh
+    # && cp /datashop/d3m_components/mk_docker/start.sh /datashop/shart.sh \
+    && chmod ug+rwx,o+rx /datashop/d3m_components/mk_docker/start.sh \
+    && chown datashop:datashop /datashop/d3m_components/mk_docker/start.sh \
+    && dos2unix /datashop/d3m_components/mk_docker/start.sh
+
+ # cleanup windows file endings and permissions in workflow components directory
+ RUN chown -R datashop:datashop /datashop/workflow_components \
+     && find /datashop/workflow_components -type f -exec chmod ug+rw,o+r {} \; \
+     && find /datashop/workflow_components -type d -exec chmod ug+rwx,o+rx {} \; \
+     && find /datashop/workflow_components -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.xsd -o -iname \*.xml -o -iname \*.r \) -exec dos2unix {} \; \
+     && find /datashop/workflow_components -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.r -o -iname \*.jar -o -iname \*.exe \) -exec chmod ugo+rx {} \; \
+    # Create the workflows processing directory
+    # Copy the log4j properties from the AFM component to the wfc directory,
+    # replacing all DEBUG with INFO.
+     && cp /datashop/workflow_components/AnalysisAfm/log4j.properties /datashop/dataset_files/workflows/ \
+     && sed -i 's/DEBUG/ERROR/g' /datashop/dataset_files/workflows/log4j.properties \
+     && chmod -R g+rw /datashop/dataset_files/workflows/log4j.properties \
+    # Build component wrapper jars
+     && chmod ug+rx /datashop/workflow_components/build.sh \
+     && chmod ug+rx /datashop/tools/workflows/exec_component/update_components_docker.sh \
+     && /datashop/workflow_components/build.sh /datashop/workflow_components \
+     && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!"
 
 # Deploy DataShop and Tigris
 WORKDIR /datashop/deploy
@@ -282,14 +305,6 @@ RUN ant filter.db.password \
  && ant deployWar
 
 WORKDIR /datashop/deploy
-
-############ For Development ################
-ADD .vimrc /home/datashop/
-ADD .gitconfig /home/datashop/
-RUN echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
-    && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile
-    
-############ End Development ################
 
 
 # Setup SSH server
@@ -314,19 +329,14 @@ RUN mkdir /var/run/sshd \
 # Only if you need to enable passwordless sudo
 # RUN echo "datashop ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# Make ports 443 (HTTPS), 80 (HTTP), and 22 (SSH) available to the outside world (0.0.0.0)
-ADD start.sh /datashop/start.sh
-RUN chmod ug+rwx,o+rx /datashop/start.sh \
-    && chown datashop:datashop /datashop/start.sh
 
-ADD d3m_components /datashop/d3m_components
-RUN chown -R datashop:datashop /datashop/d3m_components
 
 # Remove IPv6 lookups 
 RUN printf ",g/ip6/d\nw\nq\n" | ed /etc/hosts
 
+# Make ports 443 (HTTPS), 80 (HTTP), and 22 (SSH) available to the outside world (0.0.0.0)
 EXPOSE 443 80 22
-CMD ["/bin/bash", "/datashop/start.sh"]
+CMD ["/bin/bash", "/datashop/d3m_components/mk_docker/start.sh"]
 
 
 # END OF Dockerfile

@@ -35,10 +35,10 @@ component.program.file=main.py
 component.version=1.0
 
 # Some descriptive text of the new component.
-component.description=Generates an interactive html app that can generate descriptive statistics of each column in a dataset
+component.description=Generates exploratory data plots for all columns of a dataset
 
 # The number of inputs for the new component. 
-component.num_inputs=1
+component.num_inputs=4
 
 # The number of outputs for the new component. 
 component.num_outputs=1
@@ -47,7 +47,7 @@ component.num_outputs=1
 component.num_options=0
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
-input.0.type=d3m-dataset
+input.0.type=dataset
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 output.0.type=inline-html
@@ -73,3 +73,4 @@ output.0.name=viz.html
 #option.2.name=ft
 #option.2.id=File_Type
 #option.2.default=student_step
+

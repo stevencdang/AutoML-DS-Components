@@ -65,17 +65,18 @@ else
 fi
 
 # Handle the argument specifying where the wcc.properties file is
-wcc=$(pwd)/wcc.properties
+wcctemp=$(pwd)/wcc.properties.template
+#wccdir=$(pwd)
 
 if [ "$#" -gt 1 ]; then
     if [[ "$2" = /* ]]; then
-        wcc="$2"
+        wcctemp="$2"
     else
-        wcc="$(pwd)/$2"
+        wcctemp="$(pwd)/$2"
     fi
 fi
 
-if [ ! -f "$wcc" ]; then
+if [ ! -f "$wcctemp" ]; then
     echo "ERROR: Could not find wcc.properties file at $wcc"
     exit 1
 else
@@ -84,11 +85,14 @@ fi
 
 ### Perform pre generation actions ###
 #######################################
-srcdir=$(dirname "$wcc")
-cwd=$(pwd)
-# Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
-$cwd/setup_run.sh
+wccdir=$(dirname "$wcctemp")
+wcc=$wccdir/wcc.properties
+awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir "/program";next}1' "$wcctemp" > tmp && mv tmp "$wcc"
 
+### Perform pre generation actions ###
+#######################################
+# Copy all source files to the "program" folder for runWCC.sh to copy into new component folder
+./setup_run.sh
 
 ### Generating new component ###
 ################################
@@ -122,10 +126,8 @@ cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
+cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
-cp "$srcdir"/build.xml "$cdir"/ 
-cp "$srcdir"/test/datasetDoc.tsv.sample "$cdir"/test/components/datasetDoc.tsv
-#mv "$cdir"/build.properties "$cdir"/build.properties.sample
 echo "Copied setup files to new component directory from source directory"
 
 # Create dir for writing logs
