@@ -25,6 +25,8 @@ else
         modelscore \
         modelselector \
         comparemodelscores \
+        comparemodelpredictions \
+        describedata \
         )
 fi
 
