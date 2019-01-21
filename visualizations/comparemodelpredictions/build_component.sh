@@ -98,6 +98,7 @@ awk -v cdir="$cwd" '/component.program.dir=/{print "component.program.dir=" cdir
 ################################
 # Ensure changing to workflow components directory so script writes out to this directory
 cd $dir
+echo $dir
 
 # double check that the script is available
 if [ ! -f runWCC.sh ]; then
@@ -122,13 +123,17 @@ done < $wcc
 cdir="$dir/$cname"
 
 # Copy component setup scripts to new component directory
+srcdir=$(dirname "$wcc")
 cp "$srcdir"/install_component.sh "$cdir"/
 cp "$srcdir"/README.md "$cdir"/ 
 cp "$srcdir"/requirements.txt "$cdir"/
 cp "$srcdir"/gen_add_component.sh "$cdir"/
 cp "$srcdir"/build.xml "$cdir"/
 cp "$srcdir"/.gitignore.component "$cdir"/.gitignore
-cp "$srcdir"/test/dataset_pred.json.sample "$cdir"/test/components/dataset_pred.json
+cp "$srcdir"/test/datasetDoc.tsv.sample "$cdir"/test/components/datasetDoc.tsv
+cp "$srcdir"/test/fit-models.tsv.sample "$cdir"/test/components/fit-models.tsv
+cp "$srcdir"/test/predictions.tsv.sample "$cdir"/test/components/predictions.tsv
+cp "$srcdir"/test/problemDoc.json.sample "$cdir"/test/components/problemDoc.json
 #mv "$cdir"/build.properties "$cdir"/build.properties.sample
 echo "Copied setup files to new component directory from source directory"
 
