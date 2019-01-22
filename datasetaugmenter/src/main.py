@@ -11,6 +11,7 @@ import os
 import argparse
 import itertools
 from shutil import copytree, rmtree, copyfile
+import json
 
 import pandas as pd
 import numpy as np
@@ -45,24 +46,13 @@ from modeling.component_out import *
 __version__ = '0.1'
 
 
-class LS_Path_Factory(object):
-
-    def __init__(self, workingDir, programDir):
-        self.workingDir = workingDir
-        self.programDir = programDir
-
-    def get_out_path(self, fpath):
-        return path.join(self.workingDir, fpath)
-
-    def get_hosted_path(self, fpath):
-        return "LearnSphere?htmlPath=" + self.get_out_path(fpath)
-
-
 if __name__ == '__main__':
     # Parse argumennts
-    parser = get_default_arg_parser("D3M Compare Model Predictions")
+    parser = get_default_arg_parser("D3M Dataset Augmenter")
     parser.add_argument('-file0', type=argparse.FileType('r'),
                        help='the dataset json provided for the search')
+    parser.add_argument('-file1', type=argparse.FileType('r'),
+                       help='the problem json provided for the search')
     args = parser.parse_args()
 
     if args.is_test is not None:
@@ -77,20 +67,38 @@ if __name__ == '__main__':
                                           is_test=is_test)
     # Setup Logging
     setup_logging(config)
-    logger = logging.getLogger('d3m_vis_describe_data')
+    logger = logging.getLogger('d3m_dataset_augmenter')
 
     ### Begin Script ###
-    logger.info("Generating a series of exploratory data plots for a given dataset")
-    logger.debug("Running D3M Describe Data with arguments: %s" % str(args))
+    logger.info("Generating an interface to allow user to query for a augmentation dataset")
+    logger.debug("Running D3M Dataset Augmenter with arguments: %s" % str(args))
 
     # Open dataset json
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
-    for dr in ds.dataResources:
-        logger.debug("Data resource type: %s" % dr.resType)
-        if dr.resType.lower() == "table":
-            logger.info("Proccessing data resource table with ID: %s" % dr.resID)
+    # Get the Problem Doc to forulate the Pipeline request
+    logger.debug("Problem input: %s" % args.file1)
+    prob = ProblemDesc.from_file(args.file1)
+    logger.debug("Got Problem Description: %s" % prob.print())
+
+    query_info = {"id": "1"}
+    # Write query info to file
+    query_file_path = path.join(args.workingDir,
+                                config.get("Output", 'data_query_file')
+                                )
+    logger.info("WRiting data query info tofile: %s" % query_file_path)
+    with open(query_file_path, 'w') as f:
+        json.dump(query_info, f)
+
+    # Get  html to output file path
+    out_file_path = path.join(args.workingDir, 
+                              config.get('Output', 'out_file')
+                              )
+    logger.info("Writing output html to: %s" % out_file_path)
+    out_html = '<iframe src="http://dexploraid.sophia.stevencdang.com:9002"></iframe>'
+    with open(out_file_path, 'w') as out_file:
+        out_file.write(out_html)
 
     # Go through each tabular data resource
     # data_resource = None

@@ -8,7 +8,7 @@
 wcc=$WCC 
 
 out_file="add_component.sql"
-comp_dir_name="DescribeData"
+comp_dir_name="DatasetAugmenter"
 
 # Remove add_component.sql if it exists
 if [ -f $out_file ]; then
@@ -29,8 +29,8 @@ echo -e "\t\`version\`," >> $out_file
 echo -e "\t\`info\`" >> $out_file
 echo -e ")" >> $out_file
 echo "VALUES (" >> $out_file
-echo -e "\t'Visualization'," >> $out_file
-echo -e "\t'Describe_Data'," >> $out_file
+echo -e "\t'Analysis'," >> $out_file
+echo -e "\t'Dataset_Augmenter'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/'," >> $out_file
 echo -e "\t'$wcc/$comp_dir_name/schemas/$comp_dir_name""_v1_0.xsd'," >> $out_file
 echo -e "\t'/usr/bin/java -jar'," >> $out_file
@@ -39,7 +39,7 @@ echo -e "\t1," >> $out_file
 echo -e "\t'system'," >> $out_file
 echo -e "\t'Steven_C_Dang'," >> $out_file 
 echo -e "\t'1.0', " >> $out_file
-echo -e "\t'Create exploratory data graphs for a given dataset'" >> $out_file
+echo -e "\t'Select additional datasets to augment a given dataset to improve performance on a given problem'" >> $out_file
 echo -e ");" >> $out_file
 
 

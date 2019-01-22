@@ -3,7 +3,7 @@
 # or find yourself wanting to do something that isn't obvious here.
 
 # The name of the new component. [Required]
-component.name=DataAugmenter
+component.name=DatasetAugmenter
 
 # The type of the new component. [Required]
 # Options include: import, analysis, transform, visualization, tetrad
@@ -51,8 +51,8 @@ input.0.type=dataset
 input.1.type=modeling-problem
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
-output.0.type=dataset
-output.0.name=datasetDoc.tsv
+output.0.type=dataset-query
+output.0.name=datasetQuery.json
 
 output.1.type=inline-html
-output.1.name=viz.html
+output.1.name=app.html

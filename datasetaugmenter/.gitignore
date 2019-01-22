@@ -29,6 +29,11 @@ gen_component.log
 wcc.properties*
 !wcc.properties.template
 
-test/dataset_pred.json
-test/dataset_pred.json.*
-!test/dataset_pred.json.sample
+test/datasetDoc.tsv
+test/datasetDoc.tsv.*
+!test/datasetDoc.tsv.sample
+
+test/problemDoc.json
+test/problemDoc.json.*
+!test/problemDoc.json.sample
+
