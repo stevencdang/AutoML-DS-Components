@@ -7,7 +7,7 @@
 # Assumed dependencies:
 # -- python pip
 # -- python virtualenv
-echo "Setting up Describe Data Tigris Components for local system"
+echo "Setting up Dataset Augmenter Tigris Components for local system"
 
 virtualenv env --python=python3.6
 source env/bin/activate

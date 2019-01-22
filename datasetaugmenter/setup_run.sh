@@ -2,7 +2,7 @@
 # Packaging source into "program" directory
 cwd=$(pwd)
 # Get lib dir
-cd ../../lib
+cd ../lib
 libdir=$(pwd)
 cd $cwd
 

@@ -15,6 +15,7 @@ if [ "$#" -gt 0 ]; then
 else
     test_comps=(datasetimporter \
         datasetselector \
+        datasetaugmenter \
         problemgeneratordefault \
         problemcreator \
         problemtaskselector \
@@ -131,6 +132,25 @@ if [[ " ${test_comps[@]} " =~ " problemmetricselector " ]]; then
     fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
     cp ../problemtaskselector/test/output/problemTask.tsv test/
+    ./run_component.sh &> $log_file
+    echo "#########################################################"
+    cd ..
+fi
+
+if [[ " ${test_comps[@]} " =~ " datasetaugmenter " ]]; then
+    # Test DatasetAugmenter
+    cname=datasetaugmenter
+    cd $cname
+    echo "#########################################################"
+    echo "Running" $cname
+    log_file=$log_dir/$cname.log
+    if [ -f $log_file ]; then
+        rm $log_file
+    fi
+    cp ../datasetselector/test/output/datasetDoc.tsv test/
+    if [ -f ../problemgeneratordefault/test/output/problemDoc.json ]; then
+        cp ../problemgeneratordefault/test/output/problemDoc.json test/
+    fi
     ./run_component.sh &> $log_file
     echo "#########################################################"
     cd ..

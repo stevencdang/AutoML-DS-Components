@@ -36,6 +36,14 @@ echo "ta2_name = $TA2NAME" >> $D3MCONFIG
 echo "mode = D3M" >> $D3MCONFIG
 chown jboss:datashop $D3MCONFIG
 chmod 775 $D3MCONFIG
+
+# Write Docker env variables to config file
+dockerconfig="/datashop/workflow_components/D3M/docker_config.cfg"
+echo "HOST_URL=$HOST_URL" >> $dockerconfig
+echo "D3M_SERVICE_SUBDOMAIN=$D3M_SERVICE_SUBDOMAIN" >> $dockerconfig
+chown jboss:datashop $dockerconfig
+chmod 775 $dockerconfig
+
 chgrp -R datashop $D3MOUTPUTDIR
 chmod g+w -R $D3MOUTPUTDIR
 
