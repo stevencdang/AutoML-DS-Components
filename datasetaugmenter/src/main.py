@@ -65,6 +65,9 @@ if __name__ == '__main__':
                                           program_dir=args.programDir,
                                           working_dir=args.workingDir,
                                           is_test=is_test)
+    # Get service fongif file
+    service_config = AppServiceSettings()
+
     # Setup Logging
     setup_logging(config)
     logger = logging.getLogger('d3m_dataset_augmenter')
@@ -83,11 +86,11 @@ if __name__ == '__main__':
     logger.debug("Got Problem Description: %s" % prob.print())
 
     # Get URL of App Service 
-    host_url = os.environ["HOST_URL"]
-    service_subdomain = os.environ["D3M_SERVICE_SUBDOMAIN"]
-    service_url = service_subdomain + "." + host_url + ":9002"
+    # host_url = os.environ["HOST_URL"]
+    # service_subdomain = os.environ["D3M_SERVICE_SUBDOMAIN"]
+    # service_url = service_subdomain + "." + host_url + ":9002"
+    service_url = service_config.get_service_url() + ":9002"
     logger.info("connecting to service at url: %s" % service_url)
-    # service_url = dexploraid.sophia.stevencdang.com:9002
 
     query_info = {"id": "1"}
     # Write query info to file
@@ -103,7 +106,7 @@ if __name__ == '__main__':
                               config.get('Output', 'out_file')
                               )
     logger.info("Writing output html to: %s" % out_file_path)
-    out_html = '<iframe src="http://%s"></iframe>' % service_url
+    out_html = '<iframe src="http://%s" width="1024" height="768"></iframe>' % service_url
     with open(out_file_path, 'w') as out_file:
         out_file.write(out_html)
 
