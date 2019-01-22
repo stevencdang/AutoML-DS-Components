@@ -280,21 +280,24 @@ RUN chown -R datashop:datashop /datashop/d3m_components \
 
  # cleanup windows file endings and permissions in workflow components directory
  RUN chown -R datashop:datashop /datashop/workflow_components \
-     && find /datashop/workflow_components -type f -exec chmod ug+rw,o+r {} \; \
-     && find /datashop/workflow_components -type d -exec chmod ug+rwx,o+rx {} \; \
-     && find /datashop/workflow_components -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.xsd -o -iname \*.xml -o -iname \*.r \) -exec dos2unix {} \; \
-     && find /datashop/workflow_components -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.r -o -iname \*.jar -o -iname \*.exe \) -exec chmod ugo+rx {} \; \
+    && find /datashop/workflow_components -type f -exec chmod ug+rw,o+r {} \; \
+    && find /datashop/workflow_components -type d -exec chmod ug+rwx,o+rx {} \; \
+    && find /datashop/workflow_components -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.xsd -o -iname \*.xml -o -iname \*.r \) -exec dos2unix {} \; \
+    && find /datashop/workflow_components -type f \( -iname \*.sh -o -iname \*.py -o -iname \*.r -o -iname \*.jar -o -iname \*.exe \) -exec chmod ugo+rx {} \; \
     # Create the workflows processing directory
     # Copy the log4j properties from the AFM component to the wfc directory,
     # replacing all DEBUG with INFO.
-     && cp /datashop/workflow_components/AnalysisAfm/log4j.properties /datashop/dataset_files/workflows/ \
-     && sed -i 's/DEBUG/ERROR/g' /datashop/dataset_files/workflows/log4j.properties \
-     && chmod -R g+rw /datashop/dataset_files/workflows/log4j.properties \
+    && cp /datashop/workflow_components/AnalysisAfm/log4j.properties /datashop/dataset_files/workflows/ \
+    && sed -i 's/DEBUG/ERROR/g' /datashop/dataset_files/workflows/log4j.properties \
+    && chmod -R g+rw /datashop/dataset_files/workflows/log4j.properties \
     # Build component wrapper jars
-     && chmod ug+rx /datashop/workflow_components/build.sh \
-     && chmod ug+rx /datashop/tools/workflows/exec_component/update_components_docker.sh \
-     && /datashop/workflow_components/build.sh /datashop/workflow_components \
-     && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!"
+    && chmod ug+rx /datashop/workflow_components/build.sh \
+    && chmod ug+rx /datashop/tools/workflows/exec_component/update_components_docker.sh \
+    && /datashop/workflow_components/build.sh /datashop/workflow_components \
+    && /datashop/tools/workflows/exec_component/update_components_docker.sh 2>&1 > /datashop/dockerfile.log || echo "Failed tests in update_components_docker.sh!" \
+    && chown -R datashop:datashop /datashop/workflow_components \
+    && find /datashop/workflow_components -type f -exec chmod ug+rw,o+r {} \; \
+    && find /datashop/workflow_components -type d -exec chmod ug+rwx,o+rx {} \;
 
 # Deploy DataShop and Tigris
 WORKDIR /datashop/deploy
