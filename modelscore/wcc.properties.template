@@ -48,7 +48,7 @@ component.num_options=1
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
 input.0.type=dataset
-input.1.type=model-set
+input.1.type=fitted-model-set
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 #output.0.type=dataset
