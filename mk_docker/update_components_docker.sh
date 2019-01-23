@@ -208,12 +208,12 @@ component.program.path=program/analysis.R
 EOF
 
 # Compile BKT's programs for this platform
-cd AnalysisBkt/program/standard-bkt-public-standard-bkt
-make
-cp predicthmm ../predicthmm.exe
-cp trainhmm ../trainhmm.exe
-chmod ug+rx ../predicthmm.exe
-chmod ug+rx ../trainhmm.exe
+# cd AnalysisBkt/program/standard-bkt-public-standard-bkt
+# make
+# cp predicthmm ../predicthmm.exe
+# cp trainhmm ../trainhmm.exe
+# chmod ug+rx ../predicthmm.exe
+# chmod ug+rx ../trainhmm.exe
 
 cd ${workflowComponentsBaseDir}
 # Copy the app context for components which use the DataShop DAO
