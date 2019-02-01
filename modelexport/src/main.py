@@ -19,7 +19,7 @@ from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from modeling.models import *
 from modeling.component_out import *
-from d3m_ta2.ta2_v3_client import TA2Client
+from d3m_ta2.ta2_client import TA2Client
 from d3m_eval.summer_2018.model_generation import RankedPipelineWriter
 
 
