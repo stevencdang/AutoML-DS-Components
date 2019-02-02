@@ -16,10 +16,10 @@ _sym_db = _symbol_database.Default()
 
 from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
-import pipeline_pb2 as pipeline__pb2
-import primitive_pb2 as primitive__pb2
-import problem_pb2 as problem__pb2
-import value_pb2 as value__pb2
+from . import pipeline_pb2 as pipeline__pb2
+from . import primitive_pb2 as primitive__pb2
+from . import problem_pb2 as problem__pb2
+from . import value_pb2 as value__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
