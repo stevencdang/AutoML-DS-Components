@@ -5,10 +5,14 @@
 ### System specific generated files for each component ###
 #########################################################
 add_component.sql
+gen_component.log
 
 ### Python files ###
 ####################
 *.pyc
+
+### Virtual environment ###
+venv
 
 ### Configuration for testing ###
 test/*.cfg
