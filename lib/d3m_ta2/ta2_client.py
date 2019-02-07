@@ -10,9 +10,10 @@ from google.protobuf.json_format import MessageToJson
 import pandas as pd
 
 # D3M TA2 API imports
-from .api_current import core_pb2, core_pb2_grpc
-from .api_current import value_pb2
-from .api_current import problem_pb2
+# from .api_v2019_1_22 import *
+from .api_v2019_1_22 import core_pb2, core_pb2_grpc
+from .api_v2019_1_22 import value_pb2
+from .api_v2019_1_22 import problem_pb2
 
 from ls_problem_desc.d3m_problem import *
 from modeling.models import *
@@ -25,7 +26,7 @@ class TA2Client(object):
 
     """
     __name__ = "CMU Tigris TA3 v2.0"
-    __version__ = "v2018.5.1"
+    __version__ = "v2019.1.22"
     __protocol_version__ = core_pb2.DESCRIPTOR.GetOptions().Extensions[core_pb2.protocol_version]
     __allowed_values__ = [value_pb2.RAW, value_pb2.DATASET_URI, value_pb2.CSV_URI]
     
