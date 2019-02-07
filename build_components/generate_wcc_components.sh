@@ -42,16 +42,19 @@ if [ "$#" -gt 0 ]; then
     fi
 fi
 
+echo "CWD: " $cwd
+echo "dir: " $dir
+
 # Check that runWCC.sh is in the directory provided
 if [ ! -d "$dir" ]; then
-    echo "ERROR: Invalid directory given $dir"
+    echo "ERROR: Invalid directory given"  $dir
     exit 1
 else
     cwd=$(pwd)
     cd "$dir"
     if [ ! -f runWCC.sh ]; then
-        echo "ERROR: Invalid directory given. Must provide directory that contains workflow_components" 1>&2
-        echo "Path: $dir" 1>&2
+        echo "ERROR: Invalid directory given. Must provide directory that contains workflow_components" 
+        echo "Path:" $dir
         cd "$cwd"
         exit 1
     else
@@ -59,20 +62,43 @@ else
         cd "$cwd"
     fi
 fi
+
+# Ensure current workign director is the base directory of the project
+if [ $(basename $(pwd)) == "build_components" ]; then
+    echo "Current directory is build directory. Changing to parent to run script"
+    
+    cwd="$(dirname $(pwd))"
+    cd $cwd
+else 
+    if [ ! -d "build_components" ]; then
+        echo "Current directory is not base directory of components. Please run from base directory" 
+        exit 1
+    fi
+fi
+
 wcc=$dir
+echo "WCC is set to director: " $wcc
+
+# set build directory
+build_dir="$(pwd)/build_components"
+echo "Build directory " $build_dir
 
 # Remove all old workflow components
-wf_comps=( DatasetImporter \
+wf_comps=( \
+    DatasetImporter \
     DatasetSelector \
     ProblemCreator \
     ProblemTaskSelector \
     ProblemMetricSelector \
     ProblemGeneratorDefault \
     ModelSearch \
-    ModelFit \
     ModelPredict \
     ModelScore \
     ModelSelector \
+    ModelRank \
+    ModelRerank \
+    ModelExport \
+    DescribeData \
     CompareModelScores \
     CompareModelPredictions \
 )
@@ -85,26 +111,30 @@ do_not_build=( \
 
 cd $cwd
 # Go through each module and configure it to run
-for f in $(find . -name "build_component.sh"); do
+for f in $(find . -name "wcc.properties.template"); do
     full_path=$(realpath $f)
     dir=$(dirname $full_path)
     # dir=$(dirname $f)
     echo "##########################################"
     echo "Found component" $dir
     cd $dir 
+
     # Run configuration scripts
     if [ ! -f src/settings.cfg ]; then
         echo "No settings.cfg file found. Copying from sample"
         cp src/settings.cfg.sample src/settings.cfg
     fi
+
     # Get component name
     tmp=$IFS
     export IFS="="
     while read -r k v; do
         [ "$k" == "component.name" ] && cname=$v
-    done < wcc.properties.template
+    done < $dir/component.properties
     echo $cname
+    # Restore default system delmiter
     export IFS=$tmp
+
     # if [[ "${do_not_build[$cname]-X} == "${do_not_build[$cname]}" ]]; then
     if [[ " ${do_not_build[@]} " =~ " $cname " ]]; then
         echo "skipping rebuild of component" $cname
@@ -114,9 +144,10 @@ for f in $(find . -name "build_component.sh"); do
             echo "Removing old generated WC directory" $cdir
             rm -Rf $cdir
         fi
-        ./build_component.sh $wcc wcc.properties.template
+        cd $build_dir
+        $build_dir/build_component.sh $wcc $dir/wcc.properties.template
         cd $cdir
-        # ant -version
+        ant -version
         ant dist -buildfile $cdir/build.xml
         # buildOutput=`ant dist`
         # echo ${buildOutput} >> build_errors_info.txt
