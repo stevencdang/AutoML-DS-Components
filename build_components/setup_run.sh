@@ -25,7 +25,7 @@ fi
 # Ensure settings.cfg has been created. If not, default to copying sample
 if [ ! -f "$srcdir"/src/settings.cfg ]; then
     echo "Settings.cfg does not exist. Creating copy from template"
-    cp $srcdir/src/settings.cfg.sample $srcdir/src/setting.cfg
+    cp $srcdir/src/settings.cfg.sample $srcdir/src/settings.cfg
 fi
 
 echo "Packaging python source to be built into 'program' directory: $srcdir/program"

@@ -10,10 +10,17 @@ from google.protobuf.json_format import MessageToJson
 import pandas as pd
 
 # D3M TA2 API imports
-# from .api_v2019_1_22 import *
-from .api_v2_27_19 import core_pb2, core_pb2_grpc
-from .api_v2_27_19 import value_pb2
-from .api_v2_27_19 import problem_pb2
+# from .api_v3 import core_pb2, core_pb2_grpc
+# from .api_v3 import value_pb2
+# from .api_v3 import problem_pb2
+# from .api_v3 import core_pb2, core_pb2_grpc, pipeline_pb2, pipeline_pb2_grpc,\
+        # problem_pb2, value_pb2 
+from ta3ta2_api import core_pb2, core_pb2_grpc, pipeline_pb2, pipeline_pb2_grpc,\
+        problem_pb2, value_pb2 
+# from ta3ta2_api import core_pb2, core_pb2_grpc
+# from ta3ta2_api import pipeline_pb2, pipeline_pb2_grpc
+# from ta3ta2_api import problem_pb2
+# from ta3ta2_api import value_pb2
 
 from ls_problem_desc.d3m_problem import *
 from modeling.models import *

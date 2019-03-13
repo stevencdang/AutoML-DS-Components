@@ -22,6 +22,16 @@ if [ ! -d $venv ]; then
     pip install --upgrade pip
     pip install -r $build_dir/requirements.txt
 
+    # install d3m ta3ta2-api
+    cd ../venv
+    mkdir tmp
+    cd tmp
+    git clone https://gitlab.com/datadrivendiscovery/ta3ta2-api.git
+    cd ta3ta2-api
+    git checkout dist-python
+    python setup.py install
+    cd $cwd
+
     # Deactiate python venv
     deactivate
 fi

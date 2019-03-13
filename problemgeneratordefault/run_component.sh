@@ -13,6 +13,12 @@ cd $cwd
 cd ../build_components
 build_dir=$(pwd)
 cd $cwd
+# Get venv dir
+cd ../venv
+venv=$(pwd)
+cd $cwd
+
+source $venv/bin/activate
 
 # Setup local test folder if necessary
 cwd=$(pwd)
@@ -28,16 +34,11 @@ fi
 # Packaging source into "program" directory
 $build_dir/setup_run.sh
 
-# Get venv dir
-cd ../venv
-venv=$(pwd)
-cd $cwd
-source $venv/bin/activate
-
 # Add all src subdirectories to python path (This emulates the flat heirarch that 
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0="$cwd/test/datasetDoc.tsv" -file1=$cwd/test/problemDoc.json -userId=' ' -is_test=1
+
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0=$cwd/test/datasetDoc.tsv -userId=' ' -is_test=1
 
 deactivate
