@@ -115,7 +115,8 @@ for f in $(find . -name "wcc.properties.template"); do
     full_path=$(realpath $f)
     dir=$(dirname $full_path)
     # dir=$(dirname $f)
-    echo "##########################################"
+    echo "################# CG #######################"
+    echo "full path " $full_path
     echo "Found component" $dir
     cd $dir 
 
@@ -126,40 +127,46 @@ for f in $(find . -name "wcc.properties.template"); do
     fi
 
     # Get component name
-    tmp=$IFS
-    export IFS="="
-    while read -r k v; do
-        [ "$k" == "component.name" ] && cname=$v
-    done < $dir/component.properties
-    echo $cname
-    # Restore default system delmiter
-    export IFS=$tmp
+    if [ -f $dir/component.properties ]; then
+        tmp=$IFS
+        export IFS="="
+        while read -r k v; do
+            [ "$k" == "component.name" ] && cname=$v
+        done < $dir/component.properties
+        echo $cname
+        # Restore default system delmiter
+        export IFS=$tmp
 
-    # if [[ "${do_not_build[$cname]-X} == "${do_not_build[$cname]}" ]]; then
-    if [[ " ${do_not_build[@]} " =~ " $cname " ]]; then
-        echo "skipping rebuild of component" $cname
+        # if [[ "${do_not_build[$cname]-X} == "${do_not_build[$cname]}" ]]; then
+        if [[ " ${do_not_build[@]} " =~ " $cname " ]]; then
+            echo "skipping rebuild of component" $cname
+        else
+            cdir="$wcc/$cname"
+            if [ -d $cdir ]; then
+                echo "Removing old generated WC directory" $cdir
+                rm -Rf $cdir
+            fi
+            cd $build_dir
+            $build_dir/build_component.sh $wcc $dir/wcc.properties.template
+            cd $cdir
+            ant -version
+            ant dist -buildfile $cdir/build.xml
+            # buildOutput=`ant dist`
+            # echo ${buildOutput} >> build_errors_info.txt
+            antReturnCode=$?
+            if [ $antReturnCode -ne 0 ]; then
+                echo "Error encountered while genarating component: " $cname
+            fi
+
+            # echo "ANT: Return code is: \""$antReturnCode"\""
+
+        fi
     else
-        cdir="$wcc/$cname"
-        if [ -d $cdir ]; then
-            echo "Removing old generated WC directory" $cdir
-            rm -Rf $cdir
-        fi
-        cd $build_dir
-        $build_dir/build_component.sh $wcc $dir/wcc.properties.template
-        cd $cdir
-        ant -version
-        ant dist -buildfile $cdir/build.xml
-        # buildOutput=`ant dist`
-        # echo ${buildOutput} >> build_errors_info.txt
-        antReturnCode=$?
-        if [ $antReturnCode -ne 0 ]; then
-            echo "Error encountered while genarating component: " $cname
-        fi
-
-        # echo "ANT: Return code is: \""$antReturnCode"\""
-
+        echo "No component.properties file. Skipping component"
     fi
-    echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+
+
+    echo "@@@@@@@@@@@@@@@@@ CG @@@@@@@@@@@@@@@@@@@@"
     cd $cwd
 done
 
