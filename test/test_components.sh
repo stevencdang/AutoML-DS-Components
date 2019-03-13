@@ -272,7 +272,7 @@ if [[ " ${test_comps[@]} " =~ " modelrank " ]]; then
         rm $log_file
     fi
     cp ../datasetselector/test/output/datasetDoc.tsv test/
-    cp ../modelfit/test/output/fit-models.tsv test/
+    cp ../modelsearch/test/output/fit-models.tsv test/
     ./run_component.sh &> $log_file
     echo "#########################################################"
     cd ..
