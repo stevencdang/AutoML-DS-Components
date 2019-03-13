@@ -437,15 +437,15 @@ class TA2Client(object):
         logger.debug("Got reply: %s" % str(reply))
         return reply.primitives
 
-    def export_solution(self, model, fit_id, rank):
+    def export_solution(self, model, mid, rank):
         logger.info("Requesting export of solution with id; %s" % model.id)
 
-        if model.fitted_id != fit_id:
-            raise Exception("Model does not have a fit matching, %s\nAvailable fits: %s" % 
-                            (fit_id, model.fitted_id))
+        if model.id != mid:
+            raise Exception("Model does not have an id matching, %s\nAvailable id: %s" % 
+                            (mid, model.id))
         
         msg = core_pb2.SolutionExportRequest(
-                fitted_solution_id  = fit_id,
+                solution_id  = mid,
                 rank = rank
         )
         if self.debug:
