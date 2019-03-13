@@ -17,8 +17,6 @@ cd ../venv
 venv=$(pwd)
 cd $cwd
 
-source $venv/bin/activate
-
 # Setup local test folder if necessary
 cwd=$(pwd)
 if [ ! -d "$cwd/test" ]; then
@@ -32,6 +30,12 @@ fi
 
 # Packaging source into "program" directory
 $build_dir/setup_run.sh
+
+# Get venv dir
+cd ../venv
+venv=$(pwd)
+cd $cwd
+source $venv/bin/activate
 
 # Add all src subdirectories to python path (This emulates the flat heirarch that 
 # will exist when this script is run in Tigris
