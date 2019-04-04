@@ -85,8 +85,11 @@ class D3MDataset(LSDataset):
                 dpath = path.dirname(fpath)
                 # dpath = path.split(path.split(fpath)[0])[0] # Assumses root
                 try:
-                    with open(fpath, 'r') as f:
+                    # with open(fpath, 'r') as f:
+                    with open(fpath, 'r', encoding="utf-8") as f:
+                        logger.info("Loading json")
                         ds_json = json.load(f)
+                        logger.info("Constructing D3MDataset")
                         return D3MDataset(dpath,
                                           ds_json)
                 except:
