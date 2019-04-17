@@ -38,9 +38,11 @@ from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
 from ls_problem_desc.ls_problem import ProblemDesc
 from ls_problem_desc.d3m_problem import DefaultProblemDesc
+from db.dx_db import DXDB
 
 from modeling.models import *
 from modeling.component_out import *
+
 
 __version__ = '0.1'
 
@@ -75,6 +77,9 @@ if __name__ == '__main__':
                                           program_dir=args.programDir,
                                           working_dir=args.workingDir,
                                           is_test=is_test)
+
+    dx_config = SettingsFactory.get_dx_settings()
+
     # Setup Logging
     setup_logging(config)
     logger = logging.getLogger('d3m_vis_describe_data')
@@ -86,6 +91,15 @@ if __name__ == '__main__':
     # Open dataset json
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
+
+    # Insert dataset json to db
+    logger.debug("DB URL: %s" % dx_config.get_db_backend_url())
+    db = DXDB(dx_config.get_db_backend_url())
+    dsid = db.insert_dataset_metadata(ds)
+    logger.debug("Inserted dataset to db with id: %s" % dsid)
+    # Testing retrieving dataset from db
+    ds = db.get_dataset_metadata(str(dsid))
+    logger.debug("dataset retrieved from db: %s" % str(ds))
 
     for dr in ds.dataResources:
         logger.debug("Data resource type: %s" % dr.resType)

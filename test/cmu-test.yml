@@ -28,9 +28,9 @@ services:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
             - /rdata/dataStore/d3m/test_data_out:/output
 
-    appserver:
+    tigris.dexplorer.backend:
         image:
-            tigris.appserver
+            tigris.appserver.backend
         ports:
             - "5005:5000"
         environment:
@@ -55,7 +55,7 @@ services:
             - D3MOUTPUTDIR=/output
             - TA2ADDR=ta2:45042
             - TA2NAME=cmu
-            - VIRTUAL_HOST=dexploraid.sophia.stevencdang.com
+            - VIRTUAL_HOST=dxui.sophia.stevencdang.com
             - VIRTUAL_PORT=80
             - HOST_URL=sophia.stevencdang.com
         volumes:

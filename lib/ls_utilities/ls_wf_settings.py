@@ -21,6 +21,16 @@ class SettingsFactory(object):
         else:
             return Settings(cfg_path, program_dir, working_dir, is_test)
 
+    @staticmethod
+    def get_dx_settings():
+        cfg_file_name = "docker_config.cfg"
+        if 'D3MCONFIG' not in os.environ:
+            config_file = os.path.join("/datashop/workflow_components/D3M", cfg_file_name)
+        else:
+            config_file = os.path.join(os.path.dirname(os.environ['D3MCONFIG']),
+                    "docker_config.cfg")
+        return AppServiceSettings(config_file)
+
 class Settings(object):
     """
     A generic settings class including a few operators for reading in configuration files
@@ -176,4 +186,7 @@ class AppServiceSettings(object):
         host = self.cfg.get("ServiceUrl", "HOST_URL")
         subdomain = self.cfg.get("ServiceUrl", "D3M_SERVICE_SUBDOMAIN")
         return "http://%s.%s" % (subdomain, host)
+
+    def get_db_backend_url(self):
+        return self.cfg.get("db", "HOST_URL")
 
