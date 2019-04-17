@@ -6,15 +6,15 @@
 # Setup local test folder if necessary
 cwd=$(pwd)
 # Get lib dir
-cd ../lib
+cd ../../lib
 libdir=$(pwd)
 cd $cwd
 # Get build_components dir
-cd ../build_components
+cd ../../build_components
 build_dir=$(pwd)
 cd $cwd
 # Get venv dir
-cd ../venv
+cd ../../venv
 venv=$(pwd)
 cd $cwd
 
@@ -33,7 +33,7 @@ fi
 $build_dir/setup_run.sh
 
 # Get venv dir
-cd ../venv
+cd ../../venv
 venv=$(pwd)
 cd $cwd
 source $venv/bin/activate
