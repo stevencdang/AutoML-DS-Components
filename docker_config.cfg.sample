@@ -1,0 +1,13 @@
+[frontend]
+HOST_URL=sophia.stevencdang.com
+D3M_SERVICE_SUBDOMAIN=dexploraid
+[backend]
+HOST_URL=dxui.sophia.stevencdang.com
+EXTERNAL_URL=sophia.stevencdang.com
+D3M_SERVICE_SUBDOMAIN=dexploraid
+[db]
+HOST_URL=tigris.mongodb:27017
+EXTERNAL_URL=db.sophia.stevencdang.com
+MONGO_USER=root
+MONGO_PSWD=lsadmin
+
