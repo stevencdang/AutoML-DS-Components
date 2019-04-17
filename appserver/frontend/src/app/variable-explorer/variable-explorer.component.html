@@ -1,0 +1,22 @@
+<div class="var-explorer-container">
+  <div class="var-explorer-main">
+
+  <div class="var-list-section">
+    <div class="section-header">
+      Variables
+    </div>
+    <div class="var-list">
+      <mat-button-toggle-group #group="matButtonToggleGroup" vertical="True">
+        <mat-button-toggle *ngFor="let dataVar of dataset.columns" value="{{dataVar.name}}" class="var-btn" (click)="updateVariableView(dataVar)">
+          {{dataVar.name}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+  <div class="var-view-section">
+    <h1 *ngIf="activeVariable">{{activeVariable.name}}</h1>
+  </div>
+  
+  </div>
+</div>

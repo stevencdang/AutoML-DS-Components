@@ -1,0 +1,40 @@
+@import '../../assets/scss/main';
+
+.var-explorer-container {
+  @include make-container();
+}
+
+.var-explorer-main {
+  @include make-row(); 
+}
+
+.var-list-section {
+  @include make-col(3);
+}
+
+.var-list {
+  padding: 5px;
+  height: 300px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.var-btn {
+
+  //margin: 0px 10px;
+  width: 100%;
+}
+
+.btn-label {
+  font-size: small;
+  word-wrap: break-word;
+}
+
+.section-header {
+  font-size: medium;
+  font-weight: bold;
+}
+
+.var-view-section {
+  @include make-col(9);
+}

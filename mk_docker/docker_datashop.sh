@@ -188,12 +188,12 @@ wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz  && tar xvf Pyt
 
 cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
 
-cp $DS_DIRECTORY/docker_datashop/no-ssl-10_1_10_patch/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
+#cp $DS_DIRECTORY/docker_datashop/no-ssl-10_1_10_patch/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
 
 
 #################################
 # Overwrite the datashop.war from the d3m trunk
-# cp $CWD/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
+#cp $CWD/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
 # Copy Dockerfile to override standard one
 cp $CWD/Dockerfile $DS_DIRECTORY/
 # Overwrite component config script to handle build bug on unused component

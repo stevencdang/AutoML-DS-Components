@@ -1,0 +1,11 @@
+@import '../../assets/scss/main';
+
+
+.tabbed-container {
+	padding-top: 2px;
+}
+
+.tab-content {
+  @include make-container();
+}
+

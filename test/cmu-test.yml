@@ -62,6 +62,13 @@ services:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
             - /rdata/dataStore/d3m/test_data_out:/output
 
+    tigris.mongodb:
+        image:
+            mongo
+        ports:
+            - "27017:27017"
+
+
     ta2:
         image: 
             registry.datadrivendiscovery.org/sheath/cmu-ta2:live
