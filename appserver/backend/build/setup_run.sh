@@ -80,6 +80,13 @@ mkdir "$srcdir"/program/ls_iviz
 find "$libdir"/ls_iviz -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/ls_iviz/{}"
 # Copy source files
 find "$libdir"/ls_iviz -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/ls_iviz/{} "$srcdir"/program/ls_iviz/{}
+### Copy db dir
+# Replicate directory structure
+mkdir "$srcdir"/program/dxdb
+find "$libdir"/dxdb -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/dxdb/{}"
+# Copy source files
+find "$libdir"/dxdb -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/dxdb/{} "$srcdir"/program/dxdb/{}
+
 
 
 cd $cwd

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {MatButtonModule, MatCheckboxModule} from '@angular/material';
-import { Dataset } from '../lib/dataset';
+import { Dataset, DatasetIntf, DataAttribute, datasetFromJson } from '../lib/dataset';
 import { DataType } from '../lib/dataType';
 import { DataService } from "../lib/data.service";
 
@@ -12,26 +12,23 @@ import { DataService } from "../lib/data.service";
 })
 export class VariableExplorerComponent implements OnInit {
   
-  dataset: Dataset = new Dataset();
+  dataset: Dataset;
   dataCols: DataType[];
   activeVariable: DataType;
   
 
   constructor(private http: HttpClient,
               private dataService: DataService) { 
-    this.dataCols = this.dataset.columns;
+    //this.dataCols = this.dataset.columns;
 
   }
 
   ngOnInit() {
+    this.dataService.getDataset().subscribe((result: DatasetIntf) => this.dataset = datasetFromJson(result));
   }
 
-  updateVariableView(dt: DataType): void {
-    console.log("Testing");
-    let configUrl: string = "http://sophia.stevencdang.com:5000";
-    //console.log(this.http.get(configUrl));
-    this.dataService.getConfig().subscribe(result => console.log(result));
-    console.log(dt.name);
+  updateVariableView(dt: DataAttribute): void {
+    console.log(dt.colName);
     this.activeVariable = dt;
   }
 

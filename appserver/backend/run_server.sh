@@ -5,6 +5,7 @@
 
 # Setup local test folder if necessary
 cwd=$(pwd)
+echo "CWD: " $cwd
 cd build
 build_dir="$(pwd)"
 echo "build directory: " $build_dir
@@ -21,8 +22,9 @@ source $venv/bin/activate
 
 # Add all src subdirectories to python path (This emulates the flat heirarch that 
 # will exist when this script is run in Tigris
-path="$PYTHONPATH":"$cwd/program"
+path="$PYTHONPATH""$cwd/program"
+echo "Using pythonpath: " $path
 
-PYTHONPATH="$path" python $cwd/program/app.py
+PYTHONPATH="$path" python $cwd/src/app.py
 
 deactivate
