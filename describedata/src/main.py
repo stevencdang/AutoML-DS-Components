@@ -92,6 +92,12 @@ if __name__ == '__main__':
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json parse: %s" % str(ds))
 
+    # Get User ID and workflow ID
+    user_id = args.userId
+    logger.debug("User ID: %s" % user_id)
+    workflow_id = os.path.split(os.path.abspath(args.workflowDir))[1]
+    logger.debug("Workflow ID: %s" % workflow_id)
+
     # Insert dataset json to db
     logger.debug("DB URL: %s" % dx_config.get_db_backend_url())
     db = DXDB(dx_config.get_db_backend_url())

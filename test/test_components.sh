@@ -336,16 +336,16 @@ fi
 if [[ " ${test_comps[@]} " =~ " describedata " ]]; then
     # Test describedata
     cname=describedata
-    cd visualizations/$cname
+    cd $cname
     echo "#########################################################"
     echo "Running" $cname
     log_file=$log_dir/$cname.log
     if [ -f $log_file ]; then
         rm $log_file
     fi
-    cp ../../datasetselector/test/output/datasetDoc.tsv test/
+    cp ../datasetselector/test/output/datasetDoc.tsv test/
     ./run_component.sh &> $log_file
     echo "#########################################################"
-    cd ../..
+    cd ..
 fi
 
