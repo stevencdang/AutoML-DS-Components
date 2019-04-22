@@ -24,7 +24,7 @@ fi
 build_path=$(dirname $(readlink -f "$0"))
 app_path=$(dirname $build_path)
 
-docker_path=$build_path/Dockerfile.appserver
+docker_path=$build_path/Dockerfile.backend
 
 echo "Executing: " "docker build -t $name -f $docker_path $app_path"
 docker build -t $name -f $docker_path $app_path

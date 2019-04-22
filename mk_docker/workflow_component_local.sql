@@ -1,4 +1,5 @@
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -12,6 +13,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    1,
 	'Analysis',
 	'Dataset_Importer',
 	'/datashop/workflow_components/DatasetImporter/',
@@ -25,6 +27,7 @@ VALUES (
 	'Make a dataset repository available within a workflow to select datasets'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -38,6 +41,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    2,
 	'Analysis',
 	'Dataset_Selector',
 	'/datashop/workflow_components/DatasetSelector/',
@@ -51,6 +55,7 @@ VALUES (
 	'Allow user to select a dataset from a dataset repository'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -64,6 +69,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    3,
 	'Analysis',
 	'Default_Problem_Generator',
 	'/datashop/workflow_components/ProblemGeneratorDefault/',
@@ -77,6 +83,7 @@ VALUES (
 	'Generate the default problem for each dataset'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -90,6 +97,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    4,
 	'Analysis',
 	'Model_Search',
 	'/datashop/workflow_components/ModelSearch/',
@@ -103,6 +111,7 @@ VALUES (
 	'Allow the user to search for a model given no previous model'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -116,6 +125,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    5,
 	'Analysis',
 	'Problem_Task_Selector',
 	'/datashop/workflow_components/ProblemTaskSelector/',
@@ -129,6 +139,7 @@ VALUES (
 	'Allow user to select problem task for a given problem target'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -142,6 +153,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    6,
 	'Analysis',
 	'Problem_Metric_Selector',
 	'/datashop/workflow_components/ProblemMetricSelector/',
@@ -155,6 +167,7 @@ VALUES (
 	'Allow user to select a metric to use for the problem'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -168,6 +181,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    7,
 	'Analysis',
 	'Model_Score',
 	'/datashop/workflow_components/ModelScore/',
@@ -181,6 +195,7 @@ VALUES (
 	'Allow user to evaluate the performance of a set of models'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -194,6 +209,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    8,
 	'Analysis',
 	'Model_Fit',
 	'/datashop/workflow_components/ModelFit/',
@@ -207,6 +223,7 @@ VALUES (
 	'Allow user to fit a model using a dataset'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -220,6 +237,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    9,
 	'Analysis',
 	'Model_Predict',
 	'/datashop/workflow_components/ModelPredict/',
@@ -233,6 +251,7 @@ VALUES (
 	'Allow user to generate predictions on a dataset given a fitted model'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -246,6 +265,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    10,
 	'Analysis',
 	'Model_Selector',
 	'/datashop/workflow_components/ModelSelector/',
@@ -259,6 +279,7 @@ VALUES (
 	'Allow user to select a model from a list of models'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -272,6 +293,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    11,
 	'Analysis',
 	'Problem_Creator',
 	'/datashop/workflow_components/ProblemCreator/',
@@ -285,6 +307,7 @@ VALUES (
 	'Allow user to select problem target from columns of a dataset from a dataset repository'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -298,6 +321,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    12,
 	'Visualization',
 	'Compare_Model_Scores',
 	'/datashop/workflow_components/CompareModelScores/',
@@ -311,6 +335,7 @@ VALUES (
 	'Generates an interactive html barplot comparing given model scores'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -324,6 +349,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    13,
 	'Analysis',
 	'Model_Selector',
 	'/datashop/workflow_components/ModelSelector/',
@@ -337,6 +363,7 @@ VALUES (
 	'Allow user to select a model from a list of models'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -350,6 +377,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    14,
 	'Analysis',
 	'Rank_Models',
 	'/datashop/workflow_components/ModelRank/',
@@ -363,6 +391,7 @@ VALUES (
 	'Allow user to rank a set of models using performance along a metric'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -376,6 +405,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    15,
 	'Analysis',
 	'Model_Rerank',
 	'/datashop/workflow_components/ModelRerank/',
@@ -389,6 +419,7 @@ VALUES (
 	'Allow user to manually specify the rank of a model from an ordered list of ranked models'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -402,6 +433,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    16,
 	'Analysis',
 	'Model_Export',
 	'/datashop/workflow_components/ModelExport/',
@@ -415,6 +447,7 @@ VALUES (
 	'Export models for D3M Evaluation'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -428,6 +461,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    17,
 	'Visualization',
 	'Compare_Model_Predictions',
 	'/datashop/workflow_components/CompareModelPredictions/',
@@ -441,6 +475,7 @@ VALUES (
 	'Create Visualization of errors of each model given'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -454,6 +489,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    18,
 	'Visualization',
 	'Describe_Data',
 	'/datashop/workflow_components/DescribeData/',
@@ -467,6 +503,7 @@ VALUES (
 	'Create exploratory data graphs for a given dataset'
 );
 REPLACE INTO `workflow_component` (
+    `workflow_component_id`,
 	`component_type`,
 	`component_name`,
 	`tool_dir`,
@@ -480,6 +517,7 @@ REPLACE INTO `workflow_component` (
 	`info`
 )
 VALUES (
+    19,
 	'Analysis',
 	'Dataset_Augmenter',
 	'/datashop/workflow_components/DatasetAugmenter/',

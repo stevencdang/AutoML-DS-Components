@@ -38,7 +38,7 @@ from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
 from ls_problem_desc.ls_problem import ProblemDesc
 from ls_problem_desc.d3m_problem import DefaultProblemDesc
-from db.dx_db import DXDB
+from dxdb.dx_db import DXDB
 
 from modeling.models import *
 from modeling.component_out import *

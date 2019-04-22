@@ -21,10 +21,18 @@ echo ""
 CWD=$(pwd)
 DS_DIRECTORY="$CWD"/DataShopDocker
 
+DS_VERSION="tags/DATASHOP_10_3_11_patch"
+DSA_VERSION="branches/d3m"
+
+if [ -d $DS_DIRECTORY ]; then
+    echo "Removing existing directly at: " $DS_DIRECTORY
+    rm -Rf $DS_DIRECTORY
+fi
+
 mkdir -p  $DS_DIRECTORY
 
 if [ ! -d "${DS_DIRECTORY}/tools" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} co svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/trunk/tools $DS_DIRECTORY/tools
+        svn --password ${MYPWD} --username ${MYUSER} co svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/${DSA_VERSION}/tools $DS_DIRECTORY/tools
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/tools
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -38,7 +46,7 @@ else
 fi
 
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/deploy" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} co --depth files svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/tags/DATASHOP_10_1_10_patch/deploy $DS_DIRECTORY/deploy
+        svn --password ${MYPWD} --username ${MYUSER} co --depth files svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/${DSA_VERSION}/deploy $DS_DIRECTORY/deploy
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/deploy
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -60,7 +68,7 @@ if [ -d ~/SemanticSpace/ ]; then
 fi
 
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/deploy/vm" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} co --depth files svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/tags/DATASHOP_10_1_10_patch/deploy/vm $DS_DIRECTORY/deploy/vm
+        svn --password ${MYPWD} --username ${MYUSER} co --depth files svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/${DSA_VERSION}/deploy/vm $DS_DIRECTORY/deploy/vm
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/deploy/vm
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -86,7 +94,7 @@ else
         echo "Successfully obtained .war file"
 fi
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/sql" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} co svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/sql/v10.x $DS_DIRECTORY/sql
+        svn --password ${MYPWD} --username ${MYUSER} co svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/${DS_VERSION}/java/sql/v10.x $DS_DIRECTORY/sql
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/sql
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -102,13 +110,15 @@ else
         exit
 fi
 
-svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/sql/create_databases.sql $DS_DIRECTORY/sql/create_databases.sql
-svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/sql/create_empty_auth_db.sql $DS_DIRECTORY/sql/create_empty_auth_db.sql
-svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/sql/workflow_component_local.sql $DS_DIRECTORY/sql/workflow_component_local.sql
-svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/sql/workflow_error_translation.sql $DS_DIRECTORY/sql/workflow_error_translation.sql
+svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/${DS_VERSION}/java/sql/create_databases.sql $DS_DIRECTORY/sql/create_databases.sql
+svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/${DS_VERSION}/java/sql/create_empty_auth_db.sql $DS_DIRECTORY/sql/create_empty_auth_db.sql
+svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/${DS_VERSION}/java/sql/workflow_component_local.sql $DS_DIRECTORY/sql/workflow_component_local.sql
+svn --password ${MYPWD} --username ${MYUSER} export --force svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/${DS_VERSION}/java/sql/workflow_error_translation.sql $DS_DIRECTORY/sql/workflow_error_translation.sql
+
+
 
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/docker_datashop" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} co svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/trunk/docker_datashop $DS_DIRECTORY/docker_datashop
+        svn --password ${MYPWD} --username ${MYUSER} co svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/${DSA_VERSION}/docker_datashop $DS_DIRECTORY/docker_datashop
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/docker_datashop
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -125,7 +135,7 @@ else
 fi
 
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/init" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} co --depth files svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/trunk/init $DS_DIRECTORY/init
+        svn --password ${MYPWD} --username ${MYUSER} co --depth files svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShopAdmin/${DSA_VERSION}/init $DS_DIRECTORY/init
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/deploy/vm
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -142,7 +152,7 @@ else
 fi
 
 if [ "$svn_success_status" == "0" ] && [ ! -d "${DS_DIRECTORY}/extlib" ]; then
-        svn --password ${MYPWD} --username ${MYUSER} export svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/tags/DATASHOP_10_1_10_patch/java/extlib $DS_DIRECTORY/extlib
+        svn --password ${MYPWD} --username ${MYUSER} export svn://pact-cvs.pact.cs.cmu.edu/usr4/local/DataShopSvnRoot/DataShop/${DS_VERSION}/java/extlib $DS_DIRECTORY/extlib
         svn_success_status=`echo $?`
         cd ${DS_DIRECTORY}/extlib
         svn --password ${MYPWD} --username ${MYUSER} cleanup
@@ -178,9 +188,12 @@ wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz  && tar xvf Pyt
 
 cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
 
-cp $DS_DIRECTORY/docker_datashop/no-ssl-10_1_10_patch/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
+#cp $DS_DIRECTORY/docker_datashop/no-ssl-10_1_10_patch/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
+
 
 #################################
+# Overwrite the datashop.war from the d3m trunk
+#cp $CWD/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
 # Copy Dockerfile to override standard one
 cp $CWD/Dockerfile $DS_DIRECTORY/
 # Overwrite component config script to handle build bug on unused component

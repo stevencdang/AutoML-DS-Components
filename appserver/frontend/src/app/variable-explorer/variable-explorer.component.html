@@ -1,0 +1,25 @@
+<div class="var-explorer-container">
+  <div class="var-explorer-main">
+
+  <div class="var-list-section">
+    <div class="section-header">
+      Variables
+    </div>
+    <div class="var-list">
+      <mat-button-toggle-group *ngIf="dataset" #group="matButtonToggleGroup" vertical="True">
+        <mat-button-toggle *ngFor="let dataVar of dataset.columns" value="{{dataVar.colName}}" class="var-btn" (click)="updateVariableView(dataVar)">
+          {{dataVar.colName}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+  <div class="var-view-section">
+    <h1 *ngIf="activeVariable">{{activeVariable.colName}}</h1>
+    <app-bokeh-viz></app-bokeh-viz>
+    <!--<script *ngIf="edaView" [src]="edaView" [id]="edaViewId" ></script>-->
+    <!--<h2>{{edaViewId}}</h2>-->
+  </div>
+  
+  </div>
+</div>

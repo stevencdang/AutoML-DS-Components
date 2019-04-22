@@ -27,7 +27,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "node_modules/bootstrap/scss/bootstrap.scss",
+              "src/assets/scss/main.scss"
             ],
             "scripts": []
           },
@@ -61,7 +62,9 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "frontend:build"
+            "browserTarget": "frontend:build",
+            "host": "sophia.stevencdang.com",
+            "port": 4200
           },
           "configurations": {
             "production": {
@@ -83,7 +86,7 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.scss"
+              "src/assets/scss/main.scss"
             ],
             "scripts": [],
             "assets": [

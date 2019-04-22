@@ -4,8 +4,6 @@
 # MongoDB interface DataExplorer DB
 
 import logging
-
-import logging
 import json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -31,8 +29,11 @@ class DXDB(object):
         return did
         
 
-    def get_dataset_metadata(self, dsid):
-        ds_json = self.db[self.tbls['ds_metadata']].find_one({'_id': ObjectId(dsid)})
+    def get_dataset_metadata(self, dsid=None):
+        if dsid is None:
+            ds_json = self.db[self.tbls['ds_metadata']].find_one()
+        else:
+            ds_json = self.db[self.tbls['ds_metadata']].find_one({'_id': ObjectId(dsid)})
         return D3MDataset.from_json(ds_json)
 
         
