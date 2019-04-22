@@ -35,6 +35,7 @@ cd $srcdir/src
 find "$srcdir"/src -mindepth 1 -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/{}"
 # Copy files
 find "$srcdir"/src -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
+find "$srcdir"/src -type f -name "*.html"  -printf %P\\n | xargs -I {} cp "$srcdir"/src/{} "$srcdir"/program/{}
 cd $cwd
 
 cd $libdir

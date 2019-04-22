@@ -9,6 +9,8 @@ import { DatasetIntf } from './dataset';
 })
 export class DataService {
   datasetUrl: string = "http://sophia.stevencdang.com:5000/ds/getDataCols";
+  bokehUrl1: string = "http://sophia.stevencdang.com:5000/testbokeh1";
+  bokehUrl2: string = "http://sophia.stevencdang.com:5000/testbokeh2";
   constructor(private http: HttpClient) { }
 
   getDataset(): Observable<DatasetIntf> {
@@ -17,4 +19,13 @@ export class DataService {
     //
     return this.http.get<DatasetIntf>(this.datasetUrl);
   }
+
+  testBokeh1(): Observable<Object> {
+    return this.http.get(this.bokehUrl1)
+  }
+
+  testBokeh2(): Observable<Object> {
+    return this.http.get(this.bokehUrl2)
+  }
+
 }

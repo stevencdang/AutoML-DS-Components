@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {MatButtonModule, MatCheckboxModule} from '@angular/material';
+
 import { Dataset, DatasetIntf, DataAttribute, datasetFromJson } from '../lib/dataset';
 import { DataType } from '../lib/dataType';
 import { DataService } from "../lib/data.service";
+
+declare let swal: any;
 
 @Component({
   selector: 'app-variable-explorer',
@@ -13,12 +17,12 @@ import { DataService } from "../lib/data.service";
 export class VariableExplorerComponent implements OnInit {
   
   dataset: Dataset;
-  dataCols: DataType[];
-  activeVariable: DataType;
+  dataCols: DataAttribute[];
+  activeVariable: DataAttribute;
   
-
   constructor(private http: HttpClient,
-              private dataService: DataService) { 
+              private dataService: DataService,
+              private sanitizer: DomSanitizer) { 
     //this.dataCols = this.dataset.columns;
 
   }
@@ -30,6 +34,9 @@ export class VariableExplorerComponent implements OnInit {
   updateVariableView(dt: DataAttribute): void {
     console.log(dt.colName);
     this.activeVariable = dt;
+    this.dataService.testBokeh().subscribe(result => console.log(result));
+    //this.dataService.testBokeh().subscribe(result => console.log(result['script_url']));
+    //this.dataService.testBokeh().subscribe(result => this.edaView = this.sanitizer.bypassSecurityTrustResourceUrl(result['script_url']));
   }
 
 }

@@ -10,6 +10,8 @@ import { TabbedInterfaceComponent } from './tabbed-interface/tabbed-interface.co
 import { VariableExplorerComponent } from './variable-explorer/variable-explorer.component';
 import { SimpleDatasetEdaComponent } from './simple-dataset-eda/simple-dataset-eda.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { SanitizePipe } from './lib/sanitize.pipe';
+import { BokehVizComponent } from './bokeh-viz/bokeh-viz.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +20,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     VariableExplorerComponent,
     SimpleDatasetEdaComponent,
     PageNotFoundComponent,
+    SanitizePipe,
+    BokehVizComponent,
   ],
   imports: [
     BrowserModule,

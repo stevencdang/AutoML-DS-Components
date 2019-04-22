@@ -15,7 +15,10 @@
   </div>
 
   <div class="var-view-section">
-    <h1 *ngIf="activeVariable">{{activeVariable.name}}</h1>
+    <h1 *ngIf="activeVariable">{{activeVariable.colName}}</h1>
+    <app-bokeh-viz></app-bokeh-viz>
+    <!--<script *ngIf="edaView" [src]="edaView" [id]="edaViewId" ></script>-->
+    <!--<h2>{{edaViewId}}</h2>-->
   </div>
   
   </div>
