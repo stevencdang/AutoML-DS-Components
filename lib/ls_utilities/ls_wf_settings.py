@@ -190,3 +190,8 @@ class AppServiceSettings(object):
     def get_db_backend_url(self):
         return self.cfg.get("db", "HOST_URL")
 
+    def get_dexplorer_url(self):
+        return self.cfg.get("frontend", "EXTERNAL_URL")
+
+    def get_viz_server_url(self):
+        return self.cfg.get("viz", "HOST_URL")

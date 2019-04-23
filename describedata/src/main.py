@@ -40,6 +40,9 @@ from ls_problem_desc.ls_problem import ProblemDesc
 from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from dxdb.dx_db import DXDB
 
+from dxdb.workflow_session import SimpleEDASession
+from ls_utilities.dexplorer import Dexplorer, VizServer, VizFactory
+
 from modeling.models import *
 from modeling.component_out import *
 
@@ -98,14 +101,31 @@ if __name__ == '__main__':
     workflow_id = os.path.split(os.path.abspath(args.workflowDir))[1]
     logger.debug("Workflow ID: %s" % workflow_id)
 
-    # Insert dataset json to db
+    # Get connection to db
     logger.debug("DB URL: %s" % dx_config.get_db_backend_url())
     db = DXDB(dx_config.get_db_backend_url())
+
+    # Create Workflow Session
+    wfs = SimpleEDASession(user_id, workflow_id, "DescribeData")
+    wfs = db.add_workflow_session(wfs)
+    logger.debug("Workflow Session with id: %s" % str(wfs.__dict__))
+    
+    # Add dataset to db 
     dsid = db.insert_dataset_metadata(ds)
-    logger.debug("Inserted dataset to db with id: %s" % dsid)
-    # Testing retrieving dataset from db
-    ds = db.get_dataset_metadata(str(dsid))
-    logger.debug("dataset retrieved from db: %s" % str(ds))
+    ds._id = str(dsid)
+    logger.debug("Inserted dataset to db with id: %s" % ds._id)
+    wfs.set_dataset(ds)
+
+    # get Connection to Dexplorer Service
+    dex = Dexplorer(dx_config.get_dexplorer_url())
+    logger.debug("Dexplorer url: %s" % dex.get_eda_url(wfs._id))
+
+
+    # Get Viz Factory
+    viz_server = VizServer(dx_config.get_viz_server_url())
+    viz_factory = VizFactory(viz_server, wfs)
+    logger.debug("got viz factory")
+
 
     for dr in ds.dataResources:
         logger.debug("Data resource type: %s" % dr.resType)
@@ -114,6 +134,8 @@ if __name__ == '__main__':
             columns = []
 
             for col in dr.columns:
+                # Generate Viz for each column
+                viz_factory.generate_simple_eda_viz(ds, dr, col)
                 # Ignore index columns
                 if ('index' not in col.colName.lower()) and \
                         ('id' not in col.colName.lower()):
