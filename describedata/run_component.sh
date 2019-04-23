@@ -46,6 +46,6 @@ source $venv/bin/activate
 path="$PYTHONPATH":"$cwd/program"
 
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId=' ' -is_test=1 -file0="$cwd/test/datasetDoc.tsv" 
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId='testuser' -workflowDir='/datashop/dataset_files/workflows/1162' -is_test=1 -file0="$cwd/test/datasetDoc.tsv" 
 
 deactivate

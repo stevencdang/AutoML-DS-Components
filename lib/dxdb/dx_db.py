@@ -15,7 +15,10 @@ logger = logging.getLogger(__name__)
 class DXDB(object):
 
     tbls = {
-            'ds_metadata': 'Datasets'
+            'ds_metadata': 'Datasets',
+            'wf_sessions': 'WorkflowSessions',
+            'viz_sessions': 'VizSessions'
+
     }
     
     def __init__(self, db_url):
@@ -36,6 +39,18 @@ class DXDB(object):
             ds_json = self.db[self.tbls['ds_metadata']].find_one({'_id': ObjectId(dsid)})
         return D3MDataset.from_json(ds_json)
 
-        
+    def add_workflow_session(self, session):
+        d = self.db[self.tbls['wf_sessions']].insert_one(session.__dict__)
+        logger.debug("Added workflow session to db")
+        logger.debug(d)
+        logger.debug("getting inserted id: %s" % str(d.inserted_id))
+        # did = self.db[self.tbls['wf_sessions']].insert_one(session.__dict__).inserted_id
+        session._id = str(d.inserted_id)
+        return session
 
-
+    def add_viz(self, viz):
+        logger.debug(viz.to_json())
+        did = self.db[self.tbls['viz_sessions']].insert_one(viz.to_json()).inserted_id
+        viz._id = str(did)
+        logger.debug("Added visualization session to db: \n%s" % str(viz.to_json()))
+        return viz
