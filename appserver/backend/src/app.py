@@ -25,6 +25,11 @@ bokeh_server_url = "http://sophia.stevencdang.com:5100/test"
 def main():
     return "Hello World"
 
+@app.route('/wfs/<string:wfid')
+def get_simple_eda_session(wfid):
+    print("Looking up workflow session with id: %s" % wfid)
+
+
 @app.route("/testbokeh1")
 def get_bokeh1():
     print("Testing bokeh 1")

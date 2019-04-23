@@ -8,7 +8,8 @@ import { DatasetIntf } from './dataset';
     providedIn: 'root',
 })
 export class DataService {
-  datasetUrl: string = "http://sophia.stevencdang.com:5000/ds/getDataCols";
+  datasetUrl: string = "/ds/getDataCols";
+  backendAddr: string = "http://sophia.stevencdang.com:5000";
   bokehUrl1: string = "http://sophia.stevencdang.com:5000/testbokeh1";
   bokehUrl2: string = "http://sophia.stevencdang.com:5000/testbokeh2";
   constructor(private http: HttpClient) { }
@@ -17,7 +18,13 @@ export class DataService {
     //return "Testing Data Service"
     //return of("Testing Data Service Observable")
     //
+    let url: string = this.backendAddr + this.datasetUrl;
+    return this.http.get<DatasetIntf>(url);
+  }
+
+  getWorkflowSession(wfid): Observable<Object> {
     return this.http.get<DatasetIntf>(this.datasetUrl);
+    
   }
 
   testBokeh1(): Observable<Object> {

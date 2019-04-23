@@ -5,7 +5,7 @@ import { SimpleDatasetEdaComponent } from './simple-dataset-eda/simple-dataset-e
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
-    { path: 'eda',      
+    { path: 'eda/:wfid',      
       component: SimpleDatasetEdaComponent 
     },
     { path: '',
