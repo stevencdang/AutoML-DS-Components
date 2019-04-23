@@ -41,7 +41,7 @@ from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from dxdb.dx_db import DXDB
 
 from dxdb.workflow_session import SimpleEDASession
-from ls_utilities.dexplorer import Dexplorer, VizServer, VizFactory
+from ls_utilities.dexplorer import *
 
 from modeling.models import *
 from modeling.component_out import *
@@ -105,6 +105,9 @@ if __name__ == '__main__':
     logger.debug("DB URL: %s" % dx_config.get_db_backend_url())
     db = DXDB(dx_config.get_db_backend_url())
 
+    # Get connection to UI server
+    dex_ui = DexplorerUIServer(dx_config.get_dexplorer_url())
+
     # Create Workflow Session
     wfs = SimpleEDASession(user_id, workflow_id, "DescribeData")
     wfs = db.add_workflow_session(wfs)
@@ -135,7 +138,10 @@ if __name__ == '__main__':
 
             for col in dr.columns:
                 # Generate Viz for each column
-                viz_factory.generate_simple_eda_viz(ds, dr, col)
+                viz = viz_factory.generate_simple_eda_viz(ds, dr, col)
+                if viz is not None:
+                    viz = db.add_viz(viz)
+                    wfs.add_viz(viz)
                 # Ignore index columns
                 if ('index' not in col.colName.lower()) and \
                         ('id' not in col.colName.lower()):
@@ -328,12 +334,18 @@ if __name__ == '__main__':
     # logger.info("Writing output html to: %s" % out_file_path)
     # with open(out_file_path, 'w') as out_file:
 	# out_file.write(viz_template.render(template_info))
-    
+   
+
+    logger.debug("Simple EDA Session in db: \n%s" % str(wfs.__dict__))
 
     # Get  html to output file path
     out_file_path = path.join(args.workingDir, 
                               config.get('Output', 'out_file')
                               )
     logger.info("Writing output html to: %s" % out_file_path)
-    plot_url = py.offline.plot(fig, filename=out_file_path)
+    service_url = dex_ui.get_simple_eda_ui_url(wfs)
+    logger.debug("Embedded iframe url: %s" % service_url)
+    out_html = '<iframe src="http://%s" width="1024" height="768"></iframe>' % service_url
+    with open(out_file_path, 'w') as out_file:
+        out_file.write(out_html)
 

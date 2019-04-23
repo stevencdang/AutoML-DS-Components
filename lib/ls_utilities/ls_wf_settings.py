@@ -194,4 +194,4 @@ class AppServiceSettings(object):
         return self.cfg.get("frontend", "EXTERNAL_URL")
 
     def get_viz_server_url(self):
-        return self.cfg.get("viz", "HOST_URL")
+        return "http://%s" % self.cfg.get("viz", "HOST_URL")

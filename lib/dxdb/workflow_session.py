@@ -5,6 +5,8 @@
 
 import logging
 
+from ls_iviz.simple_eda import *
+
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +32,13 @@ class SimpleEDASession(WorkflowSession):
         if dataset is not None:
             self.dataset_id = dataset._id
         super().__init__(userId, workflowId, compType, session_url)
+        self.visualizations = []
 
     def set_dataset(self, dataset):
         self.dataset_id = dataset._id
+
+    def add_viz(self, viz):
+        v_ids = set(self.visualizations)
+        if viz._id not in v_ids:
+            self.visualizations.append(viz._id)
 

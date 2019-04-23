@@ -12,8 +12,6 @@ logger = logging.getLogger(__name__)
 
 class Dexplorer(object):
 
-    url = None  
-
     def __init__(self, url):
         self.url = url
 
@@ -21,13 +19,23 @@ class Dexplorer(object):
     def get_eda_url(self, sid):
         return self.url + "/testbokeh1/" + str(sid)
 
+        
+class DexplorerUIServer(object):
+
+    def __init__(self, url):
+        self.url = url
+
+    def get_simple_eda_ui_url(self, wfs):
+        return self.url + "/eda" + "/%s" % (wfs._id)
+
 class VizServer(object):
 
     def __init__(self, url):
         self.url = url
 
     def get_address(self):
-        return "http://" + self.url
+        # return "http://" + self.url
+        return self.url
 
 
 class VizFactory(object):
@@ -37,7 +45,7 @@ class VizFactory(object):
         self.workflow_session = wf_session
 
     def generate_simple_eda_viz(self, dataset, resource, data_attr):
-
+        viz = None
         if not isinstance(self.workflow_session, SimpleEDASession):
             logger.warning("Generating simple eda viz without simple eda workflow session")
         else:
@@ -47,7 +55,6 @@ class VizFactory(object):
             elif data_attr.colType == 'integer':
                 logger.info("Generating SimpleIntEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
                 viz = SimpleNumericEDAViz(self.viz_server, self.workflow_session, dataset, resource, data_attr)
-                viz.generate()
 
             elif data_attr.colType == 'real':
                 logger.info("Generating SimpleRealEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
@@ -58,7 +65,6 @@ class VizFactory(object):
             elif data_attr.colType == 'categorical':
                 logger.info("Generating SimpleCategoryEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
                 viz = SimpleNumericEDAViz(self.viz_server, self.workflow_session, dataset, resource, data_attr)
-                viz.generate()
 
             elif data_attr.colType == 'dateTime':
                 logger.info("Generating SimpleDateTimeEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
@@ -73,6 +79,10 @@ class VizFactory(object):
                 logger.info("Generating SimpleGeoJsonEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
             else:
                 logger.warning("Unsupported Data type for EDA Viz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
+                return None
+            if viz is not None:
+                viz.generate()
+            return viz
 
 
 

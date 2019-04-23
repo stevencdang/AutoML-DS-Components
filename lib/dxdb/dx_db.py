@@ -16,7 +16,8 @@ class DXDB(object):
 
     tbls = {
             'ds_metadata': 'Datasets',
-            'wf_sessions': 'WorkflowSessions'
+            'wf_sessions': 'WorkflowSessions',
+            'viz_sessions': 'VizSessions'
 
     }
     
@@ -47,4 +48,9 @@ class DXDB(object):
         session._id = str(d.inserted_id)
         return session
 
-
+    def add_viz(self, viz):
+        logger.debug(viz.to_json())
+        did = self.db[self.tbls['viz_sessions']].insert_one(viz.to_json()).inserted_id
+        viz._id = str(did)
+        logger.debug("Added visualization session to db: \n%s" % str(viz.to_json()))
+        return viz
