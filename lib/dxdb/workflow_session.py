@@ -32,6 +32,10 @@ class WorkflowSession(object):
         )
         return ses
 
+    def set_session_url(self, url):
+        self.session_url = url
+        
+
 class SimpleEDASession(WorkflowSession):
 
     dataset_id = None
