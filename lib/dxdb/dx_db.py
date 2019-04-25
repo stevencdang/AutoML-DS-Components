@@ -48,6 +48,17 @@ class DXDB(object):
         session._id = str(d.inserted_id)
         return session
 
+    def update_workflow_session(self, session, fields):
+        try:
+            logger.debug("Updating workflow session to: %s" % str(session.__dict__))
+            logger.debug("Updating fields: %s" % str({k: v for k, v in session.__dict__.items() if k in fields })) 
+            self.db[self.tbls['wf_sessions']].update_one(
+                    {"_id": ObjectId(session._id)},
+                    {"$set": {k: v for k, v in session.__dict__.items() if k in fields }}
+                    )
+        except Exception as e:
+            logger.error("Error while updating workflow session: %s" % str(e))
+
     def add_viz(self, viz):
         logger.debug(viz.to_json())
         did = self.db[self.tbls['viz_sessions']].insert_one(viz.to_json()).inserted_id

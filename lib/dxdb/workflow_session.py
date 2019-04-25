@@ -24,6 +24,10 @@ class WorkflowSession(object):
         self.component_type = compType
         self.session_url = session_url
 
+    def set_session_url(self, url):
+        self.session_url = url
+        
+
 class SimpleEDASession(WorkflowSession):
 
     dataset_id = None

@@ -118,6 +118,7 @@ if __name__ == '__main__':
     ds._id = str(dsid)
     logger.debug("Inserted dataset to db with id: %s" % ds._id)
     wfs.set_dataset(ds)
+    db.update_workflow_session(wfs, ['dataset_id'])
 
     # get Connection to Dexplorer Service
     dex = Dexplorer(dx_config.get_dexplorer_url())
@@ -337,6 +338,7 @@ if __name__ == '__main__':
    
 
     logger.debug("Simple EDA Session in db: \n%s" % str(wfs.__dict__))
+    db.update_workflow_session(wfs, ['visualizations'])
 
     # Get  html to output file path
     out_file_path = path.join(args.workingDir, 
@@ -344,6 +346,8 @@ if __name__ == '__main__':
                               )
     logger.info("Writing output html to: %s" % out_file_path)
     service_url = dex_ui.get_simple_eda_ui_url(wfs)
+    wfs.set_session_url(service_url)
+    db.update_workflow_session(wfs, ['session_url'])
     logger.debug("Embedded iframe url: %s" % service_url)
     out_html = '<iframe src="http://%s" width="1024" height="768"></iframe>' % service_url
     with open(out_file_path, 'w') as out_file:
