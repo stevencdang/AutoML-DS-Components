@@ -9,6 +9,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 from ls_dataset.d3m_dataset import D3MDataset
+from dxdb.workflow_session import *
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,10 @@ class DXDB(object):
         # did = self.db[self.tbls['wf_sessions']].insert_one(session.__dict__).inserted_id
         session._id = str(d.inserted_id)
         return session
+
+    def get_workflow_session(self, wfid):
+        wfs = self.db[self.tbls['wf_sessions']].find_one({'_id': ObjectId(wfid)})
+        return wfs
 
     def add_viz(self, viz):
         logger.debug(viz.to_json())

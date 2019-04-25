@@ -24,6 +24,14 @@ class WorkflowSession(object):
         self.component_type = compType
         self.session_url = session_url
 
+    @classmethod
+    def from_json(cls, ses_json): 
+        logger.debug("Initializing WorkflowSession from json: %s" % str(ses_json))
+        ses = cls(ses_json['user_id'], ses_json['workflow_id'],
+                         ses_json['component_type'], ses_json['session_url']
+        )
+        return ses
+
 class SimpleEDASession(WorkflowSession):
 
     dataset_id = None
@@ -41,4 +49,16 @@ class SimpleEDASession(WorkflowSession):
         v_ids = set(self.visualizations)
         if viz._id not in v_ids:
             self.visualizations.append(viz._id)
+
+    @classmethod
+    def from_json(cls, ses_json): 
+        logger.debug("Initializing SimpleEDASession from json: %s" % str(ses_json))
+        ses = cls(ses_json['user_id'], ses_json['workflow_id'],
+                         ses_json['component_type'], ses_json['session_url'],
+        )
+        ses.dataset_id = ses_json['dataset_id']
+        for vizid in ses_json['visualizations']:
+             logger.debug("Adding visualization id to eda session: %s" % vizid)
+             ses.visualizations.append(vizid)
+        return ses
 

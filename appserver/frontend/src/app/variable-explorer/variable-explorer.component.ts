@@ -6,8 +6,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 
 import { Dataset, DatasetIntf, DataAttribute, datasetFromJson } from '../lib/dataset';
-import { DataType } from '../lib/dataType';
 import { DataService } from "../lib/data.service";
+import { WorkflowSession, SimpleEDASession } from "../lib/workflowSession";
 
 declare let swal: any;
 
@@ -33,14 +33,25 @@ export class VariableExplorerComponent implements OnInit {
   }
 
   ngOnInit() {
-    let wfid: string = this.get_session();
-    this.dataService.getDataset().subscribe((result: DatasetIntf) => this.dataset = datasetFromJson(result));
+    let wfid: string = this.get_session_id();
+    this.dataService.getWorkflowSession(wfid).subscribe((result: SimpleEDASession) => this.get_data_columns(result));
   }
 
-  get_session() {
+  get_session_id() {
+    // Get the workflow session id using the page route
     const wfid = this.route.snapshot.paramMap.get('wfid');
     console.log("Got workflow Id: ", wfid);
     return wfid
+
+  }
+
+  get_data_columns(wfs: SimpleEDASession): DataAttribute[] {
+    // Get the associated dataset data columns using the dataset id from a workflow session
+    console.log("Got workflow session: ", wfs);
+    console.log("Getting dataset columns using workflow id: ", wfs.dataset_id);
+    //this.dataService.getDataset(wfs.dataset_id).subscribe((result: DatasetIntf) => console.log(result)); 
+    this.dataService.getDataset(wfs.dataset_id).subscribe((result: DatasetIntf) => this.dataset = datasetFromJson(result)); 
+    return [];
 
   }
 

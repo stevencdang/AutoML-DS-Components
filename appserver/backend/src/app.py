@@ -1,4 +1,5 @@
 # from flask import Flask
+import logging
 from flask import Flask, render_template, url_for
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -8,6 +9,7 @@ import re
 
 from ls_dataset.d3m_dataset import D3MDataset
 from dxdb.dx_db import DXDB
+from dxdb.workflow_session import *
 
 from bokeh.client import pull_session
 from bokeh.embed import server_session
@@ -25,14 +27,19 @@ bokeh_server_url = "http://sophia.stevencdang.com:5100/test"
 def main():
     return "Hello World"
 
-@app.route('/wfs/<string:wfid')
+@app.route('/wfs/<string:wfid>')
 def get_simple_eda_session(wfid):
-    print("Looking up workflow session with id: %s" % wfid)
+    db_wfs = db_client.get_workflow_session(wfid)
+    app.logger.debug("workflow session from db: %s" % db_wfs)
+    wfs = SimpleEDASession.from_json(db_wfs)
+    app.logger.debug("workflow session to json: %s" % json.dumps(wfs.__dict__))
+    return json.dumps(wfs.__dict__)
+      
 
 
 @app.route("/testbokeh1")
 def get_bokeh1():
-    print("Testing bokeh 1")
+    app.logger.debug("Testing bokeh 1")
      
     with pull_session(url=bokeh_server_url) as session:
         # update or customize that session
@@ -40,12 +47,12 @@ def get_bokeh1():
 
         # generate a script to load the customized session
         embed_script = server_session(session_id=session.id, url=bokeh_server_url)
-        print("Got script:")
-        print(embed_script)
+        app.logger.debug("Got script:")
+        app.logger.debug(embed_script)
         embed_url = re.findall(r'src="(.*)" ', embed_script)[0]
         script_id = re.findall(r'id="(.*)"', embed_script)[0]
-        print(embed_url)
-        print(script_id)
+        app.logger.debug(embed_url)
+        app.logger.debug(script_id)
         # embed_script = '<script>alert("Testing bokeh flask")</script>'
 
 
@@ -58,7 +65,7 @@ def get_bokeh1():
 
 @app.route("/testbokeh2")
 def get_bokeh2():
-    print("Testing bokeh 2")
+    app.logger.debug("Testing bokeh 2")
      
     with pull_session(url=bokeh_server_url) as session:
         # update or customize that session
@@ -66,12 +73,12 @@ def get_bokeh2():
 
         # generate a script to load the customized session
         embed_script = server_session(session_id=session.id, url=bokeh_server_url)
-        print("Got script:")
-        print(embed_script)
+        app.logger.debug("Got script:")
+        app.logger.debug(embed_script)
         embed_url = re.findall(r'src="(.*)" ', embed_script)[0]
         script_id = re.findall(r'id="(.*)"', embed_script)[0]
-        print(embed_url)
-        print(script_id)
+        app.logger.debug(embed_url)
+        app.logger.debug(script_id)
         # embed_script = '<script>alert("Testing bokeh flask")</script>'
 
 
@@ -86,22 +93,22 @@ def get_bokeh2():
 def get_dataset():
 
     ds = db_client.get_dataset_metadata()
-    print([str(d) for d in ds.get_data_columns()])
+    app.logger.debug([str(d) for d in ds.get_data_columns()])
     # return json.dumps({"result": "Hello World"})
     return ds.to_json()
 
-@app.route('/ds/getDataCols')
-def get_data_columns():
+@app.route('/ds/getDataCols/<string:dsid>')
+def get_data_columns(dsid):
     """
     Return a list of the data columns for each data resource in the dataset
 
     """
-    ds = db_client.get_dataset_metadata()
+    ds = db_client.get_dataset_metadata(dsid)
     result = {'DatasetId': ds.id,
               'DatasetColumns': [d.to_json() for d in ds.get_data_columns()]
     }
 
-    print(result)
+    app.logger.debug(result)
     # return result
     return json.dumps(result)
 
