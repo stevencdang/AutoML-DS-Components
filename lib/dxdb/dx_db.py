@@ -65,10 +65,15 @@ class DXDB(object):
             logger.error("Error while updating workflow session: %s" % str(e))
 
     def add_viz(self, viz):
-        logger.debug(viz.to_json())
-        did = self.db[self.tbls['viz_sessions']].insert_one(viz.to_json()).inserted_id
+        logger.debug("########$$$$$$$$$$$$#####################")
+        logger.debug("########$$$$$$$$$$$$#####################")
+        logger.debug("########$$$$$$$$$$$$#####################")
+        logger.debug(viz.as_dict())
+        logger.debug("########$$$$$$$$$$$$#####################")
+        logger.debug("########$$$$$$$$$$$$#####################")
+        did = self.db[self.tbls['viz_sessions']].insert_one(viz.as_dict()).inserted_id
         viz._id = str(did)
-        logger.debug("Added visualization session to db: \n%s" % str(viz.to_json()))
+        logger.debug("Added visualization session to db: \n%s" % str(viz.as_dict()))
         return viz
 
     def get_visualizations(self, viz_ids):

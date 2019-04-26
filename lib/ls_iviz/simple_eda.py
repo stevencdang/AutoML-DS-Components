@@ -30,18 +30,18 @@ class SimpleEDAViz(ABC):
     def generate(self, viz_server):
         logger.info("Generating simple eda viz")
 
-    def __dict__(self):
-        out = {
-                'workflow_session_id': self.workflow_session._id,
+    def as_dict(self):
+        out = {'workflow_session_id': self.workflow_session._id,
                 'dataset_id': self.dataset._id,
-                'resource_id': self.resource.resID
-                'data_attr_id': self.data_attr.colIndex
-                'viz_doc': str(self.viz_doc),
+                'resource_id': self.resource.resID,
+                'data_attr_id': self.data_attr.colIndex,
+                'viz_doc': str(self.viz_doc)
         }
         if self._id is not None:
             out['_id'] = str(self._id),
         if self.viz_type is not None:
             out['viz_type']  = self.viz_type
+        logger.debug(out)
         return out
 
     @staticmethod

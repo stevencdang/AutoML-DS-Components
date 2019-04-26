@@ -54,7 +54,7 @@ class VizFactory(object):
 
             elif data_attr.colType == 'integer':
                 logger.info("Generating SimpleIntEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
-                viz = SimpleNumericEDAViz(self.workflow_session._id, dataset, resource, data_attr)
+                viz = SimpleNumericEDAViz(self.workflow_session, dataset, resource, data_attr)
 
             elif data_attr.colType == 'real':
                 logger.info("Generating SimpleRealEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
@@ -64,7 +64,7 @@ class VizFactory(object):
 
             elif data_attr.colType == 'categorical':
                 logger.info("Generating SimpleCategoryEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
-                viz = SimpleNumericEDAViz(self.workflow_session._id, dataset, resource, data_attr)
+                viz = SimpleNumericEDAViz(self.workflow_session, dataset, resource, data_attr)
 
             elif data_attr.colType == 'dateTime':
                 logger.info("Generating SimpleDateTimeEDAViz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
@@ -81,7 +81,7 @@ class VizFactory(object):
                 logger.warning("Unsupported Data type for EDA Viz for dataset, %s, resource id: %s, data attribute: %s" % (dataset.name, resource.resID, data_attr.colName))
                 return None
             if viz is not None:
-                viz.generate(self.viz_server)
+                viz.generate(self.viz_server.get_address())
             return viz
 
 
