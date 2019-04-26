@@ -202,7 +202,16 @@ class D3MDataset(LSDataset):
                 data = pd.read_csv(dpath, ',')
                 return data
 
+    def get_resource(self, rid):
+        """
+        Get a data resource by its index
 
+        """
+        for dr in self.dataResources:
+            if dr.resID == rid:
+                return dr
+
+        logger.warning("No data resource found with id matching: %s" % rid)
 
     def get_data_columns(self):
         for dr in [dr for dr in self.dataResources if type(dr) is DSRTable]:
