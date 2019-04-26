@@ -5,22 +5,25 @@
 
 import logging
 import requests
+import json
 from abc import ABC, abstractmethod
 
 from bokeh.client import pull_session
 from bokeh.plotting import figure
 from bokeh.embed import server_session
 
+from ls_utilities.dexplorer import VizServer
+
 logger = logging.getLogger(__name__)
 
 class SimpleEDAViz(ABC):
 
-    def __init__(self, viz_server, eda_session, dataset, resource, data_attr):
+    def __init__(self, viz_server, session_id, dataset_id, resource_id, data_attr_id):
         self.viz_server = viz_server
-        self.workflow_session = eda_session
-        self.dataset = dataset
-        self.resource = resource
-        self.data_attr = data_attr
+        self.workflow_session_id = session_id
+        self.dataset_id = dataset_id
+        self.resource_id = resource_id
+        self.data_attr_id = data_attr_id
         
         self._id = None
         self.viz_doc = None
@@ -33,10 +36,10 @@ class SimpleEDAViz(ABC):
     def to_json(self):
         out = {
                 'viz_server': self.viz_server.get_address(),
-                'workflow_session': self.workflow_session.__dict__,
-                'dataset': self.dataset._id,
-                'resource': self.resource.resID,
-                'data_attr': self.data_attr.to_json(),
+                'workflow_session_id': self.workflow_session_id,
+                'dataset_id': self.dataset_id,
+                'resource_id': self.resource_id,
+                'data_attr_id': self.data_attr_id,
                 'viz_doc': str(self.viz_doc),
         }
         if self._id is not None:
@@ -45,11 +48,28 @@ class SimpleEDAViz(ABC):
             out['viz_type']  = self.viz_type
         return out
 
+    @staticmethod
+    def from_json(data):
+        if data['viz_type'] == "Simple Numeric EDA":
+            cls = globals()['SimpleNumericEDAViz']
+        elif data['viz_type'] == "Simple Categorical EDA":
+            cls = globals()['SimpleCategoricalEDAViz']
+        out = cls(VizServer(data['viz_server'])
+                  data['workflow_session_id'],
+                  data['dataset_id'],
+                  data['resource_id'],
+                  data['data_attr_id']
+                  )
+        out.viz_type = data['viz_type']
+        out.viz_doc = data['viz_doc']
+        out._id = data['_id']
+        return out
+
 
 class SimpleNumericEDAViz(SimpleEDAViz):
 
-    def __init__(self, viz_server, eda_session, dataset, resource, data_attr):
-        super().__init__(viz_server, eda_session, dataset, resource, data_attr)
+    def __init__(self, viz_server, session_id, dataset_id, resource_id, data_attr_id):
+        super().__init__(viz_server, session_id, dataset_id, resource_id, data_attr_id)
         self.viz_type = "Simple Numeric EDA"
 
     def generate(self):
@@ -76,8 +96,8 @@ class SimpleNumericEDAViz(SimpleEDAViz):
 
 class SimpleCategoricalEDAViz(SimpleEDAViz):
 
-    def __init__(self, viz_server, eda_session, dataset, resource, data_attr):
-        super().__init__(viz_server, eda_session, dataset, resource, data_attr)
+    def __init__(self, viz_server, session_id, dataset_id, resource_id, data_attr_id):
+        super().__init__(viz_server, session_id, dataset_id, resource_id, data_attr_id)
         self.viz_type = "Simple Categorical EDA"
 
     def generate(self):

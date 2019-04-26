@@ -78,13 +78,22 @@ class Settings(object):
         return self.cfg.getboolean('Logging', 'enable_file_log')
 
     def get_file_log_path(self):
-        return os.path.join(self.working_dir)
+        if self.working_dir is None:
+            return os.getcwd()
+        else:
+            return os.path.join(self.working_dir)
 
     def get_working_dir(self):
-        return self.working_dir
+        if self.working_dir is None:
+            return os.getcwd()
+        else:
+            return self.working_dir
 
     def get_program_dir(self):
-        return self.program_dir
+        if self.program_dir is None:
+            return os.getcwd()
+        else:
+            return self.program_dir
 
     def parse_logging(self):
         """

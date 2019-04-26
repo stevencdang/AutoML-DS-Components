@@ -2,3 +2,6 @@
 program
 test
 venv
+
+# Generated log files
+log-*.txt

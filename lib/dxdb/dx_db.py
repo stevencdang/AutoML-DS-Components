@@ -31,7 +31,6 @@ class DXDB(object):
         d = json.loads(ds.to_json())
         did = self.db[self.tbls['ds_metadata']].insert_one(d).inserted_id
         return did
-        
 
     def get_dataset_metadata(self, dsid=None):
         if dsid is None:
@@ -50,6 +49,7 @@ class DXDB(object):
         return session
 
     def get_workflow_session(self, wfid):
+        logger.debug("Getting workflow session: %s" % wfid)
         wfs = self.db[self.tbls['wf_sessions']].find_one({'_id': ObjectId(wfid)})
         return wfs
 
@@ -70,3 +70,11 @@ class DXDB(object):
         viz._id = str(did)
         logger.debug("Added visualization session to db: \n%s" % str(viz.to_json()))
         return viz
+
+    def get_visualizations(self, viz_ids):
+        logger.debug("Searching for visualizations with ids: %s" % viz_ids)
+        results = self.db[self.tbls['viz_sessions']].find({"_id": {"$in": [ObjectId(viz) for viz in viz_ids]}})
+        out = [SimpleEDAViz.from_json(doc) for doc in results]
+        logger.debug("Found matches: %s" % out)
+        return out
+
