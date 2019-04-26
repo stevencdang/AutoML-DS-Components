@@ -12,34 +12,30 @@ from bokeh.client import pull_session
 from bokeh.plotting import figure
 from bokeh.embed import server_session
 
-from ls_utilities.dexplorer import VizServer
-
 logger = logging.getLogger(__name__)
 
 class SimpleEDAViz(ABC):
 
-    def __init__(self, viz_server, session_id, dataset_id, resource_id, data_attr_id):
-        self.viz_server = viz_server
-        self.workflow_session_id = session_id
-        self.dataset_id = dataset_id
-        self.resource_id = resource_id
-        self.data_attr_id = data_attr_id
+    def __init__(self, session, dataset, resource, data_attr):
+        self.workflow_session = session
+        self.dataset = dataset
+        self.resource = resource
+        self.data_attr = data_attr
         
         self._id = None
         self.viz_doc = None
         self.viz_type = None
 
     @abstractmethod
-    def generate(self):
+    def generate(self, viz_server):
         logger.info("Generating simple eda viz")
 
-    def to_json(self):
+    def __dict__(self):
         out = {
-                'viz_server': self.viz_server.get_address(),
-                'workflow_session_id': self.workflow_session_id,
-                'dataset_id': self.dataset_id,
-                'resource_id': self.resource_id,
-                'data_attr_id': self.data_attr_id,
+                'workflow_session_id': self.workflow_session._id,
+                'dataset_id': self.dataset._id,
+                'resource_id': self.resource.resID
+                'data_attr_id': self.data_attr.colIndex
                 'viz_doc': str(self.viz_doc),
         }
         if self._id is not None:
@@ -49,35 +45,39 @@ class SimpleEDAViz(ABC):
         return out
 
     @staticmethod
-    def from_json(data):
+    def from_json(data, db):
         if data['viz_type'] == "Simple Numeric EDA":
             cls = globals()['SimpleNumericEDAViz']
         elif data['viz_type'] == "Simple Categorical EDA":
             cls = globals()['SimpleCategoricalEDAViz']
-        out = cls(VizServer(data['viz_server'])
-                  data['workflow_session_id'],
-                  data['dataset_id'],
-                  data['resource_id'],
-                  data['data_attr_id']
-                  )
+        wfs = db.get_workflow_session(data['workflow_session_id'])
+        ds = db.get_dataset_metadata(data['dataset_id'])
+        resource = ds.get_resource(data['resource_id'])
+        dattr = resource.get_column(data['data_attr.colIndex'])
+
+        out = cls(wfs, ds, resource, dattr)
         out.viz_type = data['viz_type']
         out.viz_doc = data['viz_doc']
         out._id = data['_id']
+
         return out
 
 
 class SimpleNumericEDAViz(SimpleEDAViz):
 
-    def __init__(self, viz_server, session_id, dataset_id, resource_id, data_attr_id):
-        super().__init__(viz_server, session_id, dataset_id, resource_id, data_attr_id)
+    def __init__(self, session, dataset, resource, data_attr):
+        super().__init__(session, dataset, resource, data_attr)
         self.viz_type = "Simple Numeric EDA"
 
-    def generate(self):
-        logger.info("Generating Simple Numeric EDA Viz")
-        viz_addr = self.viz_server.get_address()
-        logger.debug("Connecting to server at address: %s" % viz_addr)
+    def generate(self, viz_server):
+        """
+        viz_server - url to the viz server
 
-        with pull_session(url=viz_addr) as session:
+        """
+        logger.info("Generating Simple Numeric EDA Viz")
+        logger.debug("Connecting to server at address: %s" % viz_server)
+
+        with pull_session(url=viz_server) as session:
             # update or customize that session
             doc = session.document
 
@@ -88,7 +88,7 @@ class SimpleNumericEDAViz(SimpleEDAViz):
 
             doc.add_root(p)
             # generate a script to load the customized session
-            embed_script = server_session(session_id=session.id, url=viz_addr)
+            embed_script = server_session(session_id=session.id, url=viz_server)
             logger.debug("Got embed script for viz:\n%s" % str(embed_script))
 
             self.viz_doc = embed_script
@@ -96,16 +96,16 @@ class SimpleNumericEDAViz(SimpleEDAViz):
 
 class SimpleCategoricalEDAViz(SimpleEDAViz):
 
-    def __init__(self, viz_server, session_id, dataset_id, resource_id, data_attr_id):
-        super().__init__(viz_server, session_id, dataset_id, resource_id, data_attr_id)
+    def __init__(self, session, dataset, resource, data_attr):
+        super().__init__(session, dataset, resource, data_attr)
         self.viz_type = "Simple Categorical EDA"
 
-    def generate(self):
+    def generate(self, viz_server):
         logger.info("Generating Simple Categorical EDA Viz")
-        viz_addr = self.viz_server.get_address()
-        logger.debug("Connecting to server at address: %s" % viz_addr)
+        viz_server = viz_server.get_address()
+        logger.debug("Connecting to server at address: %s" % viz_server)
 
-        with pull_session(url=viz_addr) as session:
+        with pull_session(url=viz_server) as session:
             # update or customize that session
             doc = session.document
 
@@ -116,7 +116,7 @@ class SimpleCategoricalEDAViz(SimpleEDAViz):
             
             doc.add_root(p)
             # generate a script to load the customized session
-            embed_script = server_session(session_id=session.id, url=viz_addr)
+            embed_script = server_session(session_id=session.id, url=viz_server)
             logger.debug("Got embed script for viz:\n%s" % str(embed_script))
 
             self.viz_doc = embed_script

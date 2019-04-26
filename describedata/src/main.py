@@ -143,6 +143,7 @@ if __name__ == '__main__':
                 if viz is not None:
                     viz = db.add_viz(viz)
                     wfs.add_viz(viz)
+
                 # Ignore index columns
                 if ('index' not in col.colName.lower()) and \
                         ('id' not in col.colName.lower()):
