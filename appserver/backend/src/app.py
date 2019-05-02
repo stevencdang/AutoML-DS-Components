@@ -40,26 +40,27 @@ def main():
 
 @app.route('/wfs/<string:wfid>')
 def get_simple_eda_session(wfid):
-    db_wfs = db_client.get_workflow_session(wfid)
+    wfs = db_client.get_workflow_session(wfid)
     # logger.debug("workflow session from db: %s" % db_wfs)
-    wfs = SimpleEDASession.from_json(db_wfs)
+    # wfs = SimpleEDASession.from_json(db_wfs)
     # logger.debug("workflow session to json: %s" % json.dumps(wfs.__dict__))
     ds = db_client.get_dataset_metadata(wfs.dataset_id)
-    data_cols = {col.colIndex: col for col in ds.get_data_columns()}
+    data_cols = {col.colIndex: col.to_json() for col in ds.get_data_columns()}
+
+    # data_cols = {col.colIndex: col for col in ds.get_data_columns()}
     logger.debug("*********************************************")
     logger.debug("Data columns: %s" % data_cols)
     all_viz = db_client.get_visualizations(wfs.visualizations)
     logger.debug("*********************************************")
-    logger.debug([viz for viz in all_viz])
-    logger.debug("*********************************************")
     for viz in all_viz:
         logger.debug("##########################################")
-        logger.debug("Viz: %s" % str(viz))
-        logger.debug("Data_col entry to modify: %s" % str(data_cols[viz['data_attr']['colIndex']]))
+        logger.debug("Viz: %s" % str(viz.as_dict()))
+        logger.debug("Adding viz to data col: %s" % str(data_cols[viz.data_attr.colIndex]))
+        # logger.debug("Data_col entry to modify: %s" % str(data_cols[viz['data_attr']['colIndex']]))
         # data_cols[viz['data_attr']['colIndex']]['viz_dic'] = viz['viz_doc']
     result = {'WorkflowSession': wfs.__dict__,
               'DatasetId': ds.id,
-              'DatasetColumns': data_cols
+              'DatasetColumns': [d.to_json() for d in ds.get_data_columns()]
     }
     logger.debug("EDA Session with datasetd and datacols: \n%s" % json.dumps(result))
 

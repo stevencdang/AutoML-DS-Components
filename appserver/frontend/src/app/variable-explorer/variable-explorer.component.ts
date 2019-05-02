@@ -34,7 +34,8 @@ export class VariableExplorerComponent implements OnInit {
 
   ngOnInit() {
     let wfid: string = this.get_session_id();
-    this.dataService.getWorkflowSession(wfid).subscribe((result: SimpleEDASession) => this.get_data_columns(result));
+    this.dataService.getWorkflowSession(wfid).subscribe(result => console.log(result));
+    //this.dataService.getWorkflowSession(wfid).subscribe((result: SimpleEDASession) => this.get_data_columns(result));
   }
 
   get_session_id() {
@@ -42,6 +43,10 @@ export class VariableExplorerComponent implements OnInit {
     const wfid = this.route.snapshot.paramMap.get('wfid');
     console.log("Got workflow Id: ", wfid);
     return wfid
+
+  }
+
+  parse_session_data(sesData: SimpleEDASession) void {
 
   }
 

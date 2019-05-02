@@ -53,7 +53,7 @@ class SimpleEDAViz(ABC):
         wfs = db.get_workflow_session(data['workflow_session_id'])
         ds = db.get_dataset_metadata(data['dataset_id'])
         resource = ds.get_resource(data['resource_id'])
-        dattr = resource.get_column(data['data_attr.colIndex'])
+        dattr = resource.get_column(data['data_attr_id'])
 
         out = cls(wfs, ds, resource, dattr)
         out.viz_type = data['viz_type']
@@ -61,6 +61,9 @@ class SimpleEDAViz(ABC):
         out._id = data['_id']
 
         return out
+
+    def __str__(self):
+        return str(self.as_dict())
 
 
 class SimpleNumericEDAViz(SimpleEDAViz):

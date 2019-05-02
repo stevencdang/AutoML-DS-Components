@@ -33,6 +33,7 @@ class DXDB(object):
         return did
 
     def get_dataset_metadata(self, dsid=None):
+        logger.debug("looking up dataset with id: %s" % dsid)
         if dsid is None:
             ds_json = self.db[self.tbls['ds_metadata']].find_one()
         else:
@@ -51,7 +52,8 @@ class DXDB(object):
     def get_workflow_session(self, wfid):
         logger.debug("Getting workflow session: %s" % wfid)
         wfs = self.db[self.tbls['wf_sessions']].find_one({'_id': ObjectId(wfid)})
-        return wfs
+        session = SimpleEDASession.from_json(wfs)  
+        return session
 
     def update_workflow_session(self, session, fields):
         try:
@@ -65,12 +67,6 @@ class DXDB(object):
             logger.error("Error while updating workflow session: %s" % str(e))
 
     def add_viz(self, viz):
-        logger.debug("########$$$$$$$$$$$$#####################")
-        logger.debug("########$$$$$$$$$$$$#####################")
-        logger.debug("########$$$$$$$$$$$$#####################")
-        logger.debug(viz.as_dict())
-        logger.debug("########$$$$$$$$$$$$#####################")
-        logger.debug("########$$$$$$$$$$$$#####################")
         did = self.db[self.tbls['viz_sessions']].insert_one(viz.as_dict()).inserted_id
         viz._id = str(did)
         logger.debug("Added visualization session to db: \n%s" % str(viz.as_dict()))
@@ -79,7 +75,7 @@ class DXDB(object):
     def get_visualizations(self, viz_ids):
         logger.debug("Searching for visualizations with ids: %s" % viz_ids)
         results = self.db[self.tbls['viz_sessions']].find({"_id": {"$in": [ObjectId(viz) for viz in viz_ids]}})
-        out = [SimpleEDAViz.from_json(doc) for doc in results]
+        out = [SimpleEDAViz.from_json(doc, self) for doc in results]
         logger.debug("Found matches: %s" % out)
         return out
 

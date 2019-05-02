@@ -24,10 +24,10 @@ export class DataService {
     return this.http.get<DatasetIntf>(url);
   }
 
-  getWorkflowSession(wfid: string): Observable<WorkflowSession> {
+  getWorkflowSession(wfid: string): Observable<Object> {
     let url: string = this.backendAddr + this.getSessionUrl + "/" + wfid;
     console.log("Getting workflow session with GET: ", url);
-    return this.http.get<WorkflowSession>(url);
+    return this.http.get<Object>(url);
     
   }
 
