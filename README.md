@@ -18,39 +18,46 @@ Copyright 2016. All Rights Reserved.
 * Dataset Selector
 * Pipeline Search
 
-## Cloning instructions
-This project includes a number of submodules for each workflow component. In order to clone the project to your local 
-machine, you have to perform the following commands
+## TA3 docker container deployment
 
-```
-git clone <repo_addr>
-git submodule init
-git submodule update
-```
+# CMU TA3
 
-Alternatively you can clone with all submodules in one command:
+## Prerequisites
+1. A TA2 is running and accessible.
 
-```
-git clone  --recurse-submodules <repo_address>
-```
+## Command to launch the docker image
+Assuming a TA2 is running at ```localhost:45042```.
 
-# Setting up local Git environment for convenience
-
-To work with submodules conveniently, it is usefule to alias a few submodule commands so it is cleaner to operate on 
-all submodules.
-
-```
-# Update and merge remote changes into local submodules
-git config alias.supdate 'submodule update --remote --merge'
-git config alias.spush 'push --recurse-submodules=on-demand'
-
-# 
+```bash
+docker run -it \
+    --rm \
+    -p 8080:80 \
+    --mount type=bind,source=<path_to_local_dataset_dir>,target=/input \
+    --mount type=bind,source=<any_writable_dir>,target=/output \
+    -e "D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg" \
+    -e D3MINPUTDIR=/input \
+    -e D3MOUTPUTDIR=/output \
+    -e TA2ADDR="localhost:45042" \
+    -e TA2NAME=<name_of_the_TA2> \
+    registry.datadrivendiscovery.org/sdang/cmu-ta3:live
 ```
 
-In order to make modifications to the submodule you should execute the following commands after cloning. This will put 
-each local clone of each submodule on its own branch.
+Example of using CMU TA2 that runs at port 45042
+```bash
+docker run -it \
+    --rm \
+    -p 8080:80 \
+    --mount type=bind,source=/data/data/d3m/dryrun2018summer/input,target=/input \
+    --mount type=bind,source=/data/data/d3m/dryrun2018summer/output,target=/output \
+    -e "D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg" \
+    -e D3MINPUTDIR=/input \
+    -e D3MOUTPUTDIR=/output \
+    -e TA2ADDR="localhost:45042" \
+    -e TA2NAME="cmu" \
+    registry.datadrivendiscovery.org/sdang/cmu-ta3:live
+```
 
-```
-git submodule forech 'git branch dev'
-git submodule forech 'git checkout dev'
-```
+Then point your browser to [https://localhost:8080](https://localhost:8080).
+
+
+
