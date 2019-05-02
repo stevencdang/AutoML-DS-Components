@@ -18,9 +18,7 @@ Copyright 2016. All Rights Reserved.
 * Dataset Selector
 * Pipeline Search
 
-## TA3 docker container deployment
-
-# CMU TA3
+### TA3 docker container deployment
 
 ## Prerequisites
 1. A TA2 is running and accessible.
@@ -58,6 +56,3 @@ docker run -it \
 ```
 
 Then point your browser to [https://localhost:8080](https://localhost:8080).
-
-
-
