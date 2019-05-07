@@ -1,0 +1,17 @@
+docker run   \
+--volume=/var/run/docker.sock:/var/run/docker.sock \
+--volume=/var/lib/drone:/data \
+--env=DRONE_GIT_ALWAYS_AUTH=false \
+--env=DRONE_GITLAB_SERVER=https://gitlab.com \
+--env=DRONE_GITLAB_CLIENT_ID=<GITLAB CLIENT APP ID> \
+--env=DRONE_GITLAB_CLIENT_SECRET=<GITLAB CLIENT SECRET KEY> \
+--env=DRONE_RUNNER_CAPACITY=2 \
+--env=DRONE_SERVER_HOST=<local.drone.host> \
+--env=DRONE_SERVER_PROTO=<http or https>
+--env=DRONE_TLS_AUTOCERT=false \
+--publish=<exposed http port>:80 \
+--publish=<exposed https port>:443 \
+--restart=always \
+--detach=true \
+--name=drone \
+drone/drone:1

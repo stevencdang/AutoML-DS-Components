@@ -1,0 +1,8 @@
+pipeline:
+name: default
+  steps:
+    - name: learnsphere
+      image: ubuntu:16.04
+      commands:
+        - cd mk_docker
+        - echo "Test"
