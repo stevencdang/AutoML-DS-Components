@@ -1,8 +1,13 @@
-pipeline:
+kind: pipeline:
 name: default
+
   steps:
-    - name: learnsphere
-      image: ubuntu:16.04
-      commands:
-        - cd mk_docker
-        - echo "Test"
+    - name: backend
+      image: plugins/docker 
+      settings:
+          username: 
+            from_secret: d3m_username
+          password: 
+            from_secret: d3m_password
+          repo: gitlab.datadrivendiscovery.org/sdang/cmu-ta3
+          registry: registry.datadrivendiscovery.org/sdang/cmu-ta3 
