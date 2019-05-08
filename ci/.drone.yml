@@ -1,13 +1,13 @@
 kind: pipeline
 name: default
 
-  steps:
-    - name: backend
-      image: plugins/docker 
-      settings:
-          username: 
-            from_secret: d3m_username
-          password: 
-            from_secret: d3m_password
-          repo: gitlab.datadrivendiscovery.org/sdang/cmu-ta3
-          registry: registry.datadrivendiscovery.org/sdang/cmu-ta3 
+steps:
+  - name: backend
+    image: plugins/docker 
+    settings:
+      username: 
+        from_secret: d3m_username
+      password: 
+        from_secret: d3m_password
+      repo: gitlab.datadrivendiscovery.org/sdang/cmu-ta3
+      registry: registry.datadrivendiscovery.org/sdang/cmu-ta3 
