@@ -13,6 +13,7 @@ from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
+from user_ops.dataset_importer import DatasetImporter
 
 __version__ = '0.1'
 
@@ -44,24 +45,28 @@ if __name__ == '__main__':
 
     # Read in the dataset json
     ds_root = config.get_dataset_path()
-    datasets = set()
-    for root, dirs, files in os.walk(ds_root):
-        for f in files:
-            if f == 'datasetDoc.json':
-                logger.debug("Found dataset in directory: %s" % root)
-                try:
-                    ds = D3MDataset.from_dataset_json(path.join(root, f))
-                    if ds.name not in datasets:
-                        logger.info("Found dataset name: %s\nAt path: %s" % (ds.name,  ds.dpath))
-                        datasets.add(ds.name)
-                except:
-                    # Don't choke on unsupported dataset jsons
-                    logger.warning("Encountered unsupported dataset: %s" % str(path.join(root, f)))
-
-    logger.debug("Found datasets: %s" % str(datasets))
+    runner = DatasetImporter()
+    datasets = runner.run(ds_root)
 
 
-    # # Write dataset info to output file
+    # datasets = set()
+    # for root, dirs, files in os.walk(ds_root):
+        # for f in files:
+            # if f == 'datasetDoc.json':
+                # logger.debug("Found dataset in directory: %s" % root)
+                # try:
+                    # ds = D3MDataset.from_dataset_json(path.join(root, f))
+                    # if ds.name not in datasets:
+                        # logger.info("Found dataset name: %s\nAt path: %s" % (ds.name,  ds.dpath))
+                        # datasets.add(ds.name)
+                # except:
+                    # # Don't choke on unsupported dataset jsons
+                    # logger.warning("Encountered unsupported dataset: %s" % str(path.join(root, f)))
+
+    # logger.debug("Found datasets: %s" % str(datasets))
+
+
+    # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))
     logger.info("Writing dataset list of %i datasets to file: %s" % (len(datasets), out_file_path))
     with open(out_file_path, 'w') as out_file:

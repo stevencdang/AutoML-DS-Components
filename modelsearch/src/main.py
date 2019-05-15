@@ -33,6 +33,7 @@ from d3m_eval.summer_2018.prob_discovery import ProblemDiscoveryWriter
 # from ls_workflow.workflow import Workflow as Solution
 from modeling.models import *
 from modeling.component_out import *
+from user_ops.modeling import *
 
 
 __version__ = '0.1'
@@ -88,100 +89,110 @@ if __name__ == '__main__':
         serv = TA2Client(address, 
                 name=name)
 
-    logger.debug("********************************")
-    logger.debug("********************************")
-    # Parse the problem and dataset to get the prediction data
-    # Assume the problem has 1 input with 1 target
-    if len(prob.inputs) != 1:
-        logger.warning("Assumed problem has 1 input, but actually has %i inputs" % len(prob.inputs))
-    pinput = prob.inputs[0]
-    if len(pinput.targets) != 1:
-        logger.warning("Assumed problem input has 1 target, but actually has %i inputs" % len(pinput.targets))
-    ptarget = pinput.targets[0]
 
-    # Use problem target info to retreive dataset and prediction column
-    data_resource = None
-    for dr in ds.dataResources:
-        if dr.resID == ptarget.resource_id:
-            data_resource = dr
-            logger.debug("Got Data resourse\n%s" % str(data_resource))
-    if data_resource is None:
-        logger.error("No matching data resouce was found for info from problem\n%s" % str(ptarget))
-    data_path = path.join(ds.get_ds_path(), data_resource.resPath)
-    logger.debug("Got data path from dataset with ds root path: %s\t total path: %s" % (ds.get_ds_path(), data_path))
-    data = pd.read_csv(data_path, sep=',')
-    logger.debug(data.head())
-    predictions = data.loc[:,['d3mIndex', ptarget.column_name]]
-    predictions.index = predictions['d3mIndex']
-    predictions.drop(labels=['d3mIndex'], axis=1, inplace=True)
-    logger.debug("Just predictions data: \n%s" % str(predictions.head()))
-
-    logger.debug("********************************")
-    logger.debug("********************************")
-
-
-
-
-    # Search for solutions
     if config.get_mode() == 'D3M':
         # Write search and problem to file for problem discovery task
-        logger.debug("Writing to out_dir: %s" % config.get_out_path())
-        prob_list = ProblemDiscoveryWriter(config.get_out_path())
-        search_id, request = serv.search_solutions(prob, ds, get_request=True)
-        prob_list.add_problem(prob, request)
+        out_path = config.get_out_path()
     else:
-        search_id = serv.search_solutions(prob, ds, get_request=True)
-    # Get search results
-    soln_ids = serv.get_search_solutions_results(search_id)
-    if soln_ids is None:
-        raise Exception("No solution returned")
+        out_path = None
+
+    runner = ModelSearch()
+    m_index, models = runner.run(ds, prob, serv, out_path)
+
+    # logger.debug("********************************")
+    # logger.debug("********************************")
+    # # Parse the problem and dataset to get the prediction data
+    # # Assume the problem has 1 input with 1 target
+    # if len(prob.inputs) != 1:
+        # logger.warning("Assumed problem has 1 input, but actually has %i inputs" % len(prob.inputs))
+    # pinput = prob.inputs[0]
+    # if len(pinput.targets) != 1:
+        # logger.warning("Assumed problem input has 1 target, but actually has %i inputs" % len(pinput.targets))
+    # ptarget = pinput.targets[0]
+
+    # # Use problem target info to retreive dataset and prediction column
+    # data_resource = None
+    # for dr in ds.dataResources:
+        # if dr.resID == ptarget.resource_id:
+            # data_resource = dr
+            # logger.debug("Got Data resourse\n%s" % str(data_resource))
+    # if data_resource is None:
+        # logger.error("No matching data resouce was found for info from problem\n%s" % str(ptarget))
+    # data_path = path.join(ds.get_ds_path(), data_resource.resPath)
+    # logger.debug("Got data path from dataset with ds root path: %s\t total path: %s" % (ds.get_ds_path(), data_path))
+    # data = pd.read_csv(data_path, sep=',')
+    # logger.debug(data.head())
+    # predictions = data.loc[:,['d3mIndex', ptarget.column_name]]
+    # predictions.index = predictions['d3mIndex']
+    # predictions.drop(labels=['d3mIndex'], axis=1, inplace=True)
+    # logger.debug("Just predictions data: \n%s" % str(predictions.head()))
+
+    # logger.debug("********************************")
+    # logger.debug("********************************")
+
+
+
+
+    # # Search for solutions
+    # if config.get_mode() == 'D3M':
+        # # Write search and problem to file for problem discovery task
+        # logger.debug("Writing to out_dir: %s" % config.get_out_path())
+        # prob_list = ProblemDiscoveryWriter(config.get_out_path())
+        # search_id, request = serv.search_solutions(prob, ds, get_request=True)
+        # prob_list.add_problem(prob, request)
+    # else:
+        # search_id = serv.search_solutions(prob, ds, get_request=True)
+    # # Get search results
+    # soln_ids = serv.get_search_solutions_results(search_id)
+    # if soln_ids is None:
+        # raise Exception("No solution returned")
 
     
-    # Get Model for each solution returned
-    solns = {}
-    for soln_id in soln_ids:
-        solns[soln_id] = serv.describe_solution(soln_id)
-        logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
+    # # Get Model for each solution returned
+    # solns = {}
+    # for soln_id in soln_ids:
+        # solns[soln_id] = serv.describe_solution(soln_id)
+        # logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
 
-    ### Temp patch of writing to file and reading back in to simulate passing between components
-    out_file_name = "model_data.tsv"
+    # ### Temp patch of writing to file and reading back in to simulate passing between components
+    # out_file_name = "model_data.tsv"
 
-    out_file_path = path.join(args.workingDir, out_file_name)
-    ModelSetIO.to_file(out_file_path, solns)
-    logger.info(out_file_path)
-    with open(out_file_path, 'r') as ofile:
-        m_index, models = ModelSetIO.from_file(ofile)
+    # out_file_path = path.join(args.workingDir, out_file_name)
+    # ModelSetIO.to_file(out_file_path, solns)
+    # logger.info(out_file_path)
+    # with open(out_file_path, 'r') as ofile:
+        # m_index, models = ModelSetIO.from_file(ofile)
 
-    # Get fitted solution
-    fit_req_ids = {}
-    #fitted_models = {}
-    fitted_results = {}
-    for mid, model in models.items():
-        logger.debug("Fitting model: %s" % str(model))
-        fit_req_ids[mid] = serv.fit_solution(model, ds)
-    for mid, rid in fit_req_ids.items():
-        logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
-        models[mid].fitted_id, fitted_results[mid] = serv.get_fit_solution_results(rid)
+    # # Get fitted solution
+    # fit_req_ids = {}
+    # #fitted_models = {}
+    # fitted_results = {}
+    # for mid, model in models.items():
+        # logger.debug("Fitting model: %s" % str(model))
+        # fit_req_ids[mid] = serv.fit_solution(model, ds)
+    # for mid, rid in fit_req_ids.items():
+        # logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
+        # models[mid].fitted_id, fitted_results[mid] = serv.get_fit_solution_results(rid)
 
-    for mid in models:
-        logger.debug("Got fitted model with model id: %s" % mid)
-        logger.debug("Model: %s\tFitted Model: %s" % (mid, models[mid].fitted_id))
+    # for mid in models:
+        # logger.debug("Got fitted model with model id: %s" % mid)
+        # logger.debug("Model: %s\tFitted Model: %s" % (mid, models[mid].fitted_id))
 
-    result_df = predictions
-    for mid in fitted_results:
-        rdf = fitted_results[mid].copy()
-        rdf.rename(columns={rdf.columns[-1]: mid}, inplace=True)
-        # if result_df is None:
-            # result_df = rdf.copy()
-            # result_df.index = rdf['d3mIndex']
-        # else:
-        result_df = pd.merge(result_df, rdf, on='d3mIndex')
-        logger.debug("********************************")
-        logger.debug(result_df.columns)
-        logger.debug("********************************")
+    # result_df = predictions
+    # for mid in fitted_results:
+        # rdf = fitted_results[mid].copy()
+        # rdf.rename(columns={rdf.columns[-1]: mid}, inplace=True)
+        # # if result_df is None:
+            # # result_df = rdf.copy()
+            # # result_df.index = rdf['d3mIndex']
+        # # else:
+        # result_df = pd.merge(result_df, rdf, on='d3mIndex')
+        # logger.debug("********************************")
+        # logger.debug(result_df.columns)
+        # logger.debug("********************************")
     
         
-    # # Write model fit id info to output file
+    # Write model fit id info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'model_out_file'))
 
     FittedModelSetIO.to_file(out_file_path, models, m_index)

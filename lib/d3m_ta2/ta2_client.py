@@ -114,7 +114,7 @@ class TA2Client(object):
             user_agent = self.__name__,
             version = self.__protocol_version__,
             allowed_value_types = self.__allowed_values__,
-            time_bound = max_time,
+            time_bound_search = max_time,
             priority = priority,
             problem = p.to_protobuf(),
         )

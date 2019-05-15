@@ -24,14 +24,7 @@ class GRPCProblemDesc(ProblemDesc):
     __version__ = "D3M TA3TA2 API v2018.5.1"
 
     def to_protobuf(self):
-        prob = problem_pb2.Problem(
-            id=self.id,
-        )
-        prob.version = str(self.version)
-        if self.name is not None:
-            prob.name = self.name
-        if self.description is not None:
-            prob.description = self.description
+        prob = problem_pb2.Problem()
         if self.task_type is not None:
             prob.task_type = GRPCProblemDesc.get_task_type(self.task_type)
         if self.subtype is not None:
@@ -44,8 +37,15 @@ class GRPCProblemDesc(ProblemDesc):
             if metric.pos is not None:
                 m.pos_label = metric.pos
         msg = problem_pb2.ProblemDescription(
+            id=self.id,
             problem=prob
         )
+        msg.version = str(self.version)
+        if self.name is not None:
+            msg.name = self.name
+        if self.description is not None:
+            msg.description = self.description
+
         # logger.debug("Adding inputs: %s" % str(self.inputs))
         for inpt in self.inputs:
             i = msg.inputs.add()

@@ -95,6 +95,13 @@ mkdir "$srcdir"/program/dxdb
 find "$libdir"/dxdb -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/dxdb/{}"
 # Copy source files
 find "$libdir"/dxdb -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/dxdb/{} "$srcdir"/program/dxdb/{}
+### Copy user_ops dir
+# Replicate directory structure
+mkdir "$srcdir"/program/user_ops
+find "$libdir"/user_ops -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/program/user_ops/{}"
+# Copy source files
+find "$libdir"/user_ops -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/user_ops/{} "$srcdir"/program/user_ops/{}
+
 
 
 cd $cwd

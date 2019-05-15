@@ -16,6 +16,7 @@ from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
+from user_ops.dataset_selector import DatasetSelector
 
 __version__ = '0.1'
 
@@ -79,25 +80,27 @@ if __name__ == '__main__':
 
     # Crawl dataset directory to find dataset json with matching name
     ds_root = config.get_dataset_path()
-    names = set()
-    datasets = {}
+    runner = DatasetSelector()
+    ds = runner.run(ds_root, name)
+    # names = set()
+    # datasets = {}
 
-    for root, dirs, files in os.walk(ds_root):
-        for f in files:
-            if f == 'datasetDoc.json':
-                logger.debug("Found dataset in directory: %s" % root)
-                try: 
-                    ds = D3MDataset.from_dataset_json(path.join(root, f))
-                    if ds.name not in names:
-                        logger.info("Found dataset name: %s\nAt path: %s" % (ds.name,  ds.dpath))
-                        names.add(ds.name)
-                        datasets[ds.name] = ds
-                except:
-                    logger.warning("Error encountered whiel loading dataset json: %s" % path.join(root, f))
+    # for root, dirs, files in os.walk(ds_root):
+        # for f in files:
+            # if f == 'datasetDoc.json':
+                # logger.debug("Found dataset in directory: %s" % root)
+                # try: 
+                    # ds = D3MDataset.from_dataset_json(path.join(root, f))
+                    # if ds.name not in names:
+                        # logger.info("Found dataset name: %s\nAt path: %s" % (ds.name,  ds.dpath))
+                        # names.add(ds.name)
+                        # datasets[ds.name] = ds
+                # except:
+                    # logger.warning("Error encountered whiel loading dataset json: %s" % path.join(root, f))
 
-    ds = datasets[name]
+    # ds = datasets[name]
 
-    logger.info("Found dataset with name %s, id: %s\n json: %s" % (ds.name, ds.id, str(ds)))
+    # logger.info("Found dataset with name %s, id: %s\n json: %s" % (ds.name, ds.id, str(ds)))
 
     # Read in the dataset json
     # schema_path = D3MDataset.get_schema_path(ds)
@@ -106,7 +109,7 @@ if __name__ == '__main__':
         # ds_data = json.load(spath)
     # logger.debug("using json: %s" % str(ds_data)) 
     # ds = D3MDataset(ds_path, ds_data)
-    logger.debug("Got dataset: %s" % str(ds))
+    # logger.debug("Got dataset: %s" % str(ds))
 
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))

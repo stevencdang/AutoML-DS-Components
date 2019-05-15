@@ -16,6 +16,7 @@ from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from ls_problem_desc.ls_problem import ProblemDesc
+from user_ops.problem import *
 
 __version__ = '0.1'
 
@@ -51,10 +52,13 @@ if __name__ == '__main__':
     ds = D3MDataset.from_component_out_file(args.file0)
     logger.debug("Dataset json: %s" % str(ds))
 
+
+    runner = DefaultProblemGenerator()
+    prob_desc = runner.run(ds)
     # Get Problem Schema from Dataset
-    prob_path = DefaultProblemDesc.get_default_problem(ds)
-    prob_desc = DefaultProblemDesc.from_file(prob_path)
-    logger.debug("Got Problem Description for json: %s" % prob_desc.print())
+    # prob_path = DefaultProblemDesc.get_default_problem(ds)
+    # prob_desc = DefaultProblemDesc.from_file(prob_path)
+    # logger.debug("Got Problem Description for json: %s" % prob_desc.print())
 
     # Write dataset info to output file
     out_file_path = path.join(args.workingDir, config.get('Main', 'out_file'))
