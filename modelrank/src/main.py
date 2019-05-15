@@ -32,7 +32,7 @@ from d3m_ta2.ta2_client import TA2Client
 from modeling.models import Model
 from modeling.component_out import *
 from modeling.scores import *
-
+from user_ops.modeling import *
 
 __version__ = '0.1'
 
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     # Get Ranked list of models
     runner = ModelRanker()
-    ranked_models = runner.run(models, ds, metric, ordering, args.ordering, serv)
+    ranked_models = runner.run(models, ds, metric, args.ordering, serv)
 
     # Get Score for each solution
     # req_ids = {}

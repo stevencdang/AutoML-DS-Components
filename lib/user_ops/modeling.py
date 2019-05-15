@@ -137,7 +137,7 @@ class ModelSearch(object):
             logger.debug(result_df.columns)
             logger.debug("********************************")
 
-        return m_index, models
+        return m_index, models, result_df
     
 class ModelRanker(object):
     """
