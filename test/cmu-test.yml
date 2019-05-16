@@ -30,7 +30,7 @@ services:
 
     tigris.dexplorer.backend:
         image:
-            tigris.appserver.backend
+            tigris.appserver
         ports:
             - "5005:5000"
         environment:

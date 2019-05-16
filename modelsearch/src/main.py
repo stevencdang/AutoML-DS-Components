@@ -97,7 +97,7 @@ if __name__ == '__main__':
         out_path = None
 
     runner = ModelSearch()
-    m_index, models = runner.run(ds, prob, serv, out_path)
+    m_index, models, result_df = runner.run(ds, prob, serv, out_path)
 
     # logger.debug("********************************")
     # logger.debug("********************************")

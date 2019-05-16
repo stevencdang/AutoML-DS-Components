@@ -10,7 +10,7 @@ fi
 # Handle the path argument to the runWCC.sh
 if [ "$#" == 0 ]; then
     echo "No Options given. Building test image 'tigris.appserver:test' by default"
-    name="tigris.appserver:test"
+    name="registry.datadrivendiscovery.org/sdang/cmu-ta3/tigris.appserver:test"
 else
     if [ "$1" == "test"]; then
         echo "Building test docker image: 'tigris.appserver:test'"
