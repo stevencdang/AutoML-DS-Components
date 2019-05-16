@@ -10,6 +10,8 @@ import json
 import re
 import sys
 
+import urllib
+
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
@@ -18,6 +20,10 @@ from dxdb.workflow_session import *
 
 from bokeh.client import pull_session
 from bokeh.embed import server_session
+
+from user_ops.modeling import *
+from user_ops.problem import *
+from user_ops.dataset import *
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -141,6 +147,231 @@ def get_data_columns(dsid):
     logger.debug(result)
     # return result
     return json.dumps(result)
+
+@app.route('/test/Hello')
+def hello():
+    return "Hello World"
+
+
+@app.route('/test/isReady')
+def is_ready():
+    """
+    Check if ta3 and ta2 systems are ready for testing
+
+    """
+
+    config = SettingsFactory.get_settings()
+    logger.info("Checking if ta2 is ready")
+
+    # Init the server connection
+    address = config.get_ta2_url()
+    name = config.get_ta2_name()
+    logger.info("using server at address %s" % address)
+    serv = TA2Client(address, 
+            name=name)
+    try:
+        reply = serv.hello()
+        logger.info(reply)
+    except:
+        logger.info("TA2 not responding to hello")
+        return "False"
+    logger.info("Checking Datashop status")
+    ta3_status = urllib.request.urlopen("http://localhost").getcode()
+    if ta3_status == 200:
+        return "True"
+    else:
+        return "False"
+
+@app.route('/test/getDatasetList')
+def get_dataset_list():
+    """
+    Get the list of all available datasets
+
+    """
+    config = SettingsFactory.get_settings()
+    logger.info("Importing List of available datasets")
+
+    ds_root = config.get_dataset_path()
+
+    logger.info("Scanning dataset root: %s" % ds_root)
+    runner = DatasetImporter()
+    datasets = runner.run(ds_root)
+
+    out_dir = os.path.join('/output/test')
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+    
+    out_file_path = path.join(out_dir, 'dataset_list.csv')
+    logger.info("Writing dataset list of %i datasets to file: %s" % (len(datasets), out_file_path))
+    with open(out_file_path, 'w') as out_file:
+        out_csv = csv.writer(out_file, delimiter='\t')
+        out_csv.writerow(datasets)
+
+@app.route('/test/selectDataset')
+def select_dataset():
+    """
+    Get the dataset by name
+
+    """
+    config = SettingsFactory.get_settings()
+    logger.info("Importing D3M Dataset selected by user")
+
+    ds_root = config.get_dataset_path()
+    name = "acled"
+    runner = DatasetSelector()
+    ds = runner.run(ds_root, name)
+
+    out_dir = os.path.join('/output/test')
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+    
+    out_file_path = path.join(out_dir, 'dataset.json')
+    logger.info("Writing dataset json to: %s" % out_file_path)
+    ds.to_component_out_file(out_file_path)
+    
+
+@app.route('/test/getDefaultProblem')
+def get_default_problem(ds):
+    """
+    Get default problem associated with the dataset
+
+    """
+    config = SettingsFactory.get_settings()
+    logger.info("Generating Problem Statement based on default problem for given dataset")
+
+    out_dir = os.path.join('/output/test')
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+  
+    ds_file = path.join(out_dir, 'dataset.json')
+    ds = D3MDataset.from_component_out_file(ds_file)
+    logger.debug("Dataset json: %s" % str(ds))
+    
+    runner = DefaultProblemGenerator()
+    prob_desc = runner.run(ds)
+
+    out_file_path = path.join(out_dir, 'problem.json')
+    logger.info("Writing problem json to: %s" % out_file_path)
+    prob_desc.to_file(out_file_path)
+    
+
+@app.route('/test/modelSearch')
+def model_search():
+    """
+    Search and fit models for a given dataset and problem
+
+    """
+    config = SettingsFactory.get_settings()
+    logger.info("Running Pipeline Search on TA2")
+
+    out_dir = os.path.join('/output/test')
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+  
+    # Open dataset json
+    ds_file = path.join(out_dir, 'dataset.json')
+    ds = D3MDataset.from_component_out_file(ds_file)
+    logger.debug("Dataset json parse: %s" % str(ds))
+
+    # Get the Problem Doc to forulate the Pipeline request
+    prob_file = path.join(out_dir, 'problem.json')
+    logger.debug("Problem input: %s" % prob_file)
+    prob = ProblemDesc.from_file(prob_file)
+    logger.debug("Got Problem Description: %s" % prob.print())
+
+    # Init the server connection
+    address = config.get_ta2_url()
+    name = config.get_ta2_name()
+    logger.info("using server at address %s" % address)
+    serv = TA2Client(address, 
+            name=name)
+
+    # Run model search
+    runner = ModelSearch()
+    m_index, models, result_df = runner.run(ds, prob, serv, out_path)
+
+    # Write output of component
+    
+    # Write model fit id info to output file
+    model_out_file_path = path.join(out_dir, 'fit-models.tsv')
+    FittedModelSetIO.to_file(model_out_file_path, models, m_index)
+
+    # # Write model predictions to output file
+    pred_out_file_path = path.join(out_dir, 'predictions.tsv')
+    result_df.to_csv(pred_out_file_path, sep='\t', index=True, header=True)
+
+
+@app.route('/test/modelRank')
+def model_rank():
+    """
+    Score the models and rank them accordingly
+
+    """
+    config = SettingsFactory.get_settings()
+    logger.info("Running Pipeline Search on TA2")
+
+    out_dir = os.path.join('/output/test')
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+  
+    # Open dataset json
+    ds_file = path.join(out_dir, 'dataset.json')
+    ds = D3MDataset.from_component_out_file(ds_file)
+    logger.debug("Dataset json parse: %s" % str(ds))
+
+    # Decode the models from file
+    m_file = path.join(out_dir, 'fit_models.tsv')
+    logger.debug("Model file input: %s" % m_file)
+    m_index, fitted_models, models = FittedModelSetIO.from_file(m_file)
+
+    # Init the server connection
+    address = config.get_ta2_url()
+    name = config.get_ta2_name()
+    logger.info("using server at address %s" % address)
+    serv = TA2Client(address, 
+            name=name)
+
+    # Create the metric(s) to use in the score request
+    metric = Metric("accuracy")
+
+    ordering = "lower_is_better"
+
+    # Get Ranked list of models
+    runner = ModelRanker()
+    ranked_models = runner.run(models, m_index, ds, metric, ordering, serv)
+
+    # Write ranked models to file
+    out_file_path = path.join(out_dir, "ranked-models.tsv")
+    ModelRankSetIO.to_file(out_file_path, ranked_models, m_index)
+
+@app.route('/test/modelExport')
+def model_export():
+    """
+    Export the list of ranked models
+
+    """
+    config = SettingsFactory.get_settings()
+    logger.info("Export set of models for d3m evaluation")
+
+    out_dir = os.path.join('/output/test')
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+  
+    # Decode the models from file
+    r_model_file = path.join(out_dir, "ranked-models.tsv")
+    logger.debug("ModelExport file input: %s" % args.file0)
+    m_index, ranked_models = ModelRankSetIO.from_file(args.file0)
+
+    # Init the server connection
+    address = config.get_ta2_url()
+    name = config.get_ta2_name()
+    logger.info("using server at address %s" % address)
+    serv = TA2Client(address, 
+            name=name)
+
+    #Create model writer 
+    runner = ModelExporter()
+    runner.run(config.get_out_path(), ranked_models, serv) 
 
 
 if __name__ == '__main__':

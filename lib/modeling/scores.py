@@ -272,13 +272,9 @@ class ModelScores(object):
 
 class Score(object):
 
-    def __init__(self, metric, fold, targets, value):
+    def __init__(self, metric, fold, value):
         self.metric = metric
         self.fold = fold
-        if targets is None:
-            self.targets = []
-        else:
-            self.targets = targets
         self.value = value
 
     @staticmethod
@@ -293,18 +289,13 @@ class Score(object):
 
         metric = Metric.from_json(data['metric'])        
         val = Value.from_json(data['value'])
-        if 'targets' in data:
-            targets = data['targets']
-        else:
-            targets = []
-        return Score(metric, data['fold'], targets, val)
+        return Score(metric, data['fold'], val)
 
     @staticmethod
     def from_protobuf(msg):
         metric = Metric.from_protobuf(msg.metric)
-        targets = [json_format.MessageToJson(target) for target in msg.targets]
         val = Value.from_protobuf(msg.value)
-        return Score(metric, msg.fold, targets, val)
+        return Score(metric, msg.fold, val)
 
     def to_protobuf(self):
         msg = core_pb2.Score(
@@ -312,17 +303,12 @@ class Score(object):
             metric=self.metric.to_protobuf(),
             value=self.value.to_protobuf()
         )
-        # msg.metric = self.metric.to_protobuf()
-        if len(self.targets) > 0:
-            msg.targets = targets
-        # msg.value = self.value.to_protobuf()
         return msg
 
     def to_dict(self):
         return {
             'metric': self.metric.to_dict(),
             'fold': self.fold,
-            'targets': self.targets,
             'value': self.value.to_dict(),
         }
 
