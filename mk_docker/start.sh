@@ -39,6 +39,16 @@ chmod 775 $D3MCONFIG
 
 # Write Docker env variables to config file
 dockerconfig="/datashop/workflow_components/D3M/docker_config.cfg"
+echo "[frontend]" >> $dockerconfig
+echo "HOST_URL=$HOST_URL" >> $dockerconfig
+echo "D3M_SERVICE_SUBDOMAIN=$D3M_SERVICE_SUBDOMAIN" >> $dockerconfig
+echo "[backend]" >> $dockerconfig
+echo "HOST_URL=$HOST_URL" >> $dockerconfig
+echo "D3M_SERVICE_SUBDOMAIN=$D3M_SERVICE_SUBDOMAIN" >> $dockerconfig
+echo "[db]" >> $dockerconfig
+echo "HOST_URL=$HOST_URL" >> $dockerconfig
+echo "EXTERNAL_URL=**" >> $dockerconfig
+echo "[viz]" >> $dockerconfig
 echo "HOST_URL=$HOST_URL" >> $dockerconfig
 echo "D3M_SERVICE_SUBDOMAIN=$D3M_SERVICE_SUBDOMAIN" >> $dockerconfig
 chown jboss:datashop $dockerconfig
@@ -109,3 +119,5 @@ echo "JBoss started."
 touch /datashop/docker.log
 tail -f /datashop/docker.log /opt/jboss/server/oli/log/server.log
 
+# Start  the testing server as a service
+./datashop/d3m_components/appserver/backend/run_server.sh &
