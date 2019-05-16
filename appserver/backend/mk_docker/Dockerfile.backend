@@ -14,7 +14,7 @@ RUN apt-get update -y \
 # Setup python dependencies
 RUN mkdir /app
 WORKDIR /app
-ADD requirements.txt /app/
+ADD build/requirements.txt /app/
 RUN pip3 install -r requirements.txt
 
 # Add project code to docker 
