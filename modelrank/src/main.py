@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     # Get Ranked list of models
     runner = ModelRanker()
-    ranked_models = runner.run(models, ds, metric, args.ordering, serv)
+    ranked_models = runner.run(models, m_index, ds, metric, args.ordering, serv)
 
     # Get Score for each solution
     # req_ids = {}

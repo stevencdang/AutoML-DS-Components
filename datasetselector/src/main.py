@@ -16,7 +16,7 @@ from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
-from user_ops.dataset_selector import DatasetSelector
+from user_ops.dataset import DatasetSelector
 
 __version__ = '0.1'
 

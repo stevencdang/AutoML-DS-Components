@@ -21,7 +21,7 @@ from modeling.models import *
 from modeling.component_out import *
 from d3m_ta2.ta2_client import TA2Client
 from d3m_eval.summer_2018.model_generation import RankedPipelineWriter
-
+from user_ops.modeling import *
 
 __version__ = '0.1'
 
@@ -75,10 +75,13 @@ if __name__ == '__main__':
                 name=name)
 
     #Create model writer 
-    logger.debug("Writing Ranked models to out_dir: %s" % config.get_out_path())
-    model_writer = RankedPipelineWriter(config.get_out_path())
-    model_writer.write_ranked_models(ranked_models)
+    runner = ModelExporter()
+    runner.run(config.get_out_path(), ranked_models, serv) 
 
-    for mid, rmodel in ranked_models.items():
-        logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (mid, rmodel.rank))
-        serv.export_solution(rmodel.mdl, rmodel.mdl.id, rmodel.rank)
+    # logger.debug("Writing Ranked models to out_dir: %s" % config.get_out_path())
+    # model_writer = RankedPipelineWriter(config.get_out_path())
+    # model_writer.write_ranked_models(ranked_models)
+
+    # for mid, rmodel in ranked_models.items():
+        # logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (mid, rmodel.rank))
+        # serv.export_solution(rmodel.mdl, rmodel.mdl.id, rmodel.rank)

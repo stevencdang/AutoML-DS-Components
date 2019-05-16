@@ -145,7 +145,7 @@ class ModelRanker(object):
 
     """
     
-    def run(self, models, ds, metric, ordering, serv):
+    def run(self, models, m_index, ds, metric, ordering, serv):
         ### Begin Script ###
         logger.info("Scoring models with selected metric")
 
@@ -243,4 +243,15 @@ class ModelRanker(object):
         
         return ranked_models
 
+class ModelExporter(object):
+
+    def run(self, out_path, ranked_models, serv):
+        #Create model writer 
+        logger.debug("Writing Ranked models to out_dir: %s" % config.get_out_path())
+        model_writer = RankedPipelineWriter(config.get_out_path())
+        model_writer.write_ranked_models(ranked_models)
+
+        for mid, rmodel in ranked_models.items():
+            logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (mid, rmodel.rank))
+            serv.export_solution(rmodel.mdl, rmodel.mdl.id, rmodel.rank)
 
