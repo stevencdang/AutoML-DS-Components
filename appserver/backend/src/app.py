@@ -207,6 +207,11 @@ def get_dataset_list():
         out_csv = csv.writer(out_file, delimiter='\t')
         out_csv.writerow(datasets)
 
+    if len(datasets) > 0:
+        return "True"
+    else:
+        return "False"
+
 @app.route('/test/selectDataset')
 def select_dataset():
     """
@@ -228,10 +233,14 @@ def select_dataset():
     out_file_path = path.join(out_dir, 'dataset.json')
     logger.info("Writing dataset json to: %s" % out_file_path)
     ds.to_component_out_file(out_file_path)
+    if ds is not None:
+        return "True"
+    else:
+        return "False"
     
 
 @app.route('/test/getDefaultProblem')
-def get_default_problem(ds):
+def get_default_problem():
     """
     Get default problem associated with the dataset
 
@@ -253,6 +262,11 @@ def get_default_problem(ds):
     out_file_path = path.join(out_dir, 'problem.json')
     logger.info("Writing problem json to: %s" % out_file_path)
     prob_desc.to_file(out_file_path)
+
+    if prob_desc is not None:
+        return "True"
+    else:
+        return "False"
     
 
 @app.route('/test/modelSearch')
@@ -286,6 +300,9 @@ def model_search():
     serv = TA2Client(address, 
             name=name)
 
+    # For Task 1 writing problem discovery output
+    out_path = out_dir
+
     # Run model search
     runner = ModelSearch()
     m_index, models, result_df = runner.run(ds, prob, serv, out_path)
@@ -299,6 +316,12 @@ def model_search():
     # # Write model predictions to output file
     pred_out_file_path = path.join(out_dir, 'predictions.tsv')
     result_df.to_csv(pred_out_file_path, sep='\t', index=True, header=True)
+
+    logger.debug("Number of models: %i" % len(m_index))
+    if len(m_index) > 0:
+        return "True"
+    else:
+        return "False"
 
 
 @app.route('/test/modelRank')
@@ -344,6 +367,13 @@ def model_rank():
     out_file_path = path.join(out_dir, "ranked-models.tsv")
     ModelRankSetIO.to_file(out_file_path, ranked_models, m_index)
 
+    if len(ranked_models) == len(m_index):
+        return "True"
+    else:
+        return "False"
+
+
+
 @app.route('/test/modelExport')
 def model_export():
     """
@@ -372,6 +402,9 @@ def model_export():
     #Create model writer 
     runner = ModelExporter()
     runner.run(config.get_out_path(), ranked_models, serv) 
+
+    # If no exceptions were through, return true
+    return "True"
 
 
 if __name__ == '__main__':

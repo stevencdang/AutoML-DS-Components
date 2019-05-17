@@ -1,0 +1,20 @@
+# Dockerfile: LearnSphere D3M Inquiry Service Server
+FROM ubuntu:18.04
+
+
+MAINTAINER Steven Dang "stevenda@cs.cmu.edu"
+RUN apt-get update -y \
+    && apt-get install -y \
+        # Python build 
+        python-pip \
+        python3-pip \
+        python-dev \
+        build-essential
+
+# Setup python dependencies
+RUN mkdir /app
+COPY . /app
+WORKDIR /app
+RUN pip3 install -r build/requirements.txt
+
+CMD ["pytest"]

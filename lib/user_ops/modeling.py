@@ -87,7 +87,7 @@ class ModelSearch(object):
             search_id, request = serv.search_solutions(prob, ds, get_request=True)
             prob_list.add_problem(prob, request)
         else:
-            search_id = serv.search_solutions(prob, ds, get_request=True)
+            search_id, request = serv.search_solutions(prob, ds, get_request=True)
         # Get search results
         soln_ids = serv.get_search_solutions_results(search_id)
         if soln_ids is None:
