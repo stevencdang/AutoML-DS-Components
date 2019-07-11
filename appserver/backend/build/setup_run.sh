@@ -26,7 +26,7 @@ if [ ! -d "$srcdir"/program ]; then
     mkdir "$srcdir"/program
 else
     # Clean out the old source before continuing
-    rm -R "$srcdir"/program
+    rm -Rf "$srcdir"/program
     mkdir "$srcdir"/program
 fi
 # Copy all source files to the "program" folder for runWCC.sh to copy into new component folder

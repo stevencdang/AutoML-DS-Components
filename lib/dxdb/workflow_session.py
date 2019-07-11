@@ -12,28 +12,40 @@ logger = logging.getLogger(__name__)
 
 class WorkflowSession(object):
     
-    _id = None
-    user_id = None
-    workflow_id = None
-    component_type = None
-    session_url = None
-
-    def __init__(self, userId, workflowId, compType, session_url=None):
-        self.user_id = userId
-        self.workflow_id = workflowId
-        self.component_type = compType
+    def __init__(self, 
+                 user_id, 
+                 workflow_id, 
+                 comp_id, 
+                 comp_type, 
+                 _id=None, 
+                 session_url=None):
+        self._id = _id
+        self.user_id = user_id
+        self.workflow_id = workflow_id
+        self.component_type = comp_type
+        self.component_id = comp_id
         self.session_url = session_url
+        self.available_states = ["Not Initialized"]
+        self.state = self.available_states[0]
+
+    def to_json(self):
+                return json.dumps(self, default=lambda o: o.__dict__, 
+                                              sort_keys=True, indent=4)
 
     @classmethod
     def from_json(cls, ses_json): 
         logger.debug("Initializing WorkflowSession from json: %s" % str(ses_json))
-        ses = cls(ses_json['user_id'], ses_json['workflow_id'],
-                         ses_json['component_type'], ses_json['session_url']
-        )
-        return ses
+        if issubclass(cls, WorkflowSession):
+            ses = cls(**ses_json)
+            return ses
+        else:
+            raise Exception("Invalid class given: %s" % str(cls))
 
     def set_session_url(self, url):
         self.session_url = url
+
+    def get_possible_states(self):
+        return self.available_states
         
 
 class SimpleEDASession(WorkflowSession):
@@ -65,4 +77,17 @@ class SimpleEDASession(WorkflowSession):
              logger.debug("Adding visualization id to eda session: %s" % vizid)
              ses.visualizations.append(vizid)
         return ses
+
+class ImportDatasetSession(WorkflowSession):
+
+    def __init__(self, userId, workflowId, compId, compType, dataset_id, session_url=None):
+        super().__init__(userId, workflowId, compId, compType, session_url)
+        self.dataset_id = None
+        self.available_datasets = []
+        self.available_states = ['Not Ready', 
+                                 'No Dataset Imported',
+                                 'Dataset Imported'
+                                 ]
+
+
 

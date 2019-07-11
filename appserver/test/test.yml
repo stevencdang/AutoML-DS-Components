@@ -1,0 +1,108 @@
+version: "2"
+services:
+    nginx-proxy:
+        image:
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:local
+        ports:
+            - "9002:80"
+        environment:
+            - NGINX_HOST=sophia.stevencdang.com
+            - NGINX_PORT=80
+            - LEARNSPHERE_HOST=tigris
+            - LEARNSPHERE_PORT=8080
+            - FRONTEND_HOST=dexplorer.frontend
+            - FRONTEND_PORT=8081
+            - BACKEND_HOST=dexplorer.backend
+            - BACKEND_PORT=5000
+            - DB_HOST=dexplorer.db
+            - DB_PORT=27017
+            - VIZ_HOST=dexplorer.viz
+            - VIZ_PORT=5100
+
+    tigris:
+        image: 
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.tigris:local
+        ports:
+            #- "9050:80"
+            - "9051:8080"
+            - "9000:22"
+        environment:
+            - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
+            - D3MINPUTDIR=/input
+            - D3MOUTPUTDIR=/output
+            - TA2ADDR=ta2:45042
+            - TA2NAME=cmu
+            - VIRTUAL_HOST=learnsphere.sophia.stevencdang.com
+            - HOST_URL=sophia.stevencdang.com
+            - D3M_SERVICE_SUBDOMAIN=dexploraid
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output
+
+    dexplorer.backend:
+        image:
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.backend:local
+        ports:
+            - "5005:5000"
+        environment:
+            - D3MINPUTDIR=/input
+            - D3MOUTPUTDIR=/output
+            - TA2ADDR=ta2
+            - TA2PORT=45042
+            - TA2NAME=cmu
+            - FRONTENDADDR=dexplorer.frontend
+            - FRONTENDPORT=8081
+            - DBADDR=dexplorer.db
+            - DBPORT=27017
+            - VIZADDR=dexplorer.viz
+            - VIZPORT=5100
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output
+
+    dexplorer.frontend:
+        image:
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.frontend:local
+        ports:
+            - "5006:8081"
+        environment:
+            - D3MINPUTDIR=/input
+            - D3MOUTPUTDIR=/output
+            - TA2ADDR=ta2:45042
+            - TA2NAME=cmu
+            - VIRTUAL_HOST=dxui.sophia.stevencdang.com
+            - VIRTUAL_PORT=80
+            - HOST_URL=sophia.stevencdang.com
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output
+
+    dexplorer.db:
+        image:
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.db:local
+        ports:
+            - "27017:27017"
+
+    dexplorer.viz:
+        image:
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.viz:local
+        ports:
+            - "5101:5100"
+        environment:
+            - VIRTUAL_HOST=sophia.stevencdang.com
+
+
+    ta2:
+        image: 
+            registry.datadrivendiscovery.org/sheath/cmu-ta2:live
+        ports:
+            - "45042:45042"
+        environment:
+            - D3MOUTPUTDIR=/output
+            - D3MINPUTDIR=/input
+            - D3MRUN=ta2ta3
+            - D3MCPU=8
+            - D3MTIMEOUT=5
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/input
+            - /rdata/dataStore/d3m/test_data_out:/output

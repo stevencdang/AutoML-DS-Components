@@ -42,12 +42,12 @@ export class VariableExplorerComponent implements OnInit {
     // Get the workflow session id using the page route
     const wfid = this.route.snapshot.paramMap.get('wfid');
     console.log("Got workflow Id: ", wfid);
-    return wfid
+    return wfid;
 
   }
 
-  parse_session_data(sesData: SimpleEDASession) void {
-
+  parse_session_data(sesData: SimpleEDASession) {
+    console.log("Parsing session data");
   }
 
   get_data_columns(wfs: SimpleEDASession): DataAttribute[] {

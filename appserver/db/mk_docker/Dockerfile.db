@@ -4,20 +4,30 @@ FROM ubuntu:18.04
 MAINTAINER Steven Dang "stevenda@cs.cmu.edu"
 
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
-   echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list && \
-      apt-get update && \
-         apt-get install -y mongodb-org
+RUN apt-get update && \
+    apt-get install -y apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    software-properties-common
+
+RUN \
+   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4  && \
+   echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list && \
+#apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
+   # echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list && \
+   apt-get update  && \
+   apt-get install -y mongodb-org
 
 # ADD mongod.conf /etc/mongod.conf
 
-EXPOSE 23456
+EXPOSE 27017
 USER mongodb
 
 VOLUME ["/data/db"]
 WORKDIR /data
 
-ENTRYPOINT ["/usr/bin/mongod", "--config", "/etc/mongod.conf", "--port", "23456"]
+ENTRYPOINT ["/usr/bin/mongod", "--config", "/etc/mongod.conf", "--port", "27017"]
 CMD ["--quiet"]
 
 

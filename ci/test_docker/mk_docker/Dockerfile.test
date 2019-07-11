@@ -9,7 +9,9 @@ RUN apt-get update -y \
         python-pip \
         python3-pip \
         python-dev \
-        build-essential
+        build-essential \
+        libcurl4-openssl-dev \
+        libssl-dev
 
 # Setup python dependencies
 RUN mkdir /app
@@ -17,4 +19,5 @@ COPY . /app
 WORKDIR /app
 RUN pip3 install -r build/requirements.txt
 
-CMD ["pytest"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["start.sh"]

@@ -160,11 +160,10 @@ def is_ready():
 
     """
 
-    config = SettingsFactory.get_settings()
     logger.info("Checking if ta2 is ready")
 
     # Init the server connection
-    address = config.get_ta2_url()
+    address = config.get_ta2_addr()
     name = config.get_ta2_name()
     logger.info("using server at address %s" % address)
     serv = TA2Client(address, 
@@ -176,7 +175,7 @@ def is_ready():
         logger.info("TA2 not responding to hello")
         return "False"
     logger.info("Checking Datashop status")
-    ta3_status = urllib.request.urlopen("http://localhost").getcode()
+    ta3_status = urllib.request.urlopen("http://" + config.get_tigris_addr()).getcode()
     if ta3_status == 200:
         return "True"
     else:
@@ -188,7 +187,6 @@ def get_dataset_list():
     Get the list of all available datasets
 
     """
-    config = SettingsFactory.get_settings()
     logger.info("Importing List of available datasets")
 
     ds_root = config.get_dataset_path()
@@ -218,7 +216,6 @@ def select_dataset():
     Get the dataset by name
 
     """
-    config = SettingsFactory.get_settings()
     logger.info("Importing D3M Dataset selected by user")
 
     ds_root = config.get_dataset_path()
@@ -245,7 +242,6 @@ def get_default_problem():
     Get default problem associated with the dataset
 
     """
-    config = SettingsFactory.get_settings()
     logger.info("Generating Problem Statement based on default problem for given dataset")
 
     out_dir = os.path.join('/output/test')
@@ -275,7 +271,6 @@ def model_search():
     Search and fit models for a given dataset and problem
 
     """
-    config = SettingsFactory.get_settings()
     logger.info("Running Pipeline Search on TA2")
 
     out_dir = os.path.join('/output/test')
@@ -294,7 +289,7 @@ def model_search():
     logger.debug("Got Problem Description: %s" % prob.print())
 
     # Init the server connection
-    address = config.get_ta2_url()
+    address = config.get_ta2_addr()
     name = config.get_ta2_name()
     logger.info("using server at address %s" % address)
     serv = TA2Client(address, 
@@ -330,7 +325,6 @@ def model_rank():
     Score the models and rank them accordingly
 
     """
-    config = SettingsFactory.get_settings()
     logger.info("Running Pipeline Search on TA2")
 
     out_dir = os.path.join('/output/test')
@@ -348,7 +342,7 @@ def model_rank():
     m_index, fitted_models, models = FittedModelSetIO.from_file(m_file)
 
     # Init the server connection
-    address = config.get_ta2_url()
+    address = config.get_ta2_addr()
     name = config.get_ta2_name()
     logger.info("using server at address %s" % address)
     serv = TA2Client(address, 
@@ -380,7 +374,6 @@ def model_export():
     Export the list of ranked models
 
     """
-    config = SettingsFactory.get_settings()
     logger.info("Export set of models for d3m evaluation")
 
     out_dir = os.path.join('/output/test')
@@ -393,7 +386,7 @@ def model_export():
     m_index, ranked_models = ModelRankSetIO.from_file(args.file0)
 
     # Init the server connection
-    address = config.get_ta2_url()
+    address = config.get_ta2_addr()
     name = config.get_ta2_name()
     logger.info("using server at address %s" % address)
     serv = TA2Client(address, 
@@ -408,8 +401,8 @@ def model_export():
 
 
 if __name__ == '__main__':
-    db_client = DXDB('localhost:27017')
-    config = Settings("src/settings.cfg")
-    bokeh_server_url = "http://sophia.stevencdang.com:5100/test"
+    config = SettingsFactory.get_env_settings()
+    db_client = DXDB(config.get_db_addr())
+    bokeh_server_url = "http://" + config.get_viz_addr() 
 
     app.run(debug=True,host='0.0.0.0')
