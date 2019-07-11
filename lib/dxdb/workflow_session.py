@@ -19,13 +19,13 @@ class WorkflowSession(object):
                  comp_type, 
                  _id=None, 
                  session_url=None):
-        self._id = _id
+        if _id is not None:
+            self._id = _id
         self.user_id = user_id
         self.workflow_id = workflow_id
         self.component_type = comp_type
         self.component_id = comp_id
         self.session_url = session_url
-        self.available_states = ["Not Initialized"]
         self.state = self.available_states[0]
 
     def to_json(self):
@@ -80,14 +80,38 @@ class SimpleEDASession(WorkflowSession):
 
 class ImportDatasetSession(WorkflowSession):
 
-    def __init__(self, userId, workflowId, compId, compType, dataset_id, session_url=None):
-        super().__init__(userId, workflowId, compId, compType, session_url)
+    available_states = ['Not Ready', 
+                        'No Dataset Imported',
+                        'Dataset Imported'
+                        ]
+    def __init__(self, 
+                 user_id, 
+                 workflow_id, 
+                 comp_id, 
+                 comp_type, 
+                 _id=None, 
+                 session_url=None):
+        super().__init__(user_id, workflow_id, 
+                         comp_id, comp_type, 
+                         _id, session_url)
         self.dataset_id = None
         self.available_datasets = []
-        self.available_states = ['Not Ready', 
-                                 'No Dataset Imported',
-                                 'Dataset Imported'
-                                 ]
+        self.state=self.available_states[0]
 
+    def set_state_ready(self):
+        self.state = self.available_states[1]
 
+    def set_state_complete(self):
+        self.state = self.available_states[2]
+
+    def set_dataset_id(self, dataset_id):
+        self.dataset_id = dataset_id
+
+    def set_available_dataset_ids(self, datasets):
+        # Takes a list of dataset IDs
+        self.available_datasets = datasets
+
+    def get_available_dataset_ids(self):
+        return self.available_datasets
+    
 

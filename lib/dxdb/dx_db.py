@@ -23,7 +23,10 @@ class DXDB(object):
     }
     
     def __init__(self, db_url):
+        # connection = MongoClient("mongodb://%s" % db_url)
+        logger.info("************************** Testin *****************")
         self.db = MongoClient("mongodb://%s" % db_url)['dexplorer']
+        # self.db = MongoClient("%s" % db_url)['dexplorer']
         
 
     def insert_dataset_metadata(self, ds):

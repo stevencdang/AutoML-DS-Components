@@ -15,7 +15,7 @@ from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from user_ops.dataset import DatasetImporter
 from dxdb.dx_db import DXDB
-from dxdb.workflow_session import SimpleEDASession
+from dxdb.workflow_session import ImportDatasetSession
 
 __version__ = '0.1'
 
@@ -61,8 +61,11 @@ if __name__ == '__main__':
     comp_id = os.path.split(os.path.abspath(args.componentXmlFile))[1].split(".")[0]
     logger.debug("Component Id: %s" % comp_id)
 
-    # Start new session
-    # session = ImportDatasetSession(
+    # Initialize new session
+    session = ImportDatasetSession(user_id=user_id, workflow_id=workflow_id, 
+                                   comp_type=comp_type, comp_id=comp_id)
+    session = db.add_workflow_session(session)
+    logger.debug("Created new Dataset Import Session: %s" % session.to_json())
 
     # Read in the dataset json
     ds_root = config.get_dataset_path()
