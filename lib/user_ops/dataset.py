@@ -22,6 +22,10 @@ class DatasetImporter(object):
 
     """
 
+    def __init__(self, db, session):
+        self.db = db
+        self.session = session
+
 
     def run(self, ds_root):
         """
@@ -37,16 +41,54 @@ class DatasetImporter(object):
             for f in files:
                 if f == 'datasetDoc.json':
                     logger.debug("Found dataset in directory: %s" % root)
-                    try:
-                        ds = D3MDataset.from_dataset_json(path.join(root, f))
-                        if ds.name not in datasets:
-                            logger.info("Found dataset name: %s\nAt path: %s" % (ds.name,  ds.dpath))
-                            datasets.add(ds.name)
-                    except:
-                        # Don't choke on unsupported dataset jsons
-                        logger.warning("Encountered unsupported dataset: %s" % str(path.join(root, f)))
+                    ds_dir = path.split(root)[1]
+                    # Determine if dataset is root dataset in d3m dataset structure
+                    if "TEST" not in ds_dir and "TRAIN" not in ds_dir and "SCORE" not in ds_dir:
+                        logger.debug("Found dataset not from TEST, TRAIN, or SCORE directories")
+                        try:
+                            ds = D3MDataset.from_dataset_json(path.join(root, f))
+                            if not self.db.has_dataset(ds):
+                                logger.info("Found dataset name: %s\nAt path: %s" % (ds.name,  ds.dpath))
+                                logger.debug(str(json.loads(ds.to_json())))
+                                # Add dataset to db 
+                                dsid = self.db.insert_dataset_metadata(ds)
+                                ds._id = str(dsid)
+                                logger.debug("Inserted dataset to db with id: %s" % ds._id)
+                                self.session.set_dataset_id(ds._id)
+                                self.db.update_workflow_session(self.session, ['dataset_id'])
+                                logger.debug("Has dataset after insert: %s" % str(self.db.has_dataset(ds)))
+                                datasets.add(ds._id)
+                            else:
+                                logger.info("Dataset with name: %s\t was already in db. Retrieving record from db" % ds.name)
+                                ds = self.db.get_dataset_with_name(ds.id)
+                                logger.info("Retrieved dataset from db with id %s: %s" % (ds._id, str(ds.to_json())))
+                                datasets.add(ds._id)
 
-        logger.debug("Found datasets: %s" % str(datasets))
+                        except:
+                            # Don't choke on unsupported dataset jsons
+                            logger.warning("Encountered unsupported dataset: %s" % str(path.join(root, f)))
+
+        logger.debug("Found datasets with ids: %s" % str(datasets))
+
+        # Add datasets to session metadata
+        self.session.set_available_dataset_ids(list(datasets))
+        logger.debug("session updated with dataset list: %s" % self.session.to_json())
+        self.db.update_workflow_session(self.session, 'available_datasets')
+        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        self.session.set_state_ready()
+        logger.debug("session state updated:  %s" % self.session.to_json())
+        self.db.update_workflow_session(self.session, 'state')
+
+        # Retrieving session from db to check for update
+        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        sess = self.db.get_workflow_session(self.session._id)
+        logger.debug("Got session from db after update: %s" % sess.to_json())
+
+        # Update ses
 
         return datasets
 

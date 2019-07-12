@@ -69,8 +69,15 @@ class D3MDataset(LSDataset):
                     # }
         # return D3MDataset(ds_json['dataset_info']['root_path'], 
                           # json_doc)
-        return D3MDataset(ds_json['dataset_info']['root_path'],
+        ds = D3MDataset(ds_json['dataset_info']['root_path'],
                           ds_json)
+        logger.debug("********************************")
+        logger.debug(type(ds_json))
+        logger.debug(str(ds_json.keys()))
+        if '_id' in ds_json.keys():
+            logger.debug("dataset has a database id. manually setting it")
+            ds._id = ds_json['_id']
+        return ds
 
 
     @staticmethod

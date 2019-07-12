@@ -67,10 +67,14 @@ if __name__ == '__main__':
     session = db.add_workflow_session(session)
     logger.debug("Created new Dataset Import Session: %s" % session.to_json())
 
+    # Testing recovering session
+    # sess = db.get_workflow_session(session._id)
+    # logger.debug("recovered session: %s" % sess.to_json())
+
     # Read in the dataset json
     ds_root = config.get_dataset_path()
-    runner = DatasetImporter()
-    # datasets = runner.run(ds_root)
+    runner = DatasetImporter(db, session)
+    datasets = runner.run(ds_root)
 
 
     # Write dataset info to output file

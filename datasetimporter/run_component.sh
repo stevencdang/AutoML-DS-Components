@@ -42,7 +42,6 @@ source $venv/bin/activate
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-#PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId=' ' -is_test=1
 PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId='testuser' -workflowDir='/datashop/dataset_files/workflows/1162' -is_test=1 -toolDir "$cwd" -componentXmlFile "$cwd/workflows/1162/components/DatasetImporter-1-x922120.xml"
 
 deactivate

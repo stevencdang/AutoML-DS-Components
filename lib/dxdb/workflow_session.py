@@ -4,6 +4,7 @@
 # MongoDB interface DataExplorer DB
 
 import logging
+import inspect
 
 from ls_iviz.simple_eda import *
 
@@ -12,34 +13,51 @@ logger = logging.getLogger(__name__)
 
 class WorkflowSession(object):
     
+    available_states = ['Not Ready']
+    
     def __init__(self, 
                  user_id, 
                  workflow_id, 
                  comp_id, 
                  comp_type, 
                  _id=None, 
-                 session_url=None):
+                 state=None,
+                 session_url=None
+                 ):
         if _id is not None:
             self._id = _id
         self.user_id = user_id
         self.workflow_id = workflow_id
-        self.component_type = comp_type
-        self.component_id = comp_id
+        self.comp_type = comp_type
+        self.comp_id = comp_id
         self.session_url = session_url
-        self.state = self.available_states[0]
+        if state is None:
+            self.state = self.available_states[0]
+        else:
+            self.state = state
 
     def to_json(self):
-                return json.dumps(self, default=lambda o: o.__dict__, 
-                                              sort_keys=True, indent=4)
+        logger.debug("Type of self: %s" % str(type(self)))
+        return json.dumps(self, default=lambda o: o.__dict__, 
+                                      sort_keys=True, indent=4)
 
-    @classmethod
-    def from_json(cls, ses_json): 
+    @staticmethod
+    def from_json(ses_json): 
         logger.debug("Initializing WorkflowSession from json: %s" % str(ses_json))
-        if issubclass(cls, WorkflowSession):
-            ses = cls(**ses_json)
-            return ses
+        if ses_json['comp_type'].lower() == "datasetimporter":
+            logger.debug("initializing a dataset importer session")
+            ses = ImportDatasetSession(**ses_json)
+        elif  ses_json['comp_type'].lower() == "simpleedasession":
+            logger.debug("initializing a simple eda session")
+            ses = SimpleEDASession(**ses_json)
         else:
-            raise Exception("Invalid class given: %s" % str(cls))
+            raise Exception("Unable to identify class to initialize workflow session with session: %s" % str(ses_json))
+        return ses
+        # if issubclass(cls, WorkflowSession):
+            # ses = cls(**ses_json)
+            # return ses
+        # else:
+            # raise Exception("Invalid class given: %s" % str(cls))
 
     def set_session_url(self, url):
         self.session_url = url
@@ -90,13 +108,22 @@ class ImportDatasetSession(WorkflowSession):
                  comp_id, 
                  comp_type, 
                  _id=None, 
+                 state=None,
+                 dataset_id=None,
+                 available_datasets=None,
                  session_url=None):
         super().__init__(user_id, workflow_id, 
                          comp_id, comp_type, 
                          _id, session_url)
-        self.dataset_id = None
-        self.available_datasets = []
-        self.state=self.available_states[0]
+        self.dataset_id = dataset_id
+        if available_datasets is None:
+            self.available_datasets = []
+        else:
+            self.available_datasets = available_datasets
+        if state is None:
+            self.state = self.available_states[0]
+        else:
+            self.state = state
 
     def set_state_ready(self):
         self.state = self.available_states[1]
@@ -105,6 +132,7 @@ class ImportDatasetSession(WorkflowSession):
         self.state = self.available_states[2]
 
     def set_dataset_id(self, dataset_id):
+        logger.info("Setting session dataset id: %s" % dataset_id)
         self.dataset_id = dataset_id
 
     def set_available_dataset_ids(self, datasets):

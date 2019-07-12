@@ -23,17 +23,45 @@ class DXDB(object):
     }
     
     def __init__(self, db_url):
-        # connection = MongoClient("mongodb://%s" % db_url)
-        logger.info("************************** Testin *****************")
         self.db = MongoClient("mongodb://%s" % db_url)['dexplorer']
-        # self.db = MongoClient("%s" % db_url)['dexplorer']
         
 
     def insert_dataset_metadata(self, ds):
         # ds is a ls_dataset
+        logger.info("Inserting dataset to db: %s" % ds.id)
+        logger.debug("Loading dataset to json")
         d = json.loads(ds.to_json())
+        logger.debug("Loaded dataset to json: %s" % str(d))
         did = self.db[self.tbls['ds_metadata']].insert_one(d).inserted_id
         return did
+
+    def has_dataset(self, ds):
+        # Check if a given dataset metadata is already within the db
+        if ds._id is not None:
+            logger.debug("dataset already has _id defined. Querying using _id: %s" % ds._id)
+            results = self.db[self.tbls['ds_metadata']].find({'_id': ObjectId(ds._id)})
+            if results.count() > 0:
+                logger.info("Dataset is in db")
+                return True
+        logger.debug("checking db for dataset with id: %s" % ds.id)
+        results = self.db[self.tbls['ds_metadata']].find({'about.datasetID': ds.id})
+        if results.count() > 0:
+            logger.info("Dataset is in db")
+            return True
+        else:
+            logger.info("Dataset is not in db")
+            return False
+
+    def get_dataset_with_name(self, name=None):
+        logger.debug("looking up dataset with name: %s" % name)
+        if name is None:
+            ds_json = self.db[self.tbls['ds_metadata']].find_one()
+        else:
+            ds_json = self.db[self.tbls['ds_metadata']].find_one({'about.datasetID': name})
+        # Convert _id to string
+        ds_json['_id'] = str(ds_json['_id'])
+        logger.debug("Got dataset: %s" % str(ds_json))
+        return D3MDataset.from_json(ds_json)
 
     def get_dataset_metadata(self, dsid=None):
         logger.debug("looking up dataset with id: %s" % dsid)
@@ -55,7 +83,9 @@ class DXDB(object):
     def get_workflow_session(self, wfid):
         logger.debug("Getting workflow session: %s" % wfid)
         wfs = self.db[self.tbls['wf_sessions']].find_one({'_id': ObjectId(wfid)})
-        session = SimpleEDASession.from_json(wfs)  
+        wfs['_id'] = str(wfs['_id'])
+        logger.debug("Got workflow session: %s" % str(wfs))
+        session = WorkflowSession.from_json(wfs)  
         return session
 
     def update_workflow_session(self, session, fields):
