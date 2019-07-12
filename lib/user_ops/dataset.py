@@ -61,7 +61,7 @@ class DatasetImporter(object):
                             else:
                                 logger.info("Dataset with name: %s\t was already in db. Retrieving record from db" % ds.name)
                                 ds = self.db.get_dataset_with_name(ds.id)
-                                logger.info("Retrieved dataset from db with id %s: %s" % (ds._id, str(ds.to_json())))
+                                logger.debug("Retrieved dataset from db with id %s: %s" % (ds._id, str(ds.to_json())))
                                 datasets.add(ds._id)
 
                         except:
@@ -74,17 +74,11 @@ class DatasetImporter(object):
         self.session.set_available_dataset_ids(list(datasets))
         logger.debug("session updated with dataset list: %s" % self.session.to_json())
         self.db.update_workflow_session(self.session, 'available_datasets')
-        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         self.session.set_state_ready()
         logger.debug("session state updated:  %s" % self.session.to_json())
         self.db.update_workflow_session(self.session, 'state')
 
         # Retrieving session from db to check for update
-        logger.debug("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         sess = self.db.get_workflow_session(self.session._id)
         logger.debug("Got session from db after update: %s" % sess.to_json())
 

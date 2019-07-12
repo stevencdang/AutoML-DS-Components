@@ -16,6 +16,7 @@ from ls_dataset.d3m_dataset import D3MDataset
 from user_ops.dataset import DatasetImporter
 from dxdb.dx_db import DXDB
 from dxdb.workflow_session import ImportDatasetSession
+from ls_utilities.dexplorer import *
 
 __version__ = '0.1'
 
@@ -66,6 +67,14 @@ if __name__ == '__main__':
                                    comp_type=comp_type, comp_id=comp_id)
     session = db.add_workflow_session(session)
     logger.debug("Created new Dataset Import Session: %s" % session.to_json())
+
+    # get Connection to Dexplorer Service
+    dex = DexplorerUIServer(dx_config.get_dexplorer_url())
+    session.session_url = dex.get_dataset_importer_ui_url(session)
+    logger.debug('***************************************************')
+    logger.debug('session before updating db %s' % str(session.to_json()))
+    db.update_workflow_session(session, 'session_url')
+    logger.debug("added Dexplorer url to session: %s" % session.session_url)
 
     # Testing recovering session
     # sess = db.get_workflow_session(session._id)

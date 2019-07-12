@@ -112,9 +112,12 @@ class ImportDatasetSession(WorkflowSession):
                  dataset_id=None,
                  available_datasets=None,
                  session_url=None):
-        super().__init__(user_id, workflow_id, 
-                         comp_id, comp_type, 
-                         _id, session_url)
+        super().__init__(user_id=user_id, 
+                         workflow_id=workflow_id, 
+                         comp_id=comp_id, 
+                         comp_type=comp_type, 
+                         _id=_id, 
+                         session_url=session_url)
         self.dataset_id = dataset_id
         if available_datasets is None:
             self.available_datasets = []

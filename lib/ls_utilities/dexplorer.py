@@ -28,6 +28,10 @@ class DexplorerUIServer(object):
     def get_simple_eda_ui_url(self, wfs):
         return self.url + "/eda" + "/%s" % (wfs._id)
 
+    def get_dataset_importer_ui_url(self, wfs):
+        return self.url + "/datasetimport" + "/%s" % (wfs._id)
+
+
 class VizServer(object):
 
     def __init__(self, url):
