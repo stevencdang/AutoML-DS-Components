@@ -5,13 +5,18 @@ export class WorkflowSession {
       public _id: string,
       public user_id: string,
       public workflow_id: string, 
-      public component_type: string,
+      public comp_id: string,
+      public comp_type: string,
+      public state: string,
       public session_url: string
   ) { 
     this._id = _id;
     this.user_id = user_id;
     this.workflow_id = workflow_id;
-    this.component_type = component_type;
+    this.comp_id = comp_id;
+    this.comp_type = comp_type;
+    this._id = _id;
+    this.state = state;
     this.session_url = session_url;
 
   }
@@ -23,14 +28,34 @@ export class SimpleEDASession extends WorkflowSession {
       public _id: string,
       public user_id: string,
       public workflow_id: string, 
-      public component_type: string,
+      public comp_id: string,
+      public comp_type: string,
+      public state: string,
       public session_url: string,
       public dataset_id: string
   ) { 
-    super(_id, user_id, workflow_id, component_type, session_url);
+    super(_id, user_id, workflow_id, comp_id, comp_type, state, session_url);
     this.dataset_id = dataset_id;
   }
 
+}
 
+export class DatasetImporterSession extends WorkflowSession {
 
+  constructor(
+      public _id: string,
+      public user_id: string,
+      public workflow_id: string, 
+      public comp_id: string,
+      public comp_type: string,
+      public state: string,
+      public session_url: string,
+      public dataset_id: string,
+      public available_datasets: string
+
+  ) { 
+    super(_id, user_id, workflow_id, comp_id, comp_type, state, session_url);
+    this.dataset_id = dataset_id;
+    this.available_datasets = available_datasets
+  }
 }

@@ -45,13 +45,17 @@ def main():
     return "Hello World"
 
 @app.route('/wfs/<string:wfid>')
+def get_workflow_session(wfid):
+    wfs = db_client.get_workflow_session(wfid)
+    logger.debug("workflow session from db: %s" % wfs.to_json())
+    
+    return wfs.to_json()
+
+@app.route('/simpleedawfs/<string:wfid>')
 def get_simple_eda_session(wfid):
     wfs = db_client.get_workflow_session(wfid)
-    # logger.debug("workflow session from db: %s" % db_wfs)
-    # wfs = SimpleEDASession.from_json(db_wfs)
-    # logger.debug("workflow session to json: %s" % json.dumps(wfs.__dict__))
-    ds = db_client.get_dataset_metadata(wfs.dataset_id)
-    data_cols = {col.colIndex: col.to_json() for col in ds.get_data_columns()}
+    logger.debug("workflow session from db: %s" % wfs.to_json())
+
 
     # data_cols = {col.colIndex: col for col in ds.get_data_columns()}
     logger.debug("*********************************************")

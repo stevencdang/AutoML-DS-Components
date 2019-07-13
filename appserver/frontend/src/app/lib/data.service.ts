@@ -11,7 +11,7 @@ import { WorkflowSession } from './workflowSession';
 export class DataService {
   datasetUrl: string = "/ds/getDataCols";
   getSessionUrl: string = "/wfs";
-  backendAddr: string = "http://sophia.stevencdang.com:5000";
+  backendAddr: string = "http://localhost:8686";
   bokehUrl1: string = "http://sophia.stevencdang.com:5000/testbokeh1";
   bokehUrl2: string = "http://sophia.stevencdang.com:5000/testbokeh2";
   constructor(private http: HttpClient) { }

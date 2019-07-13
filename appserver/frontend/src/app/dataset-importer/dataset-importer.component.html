@@ -1,0 +1,24 @@
+
+<div class="dataset-importer-container" *ngIf="is_ready(); else wfsElseBlock">
+  <div class="dataset-importer-status-container">
+    <div class="state-label">Status:</div>
+    <div class="component-state">{{wfs.state}}</div>
+  </div>
+  <div class="dataset-list-container">
+    <div class="section-header">Available Datasets</div>
+    <div class="dataset-list">
+    </div>
+  </div>
+  <div class="dataset-metadata-container">
+    <div class="section-header">Dataset Information</div>
+    <div class="metadata-fields">
+      <div class="form-field">
+        <div class="form-label">Dataset name:</div>
+        <div class="form-field">Name of Dataset</div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #wfsElseBlock>
+  <app-not-ready-yet></app-not-ready-yet>
+</ng-template>

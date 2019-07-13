@@ -12,6 +12,8 @@ import { SimpleDatasetEdaComponent } from './simple-dataset-eda/simple-dataset-e
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SanitizePipe } from './lib/sanitize.pipe';
 import { BokehVizComponent } from './bokeh-viz/bokeh-viz.component';
+import { DatasetImporterComponent } from './dataset-importer/dataset-importer.component';
+import { NotReadyYetComponent } from './not-ready-yet/not-ready-yet.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { BokehVizComponent } from './bokeh-viz/bokeh-viz.component';
     PageNotFoundComponent,
     SanitizePipe,
     BokehVizComponent,
+    DatasetImporterComponent,
+    NotReadyYetComponent,
   ],
   imports: [
     BrowserModule,

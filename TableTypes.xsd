@@ -5,8 +5,9 @@
       <xs:element name="modeling-problem" substitutionGroup="json" />
       <xs:element name="model" substitutionGroup="json" />
       <xs:element name="dataset-query" substitutionGroup="json" />
+      <xs:element name="dataset" substitutionGroup="json" />
 
-  <xs:element name="dataset" substitutionGroup="tab-delimited" />
+  <!--<xs:element name="dataset" substitutionGroup="tab-delimited" />-->
   <xs:element name="predictions" substitutionGroup="tab-delimited" />
   <xs:element name="dataset-list" substitutionGroup="tab-delimited" />
   <xs:element name="model-set" substitutionGroup="tab-delimited" />

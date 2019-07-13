@@ -78,11 +78,6 @@ class DatasetImporter(object):
         logger.debug("session state updated:  %s" % self.session.to_json())
         self.db.update_workflow_session(self.session, 'state')
 
-        # Retrieving session from db to check for update
-        sess = self.db.get_workflow_session(self.session._id)
-        logger.debug("Got session from db after update: %s" % sess.to_json())
-
-        # Update ses
 
         return datasets
 

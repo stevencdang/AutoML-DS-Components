@@ -86,9 +86,20 @@ if __name__ == '__main__':
     datasets = runner.run(ds_root)
 
 
-    # Write dataset info to output file
-    out_file_path = path.join(args.workingDir, config.get('Dataset', 'out_file'))
-    logger.info("Writing dataset list of %i datasets to file: %s" % (len(datasets), out_file_path))
+    # Write html ui to output file
+    out_file_path = path.join(args.workingDir, 
+                              config.get('Output', 'ui_out_file')
+                              )
+    logger.info("Writing output html to: %s" % out_file_path)
+    logger.debug("Embedded iframe url: %s" % session.session_url)
+    out_html = '<iframe src="http://%s" width="1024" height="768"></iframe>' % session.session_url
     with open(out_file_path, 'w') as out_file:
-        out_csv = csv.writer(out_file, delimiter='\t')
-        out_csv.writerow(datasets)
+        out_file.write(out_html)
+
+    # Write session info to output file
+    out_file_path = path.join(args.workingDir, config.get('Output', 'session_out_file'))
+    logger.info("Writing session info to select from %i datasets to file: %s" % (len(datasets), out_file_path))
+    out_data = session.to_json()
+    logger.debug("Session json to write out: %s" % out_data)
+    with open(out_file_path, 'w') as out_file:
+        out_file.write(out_data)

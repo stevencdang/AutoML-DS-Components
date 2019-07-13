@@ -1,0 +1,56 @@
+@import '../../assets/scss/main';
+
+
+.dataset-importer-container {
+  @include make-container();
+}
+.dataset-importer-status-container {
+  @include make-row();
+}
+.dataset-list-container {
+  @include make-row();
+}
+.dataset-metadata-container {
+  @include make-row();
+}
+
+.section-header {
+  @include make-col(12);
+  width: 100%;
+  font-style: bold;
+  font-size: $lg-font
+
+}
+
+.state-label {
+  font-size: $lg-font;
+
+}
+
+.component-state {
+
+}
+
+.metadata-fields {
+  @include make-col-ready();
+  //@include make-col(12);
+}
+.form-field {
+    @include make-row();
+
+  .form-label {
+    @include make-col(3);
+    display: inline-block;
+    font-style: bold;
+    font-size: $md-font;
+    margin-right: 10px;
+  }
+
+  .form-field {
+    @include make-col(9);
+    display: inline-block;
+    font-style: normal;
+    font-size: $md-font;
+  }
+  
+}

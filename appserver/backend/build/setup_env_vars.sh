@@ -1,0 +1,13 @@
+export DBADDR="localhost"
+export DBPORT=27017
+export VIZADDR="localhost"
+export VIZPORT=5000
+export FRONTENDADDR=localhost
+export FRONTENDPORT=4200
+export BACKENDADDR=localhost
+export BACKENDPORT=5000
+export TA2ADDR=localhost
+export TA2PORT=45042
+export TIGRISADDR=localhost
+export TIGRISPORT=8080
+export D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
