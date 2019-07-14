@@ -1,7 +1,7 @@
 # from flask import Flask
 import logging
 from logging.config import dictConfig
-from flask import Flask, render_template, url_for
+from flask import Flask, request, render_template, url_for
 import flask.logging
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -44,12 +44,25 @@ def main():
     logger.debug("Logging with flask logger")
     return "Hello World"
 
-@app.route('/wfs/<string:wfid>')
+@app.route('/wfs/<string:wfid>', methods = ['GET', 'PUT'])
 def get_workflow_session(wfid):
-    wfs = db_client.get_workflow_session(wfid)
-    logger.debug("workflow session from db: %s" % wfs.to_json())
-    
-    return wfs.to_json()
+    if request.method == 'GET':
+        wfs = db_client.get_workflow_session(wfid)
+        logger.debug("workflow session from db: %s" % wfs.to_json())
+        return wfs.to_json()
+    if request.method == 'PUT':
+        data = json.loads(request.data)
+        wfs = db_client.get_workflow_session(wfid)
+        logger.debug("workflow session from db: %s" % wfs.to_json())
+        logger.debug("**************************************")
+        for key in data:
+            logger.debug("updating key: %s\t to value: %s" % (key, data[key]))
+            setattr(wfs, key, data[key])
+        logger.debug("workflow session with updated values: %s" % wfs.to_json())
+        logger.debug("updated fields: %s" % data.keys())
+
+        db_client.update_workflow_session(wfs, data.keys())
+        return "Success"
 
 @app.route('/simpleedawfs/<string:wfid>')
 def get_simple_eda_session(wfid):
@@ -129,12 +142,10 @@ def get_bokeh2():
         # return render_template('embed.html', script=embed_script, framework="Bokeh", template="Flask")
 
 
-@app.route('/ds/getDataset')
-def get_dataset():
-
-    ds = db_client.get_dataset_metadata()
-    logger.debug([str(d) for d in ds.get_data_columns()])
-    # return json.dumps({"result": "Hello World"})
+@app.route('/ds/getDataset/<string:dsid>')
+def get_dataset(dsid):
+    ds = db_client.get_dataset_metadata(dsid)
+    logger.debug("dataset json: %s" % (ds.to_json()))
     return ds.to_json()
 
 @app.route('/ds/getDataCols/<string:dsid>')

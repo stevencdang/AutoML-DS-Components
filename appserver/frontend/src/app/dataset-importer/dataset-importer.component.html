@@ -3,18 +3,66 @@
   <div class="dataset-importer-status-container">
     <div class="state-label">Status:</div>
     <div class="component-state">{{wfs.state}}</div>
+    <div class="select-btn-container">
+      <button mat-raised-button (click)="importDataset()">Import Dataset</button>
+    </div>
   </div>
   <div class="dataset-list-container">
     <div class="section-header">Available Datasets</div>
-    <div class="dataset-list">
-    </div>
+    <mat-list class="dataset-list" dense>
+      <mat-list-item [ngClass]="{'dataset-item': true, 'selected': isSelectedDataset(ds)}" *ngFor="let ds of available_datasets" (click)="onSelectDataset(ds)">
+        {{ds.about.datasetID}}
+      </mat-list-item>
+    </mat-list>
   </div>
   <div class="dataset-metadata-container">
     <div class="section-header">Dataset Information</div>
-    <div class="metadata-fields">
+    <div class="metadata-fields" *ngIf="selected_dataset">
       <div class="form-field">
-        <div class="form-label">Dataset name:</div>
-        <div class="form-field">Name of Dataset</div>
+        <div class="form-label">Dataset ID:</div>
+        <div class="form-field">
+          {{selected_dataset.about.datasetID}}
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Dataset Name:</div>
+        <div class="form-field">
+          {{selected_dataset.about.datasetName}}
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Description:</div>
+        <div class="form-field">
+          {{selected_dataset.about.description}}
+        </div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Source:</div>
+        <div class="form-field">
+          {{selected_dataset.about.source}}
+        </div>
+      </div>
+      <div class="resource-list-container">
+        <div class="section-header">Resources</div>
+        <div class="resource-list">
+          <div class="list-item" *ngFor="let res of selected_dataset.dataResources">
+            <div class="resource-item" (click)="onSelectResource(res)">
+              <div class="form-field">
+                <div class="form-label">ID:</div>
+                <div class="form-field">
+                  {{res.resID}}
+                </div>
+              </div>
+              <div class="form-field">
+                <div class="form-label">Type:</div>
+                <div class="form-field">
+                  {{res.resType}}
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

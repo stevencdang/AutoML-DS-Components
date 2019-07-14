@@ -6,11 +6,50 @@
 }
 .dataset-importer-status-container {
   @include make-row();
+
+  .state-label {
+    @include make-col(2);
+  }
+
+  .component-state {
+    @include make-col(6);
+    padding: 2px 5px;
+    margin: 2px 5px;
+    border: 1px solid black;
+  }
+
+  .select-btn-container {
+    @include make-col(3);
+    text-align: right;
+  }
+    
 }
 .dataset-list-container {
   @include make-row();
+  .dataset-list {
+
+    height: 100px;
+    width: 80%;
+    margin: 0 10%;
+    overflow-y: scroll;
+
+    .dataset-item {
+      font-size: $md-font;
+      margin: 0;
+      padding: 0 0;
+      
+
+    }
+
+    .selected {
+      background: gray;
+    }
+
+  }
+
 }
 .dataset-metadata-container {
+
   @include make-row();
 }
 
@@ -33,6 +72,10 @@
 
 .metadata-fields {
   @include make-col-ready();
+  height: 200px;
+  width: 80%;
+  margin: 0 10%;
+  overflow-y: scroll;
   //@include make-col(12);
 }
 .form-field {

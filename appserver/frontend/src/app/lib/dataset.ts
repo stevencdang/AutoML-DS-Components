@@ -1,18 +1,78 @@
 import { DataType } from "./dataType"
 
 export class Dataset {
-  id: string; 
-  columns: DataAttribute[];
 
-  constructor (dsid: string, columns: DataAttribute[]) {
-  //constructor (dsid: string) {
-    this.id = dsid
-    this.columns = columns
-    
+  constructor (
+               _id: string,
+               dataset_info: DatasetInfo,
+               about: DatasetMetadata,
+               dataResources: DatasetResource[],
+               qualities: qualities
+  ) {
   }
-
-
 };
+
+class DatasetInfo {
+
+  constructor (
+    root_path: string,
+    dataset_dir: string,
+    dataset_schema: string
+  ) {}
+}
+
+class DatasetMetadata {
+
+  constructor (
+    datasetID: string,
+    datasetName: string,
+    datasetURI: string,
+    description: string,
+    citation: string,
+    publicationDate: string,
+    humanSubjectsResearch: string,
+    license: string,
+    source: string,
+    sourceURI: string,
+    approximateSize: string,
+    applicationDomain: string,
+    datasetVersion: string,
+    datasetSchemaVersion: string,
+    redacted: string,
+    digest: string
+  ) {}
+}
+
+class DatasetResource {
+  constructor (
+    resID: string,
+    resPath: string,
+    resType: string,
+    resFormat: string,
+    isCollection: boolean,
+    columns: DataColumn[]
+  ) {}
+}
+
+class DataColumn {
+  constructor (
+    colIndex: number,
+    colName: string,
+    colDescription: string,
+    colType: string,
+    role: string,
+    refersTo: RefDataColumn
+  ) {}
+}
+
+class RefDataColumn {
+  constructor (
+    resID: string,
+    resObject: string,
+    columnIndex: string,
+    columnName: string
+  ) {}
+}
 
 export function datasetFromJson(d): Dataset {
   var cols: DataAttribute[] = [];
