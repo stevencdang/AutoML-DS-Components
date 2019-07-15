@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
+import { Dataset, DatasetResource } from "../lib/dataset";
 import { DataService } from "../lib/data.service";
 import { WorkflowSession, DatasetImporterSession } from "../lib/workflowSession";
 
@@ -31,7 +32,7 @@ export class DatasetImporterComponent implements OnInit {
 
   ngOnInit() {
     let wfid: string = this.get_session_id();
-    this.dataService.getWorkflowSession(wfid).subscribe(result => this.parse_session_data(result));
+    this.dataService.getWorkflowSession(wfid).subscribe((result: DatasetImporterSession) => this.parse_session_data(result));
     this.available_datasets = [];
     
   }
@@ -62,10 +63,10 @@ export class DatasetImporterComponent implements OnInit {
     console.log("Parsing session data");
     console.log(sesData);
     this.wfs = sesData;
-    for (var dsid in this.wfs.available_datasets) {
+    for (var dsid of this.wfs.available_datasets) {
       console.log("Dataset id to retrieve: ", this.wfs.available_datasets[dsid]);
       if (this.wfs.dataset_id != undefined) {
-        console.log("Current session dataset slected: %s" % this.wfs.dataset_id)
+        console.log("Current session dataset slected: %s", this.wfs.dataset_id)
         if (this.wfs.dataset_id == dsid) {
           console.log("*************************************");
           console.log("*************************************");

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
+import { Dataset } from "../lib/dataset";
 import { DatasetIntf } from './dataset';
 import { WorkflowSession } from './workflowSession';
 
@@ -33,10 +35,13 @@ export class DataService {
 
   updateWorkflowSession(wfid: string, updates: Object): Observable<Object> {
     let url: string = this.backendAddr + this.getSessionUrl + "/" + wfid;
-    let headers = new Headers();
-    headers.append('Content-Type', 'application/json');
+    const httpoptions = {
+      headers: new HttpHeaders({
+          'Content-Type':  'application/json'
+      })
+    };
     console.log("updating workflow session with PUT: ", url);
-    return this.http.put<Object>(url, updates, {headers: headers});
+    return this.http.put<Object>(url, updates, httpoptions);
     
   }
 

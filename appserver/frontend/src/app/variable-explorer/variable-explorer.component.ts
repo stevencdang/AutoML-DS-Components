@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 
-import { Dataset, DatasetIntf, DataAttribute, datasetFromJson } from '../lib/dataset';
+import { Dataset, DatasetIntf, DataAttribute } from '../lib/dataset';
 import { DataService } from "../lib/data.service";
 import { WorkflowSession, SimpleEDASession } from "../lib/workflowSession";
 
@@ -55,7 +55,7 @@ export class VariableExplorerComponent implements OnInit {
     console.log("Got workflow session: ", wfs);
     console.log("Getting dataset columns using workflow id: ", wfs.dataset_id);
     //this.dataService.getDataset(wfs.dataset_id).subscribe((result: DatasetIntf) => console.log(result)); 
-    this.dataService.getDataset(wfs.dataset_id).subscribe((result: DatasetIntf) => this.dataset = datasetFromJson(result)); 
+    this.dataService.getDataset(wfs.dataset_id).subscribe((result: Dataset) => this.dataset = result); 
     return [];
 
   }
