@@ -224,4 +224,4 @@ class ProblemCreatorSession(WorkflowSession):
 
     def set_input_wfids(self, wfids):
         logger.debug("Adding list of input workflow ids to session")
-        self.input_wfids(wfids)
+        self.input_wfids = wfids

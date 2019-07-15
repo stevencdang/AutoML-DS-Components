@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     # Write session info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'session_out_file'))
-    logger.info("Writing session info to select from %i datasets to file: %s" % (len(datasets), out_file_path))
+    logger.info("Writing session info to file: %s" % (out_file_path))
     out_data = session.to_json()
     logger.debug("Session json to write out: %s" % out_data)
     with open(out_file_path, 'w') as out_file:
