@@ -48,8 +48,8 @@ component.num_options=0
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 output.0.type=dataset
-output.0.name=dataset.json
+output.0.name=session.json
 
-output.0.type=inline-html
-output.0.name=ui.html
+output.1.type=inline-html
+output.1.name=ui.html
 

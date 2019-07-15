@@ -44,5 +44,6 @@ path="$PYTHONPATH":"$cwd/program"
 
 
 PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -file0=$cwd/test/datasetDoc.tsv -userId=' ' -is_test=1
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId='testuser' -workflowDir='/datashop/dataset_files/workflows/1162' -is_test=1 -toolDir "$cwd" -componentXmlFile "$cwd/workflows/1162/components/DatasetImporter-1-x922120.xml" -file0=$cwd/test/session.json
 
 deactivate

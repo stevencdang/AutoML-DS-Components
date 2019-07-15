@@ -134,6 +134,9 @@ class ImportDatasetSession(WorkflowSession):
     def set_state_complete(self):
         self.state = self.available_states[2]
 
+    def is_state_complete(self):
+        return self.state == self.available_states[2]
+
     def set_dataset_id(self, dataset_id):
         logger.info("Setting session dataset id: %s" % dataset_id)
         self.dataset_id = dataset_id
@@ -146,3 +149,79 @@ class ImportDatasetSession(WorkflowSession):
         return self.available_datasets
     
 
+class ProblemCreatorSession(WorkflowSession):
+
+    available_states = ['Not Ready', 
+                        'Problem Creation Incomplete',
+                        'Problem Creation Completed'
+                        ]
+    def __init__(self, 
+                 user_id, 
+                 workflow_id, 
+                 comp_id, 
+                 comp_type, 
+                 _id=None, 
+                 state=None,
+                 input_wfids=None,
+                 dataset_id=None,
+                 prob_id=None,
+                 prob_state=None,
+                 session_url=None):
+        super().__init__(user_id=user_id, 
+                         workflow_id=workflow_id, 
+                         comp_id=comp_id, 
+                         comp_type=comp_type, 
+                         _id=_id, 
+                         session_url=session_url)
+        self.dataset_id = dataset_id
+        self.prob_id = prob_id
+        if prob_state is None:
+            self.prob_state = {}
+        else:
+            self.prob_state = prob_state
+        if state is None:
+            self.state = self.available_states[0]
+        else:
+            self.state = state
+        if input_wfids is None:
+            self.input_wfids = []
+        else:
+            self.input_wfids = input_wfids
+
+    def set_state_ready(self):
+        self.state = self.available_states[1]
+
+    def set_state_complete(self):
+        self.state = self.available_states[2]
+
+    def is_state_complete(self):
+        return self.state == self.available_states[2]
+
+    def check_state_complete(self):
+        # Check problem state for valid and sufficient user input
+        return False # stubbed for now
+
+    def set_dataset_id(self, ds_id):
+        logger.debug("Setting session dataset id: %s" % ds_id)
+        self.dataset_id = ds_id
+
+    def set_problem_id(self, prob_id):
+        logger.debug("Setting session problem id: %s" % prob_id)
+        self.problem_id = prob_id
+
+    def set_prob_state(self, prob):
+        logger.debug("Setting problem state with problem: %s" % prob.to_json())
+        state = {'Name': prob.name,
+                 'Description': prob.description,
+                 'TaskType': prob.task_type,
+                 'SubType': prob.subtype
+                 }
+        self.prob_state = state
+
+    def update_prob_state(self, field, value):
+        logger.debug("Updating problem state field, %s, with value: %s" % (field, str(value)))
+        self.state[field] = value
+
+    def set_input_wfids(self, wfids):
+        logger.debug("Adding list of input workflow ids to session")
+        self.input_wfids(wfids)

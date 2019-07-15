@@ -31,6 +31,9 @@ class DexplorerUIServer(object):
     def get_dataset_importer_ui_url(self, wfs):
         return self.url + "/datasetimport" + "/%s" % (wfs._id)
 
+    def get_problem_creator_ui_url(self, wfs):
+        return self.url + "/problemcreator" + "/%s" % (wfs._id)
+
 
 class VizServer(object):
 
