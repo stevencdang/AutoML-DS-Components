@@ -63,29 +63,15 @@ export class DatasetImporterComponent implements OnInit {
     console.log("Parsing session data");
     console.log(sesData);
     this.wfs = sesData;
-    for (var dsid of this.wfs.available_datasets) {
-      console.log("Dataset id to retrieve: ", this.wfs.available_datasets[dsid]);
+    for (let dsid in this.wfs.available_datasets) {
       if (this.wfs.dataset_id != undefined) {
-        console.log("Current session dataset slected: %s", this.wfs.dataset_id)
         if (this.wfs.dataset_id == dsid) {
-          console.log("*************************************");
-          console.log("*************************************");
-          console.log("*************************************");
-          console.log("*************************************");
           console.log("dataset already selected. setting to state variable");
           this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, true));
         } else {
-          console.log("****************2*********************");
-          console.log("*****************2********************");
-          console.log("****************2*********************");
-          console.log("*****************2********************");
           this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, false));
         }
       } else {
-          console.log("****************3*********************");
-          console.log("*****************3********************");
-          console.log("****************3*********************");
-          console.log("*****************3********************");
         this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, false));
       }
     }

@@ -23,6 +23,7 @@ export class DataService {
     //return of("Testing Data Service Observable")
     //
     let url: string = this.backendAddr + this.datasetUrl + "/" + dsid;
+    console.log("Getting dataset with GET at: ", url);
     return this.http.get<Dataset>(url);
   }
 
