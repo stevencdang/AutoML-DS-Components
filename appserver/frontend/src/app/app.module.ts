@@ -16,6 +16,7 @@ import { SanitizePipe } from './lib/sanitize.pipe';
 import { BokehVizComponent } from './bokeh-viz/bokeh-viz.component';
 import { DatasetImporterComponent } from './dataset-importer/dataset-importer.component';
 import { NotReadyYetComponent } from './not-ready-yet/not-ready-yet.component';
+import { ProblemCreatorComponent } from './problem-creator/problem-creator.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { NotReadyYetComponent } from './not-ready-yet/not-ready-yet.component';
     BokehVizComponent,
     DatasetImporterComponent,
     NotReadyYetComponent,
+    ProblemCreatorComponent,
   ],
   imports: [
     BrowserModule,

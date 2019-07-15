@@ -51,11 +51,30 @@ export class DatasetImporterSession extends WorkflowSession {
       public state: string,
       public session_url: string,
       public dataset_id: string,
-      public available_datasets: string
+      public available_datasets: string[]
 
   ) { 
     super(_id, user_id, workflow_id, comp_id, comp_type, state, session_url);
     this.dataset_id = dataset_id;
     this.available_datasets = available_datasets
+  }
+}
+
+export class ProblemCreatorSession extends WorkflowSession {
+
+  constructor(
+      public _id: string,
+      public user_id: string,
+      public workflow_id: string, 
+      public comp_id: string,
+      public comp_type: string,
+      public state: string,
+      public session_url: string,
+      public dataset_id: string,
+      public input_wfids: string[]
+  ) { 
+    super(_id, user_id, workflow_id, comp_id, comp_type, state, session_url);
+    this.dataset_id = dataset_id;
+    this.input_wfids = input_wfids;
   }
 }

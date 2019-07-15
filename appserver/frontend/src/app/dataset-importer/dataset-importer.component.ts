@@ -63,16 +63,16 @@ export class DatasetImporterComponent implements OnInit {
     console.log("Parsing session data");
     console.log(sesData);
     this.wfs = sesData;
-    for (let dsid in this.wfs.available_datasets) {
+    for (let dsid of this.wfs.available_datasets) {
       if (this.wfs.dataset_id != undefined) {
         if (this.wfs.dataset_id == dsid) {
           console.log("dataset already selected. setting to state variable");
-          this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, true));
+          this.dataService.getDataset(dsid).subscribe(result => this.parse_new_dataset(result, true));
         } else {
-          this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, false));
+          this.dataService.getDataset(dsid).subscribe(result => this.parse_new_dataset(result, false));
         }
       } else {
-        this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, false));
+        this.dataService.getDataset(dsid).subscribe(result => this.parse_new_dataset(result, false));
       }
     }
   }

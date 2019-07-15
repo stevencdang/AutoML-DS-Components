@@ -50,6 +50,9 @@ class WorkflowSession(object):
         elif  ses_json['comp_type'].lower() == "simpleedasession":
             logger.debug("initializing a simple eda session")
             ses = SimpleEDASession(**ses_json)
+        elif  ses_json['comp_type'].lower() == "problemcreator":
+            logger.debug("initializing a problem creation session")
+            ses = ProblemCreatorSession(**ses_json)
         else:
             raise Exception("Unable to identify class to initialize workflow session with session: %s" % str(ses_json))
         return ses

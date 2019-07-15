@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { SimpleDatasetEdaComponent } from './simple-dataset-eda/simple-dataset-eda.component';
 import { DatasetImporterComponent } from './dataset-importer/dataset-importer.component';
+import { ProblemCreatorComponent } from './problem-creator/problem-creator.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
@@ -11,6 +12,9 @@ const routes: Routes = [
     },
     { path: 'datasetimporter/:wfid',      
       component: DatasetImporterComponent
+    },
+    { path: 'problemcreator/:wfid',      
+      component: ProblemCreatorComponent
     },
     { path: '', component: PageNotFoundComponent },
     //{ path: '',

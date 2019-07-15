@@ -1,0 +1,8 @@
+<div class="wf-component-container" *ngIf="is_ready(); else wfsElseBlock">
+  <p>
+    problem-creator works!
+  </p>
+</div>
+<ng-template #wfsElseBlock>
+  <app-not-ready-yet></app-not-ready-yet>
+</ng-template>
