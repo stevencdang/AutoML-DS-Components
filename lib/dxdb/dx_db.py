@@ -9,6 +9,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 from ls_dataset.d3m_dataset import D3MDataset
+from ls_problem_desc.ls_problem import ProblemDesc
 from dxdb.workflow_session import *
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class DXDB(object):
 
     tbls = {
             'ds_metadata': 'Datasets',
+            'problems': 'Problems',
             'wf_sessions': 'WorkflowSessions',
             'viz_sessions': 'VizSessions'
 
@@ -69,7 +71,26 @@ class DXDB(object):
             ds_json = self.db[self.tbls['ds_metadata']].find_one()
         else:
             ds_json = self.db[self.tbls['ds_metadata']].find_one({'_id': ObjectId(dsid)})
+        # Converting returned ObjectID to string
+        ds_json['_id'] = str(ds_json['_id'])
         return D3MDataset.from_json(ds_json)
+
+    def get_problem(self, pid=None):
+        logger.debug("looking up problem with id: %s" % pid)
+        if pid is None:
+            ds_json = self.db[self.tbls['problems']].find_one()
+        else:
+            ds_json = self.db[self.tbls['problems']].find_one({'_id': ObjectId(pid)})
+        return ProblemDesc.from_json(ds_json)
+
+    def insert_problem(self, prob):
+        logger.info("Inserting problem to db: %s" % prob.name)
+        logger.debug("Loading problem to json")
+        d = json.loads(prob.to_json())
+        logger.debug("Loaded problem to json: %s" % str(d))
+        pid = self.db[self.tbls['problems']].insert_one(d).inserted_id
+        logger.debug("Got problem id: %s" % pid)
+        return str(pid)
 
     def add_workflow_session(self, session):
         d = self.db[self.tbls['wf_sessions']].insert_one(session.__dict__)

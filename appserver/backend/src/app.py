@@ -148,6 +148,12 @@ def get_dataset(dsid):
     logger.debug("dataset json: %s" % (ds.to_json()))
     return ds.to_json()
 
+@app.route('/prob/getProblem/<string:pid>')
+def get_problem(pid):
+    prob = db_client.get_problem(pid)
+    logger.debug("problem json: %s" % (prob.to_json()))
+    return prob.to_json()
+
 @app.route('/ds/getDataCols/<string:dsid>')
 def get_data_columns(dsid):
     """

@@ -1,8 +1,27 @@
 <div class="wf-component-container" *ngIf="is_ready(); else wfsElseBlock">
-  <p>
-    problem-creator works!
-  </p>
+  <div class="wf-status-container">
+    <div class="state-label">Status:</div>
+    <div class="component-state">{{wfs.state}}</div>
+    <div class="select-btn-container">
+      <button mat-raised-button (click)="set_problem()">Set Problem Definition</button>
+    </div>
+  </div>
+
+  <div class="problem-form-container">
+    <div class="section-header">Problem Information</div>
+    <div class="problem-fields">
+      <div class="form-field">
+        <div class="form-label">Problem Name:</div>
+        <div class="form-field">
+          {{ataset.about.datasetID}}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
+
 <ng-template #wfsElseBlock>
   <app-not-ready-yet></app-not-ready-yet>
 </ng-template>

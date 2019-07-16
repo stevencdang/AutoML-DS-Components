@@ -1,29 +1,6 @@
 @import '../../assets/scss/main';
 
 
-.dataset-importer-container {
-  @include make-container();
-}
-.dataset-importer-status-container {
-  @include make-row();
-
-  .state-label {
-    @include make-col(2);
-  }
-
-  .component-state {
-    @include make-col(6);
-    padding: 2px 5px;
-    margin: 2px 5px;
-    border: 1px solid black;
-  }
-
-  .select-btn-container {
-    @include make-col(3);
-    text-align: right;
-  }
-    
-}
 .dataset-list-container {
   @include make-row();
   .dataset-list {
@@ -53,47 +30,3 @@
   @include make-row();
 }
 
-.section-header {
-  @include make-col(12);
-  width: 100%;
-  font-style: bold;
-  font-size: $lg-font
-
-}
-
-.state-label {
-  font-size: $lg-font;
-
-}
-
-.component-state {
-
-}
-
-.metadata-fields {
-  @include make-col-ready();
-  height: 200px;
-  width: 80%;
-  margin: 0 10%;
-  overflow-y: scroll;
-  //@include make-col(12);
-}
-.form-field {
-    @include make-row();
-
-  .form-label {
-    @include make-col(3);
-    display: inline-block;
-    font-style: bold;
-    font-size: $md-font;
-    margin-right: 10px;
-  }
-
-  .form-field {
-    @include make-col(9);
-    display: inline-block;
-    font-style: normal;
-    font-size: $md-font;
-  }
-  
-}

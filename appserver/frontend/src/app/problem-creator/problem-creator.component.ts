@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { Dataset, DatasetResource } from "../lib/dataset";
+import { Problem } from "../lib/problem";
 import { DataService } from "../lib/data.service";
 import { WorkflowSession, ProblemCreatorSession } from "../lib/workflowSession";
 
@@ -16,6 +17,7 @@ import { WorkflowSession, ProblemCreatorSession } from "../lib/workflowSession";
 export class ProblemCreatorComponent implements OnInit {
 
   wfs: ProblemCreatorSession;
+  problem: Problem;
 
   constructor(private http: HttpClient,
               private dataService: DataService,
@@ -71,6 +73,10 @@ export class ProblemCreatorComponent implements OnInit {
         //this.dataService.getDataset(this.wfs.available_datasets[dsid]).subscribe(result => this.parse_new_dataset(result, false));
       //}
     //}
+  }
+
+  setProblem() {
+    console.log("Updating problem in db with current ui state");
   }
 
 }

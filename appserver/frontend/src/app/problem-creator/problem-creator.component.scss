@@ -1,0 +1,8 @@
+@import '../../assets/scss/main';
+
+.problem-form-container {
+  @include make-row();
+  height: 300px;
+  overflow-y: scroll;
+  
+}

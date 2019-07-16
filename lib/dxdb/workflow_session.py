@@ -165,10 +165,11 @@ class ProblemCreatorSession(WorkflowSession):
                  comp_type, 
                  _id=None, 
                  state=None,
-                 input_wfids=None,
+                 input_wfids=[],
                  dataset_id=None,
                  prob_id=None,
-                 prob_state=None,
+                 prob_state={},
+                 suggest_pids=[],
                  session_url=None):
         super().__init__(user_id=user_id, 
                          workflow_id=workflow_id, 
@@ -178,18 +179,13 @@ class ProblemCreatorSession(WorkflowSession):
                          session_url=session_url)
         self.dataset_id = dataset_id
         self.prob_id = prob_id
-        if prob_state is None:
-            self.prob_state = {}
-        else:
-            self.prob_state = prob_state
+        self.prob_state = prob_state
+        self.input_wfids = input_wfids
+        self.suggest_pids = suggest_pids
         if state is None:
             self.state = self.available_states[0]
         else:
             self.state = state
-        if input_wfids is None:
-            self.input_wfids = []
-        else:
-            self.input_wfids = input_wfids
 
     def set_state_ready(self):
         self.state = self.available_states[1]
@@ -228,3 +224,7 @@ class ProblemCreatorSession(WorkflowSession):
     def set_input_wfids(self, wfids):
         logger.debug("Adding list of input workflow ids to session")
         self.input_wfids = wfids
+
+    def add_suggestion_prob(self, prob):
+        logger.debug("Adding problem ID to list of suggested problems")
+        self.suggest_pids.append(prob._id)

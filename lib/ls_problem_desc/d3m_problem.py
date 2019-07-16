@@ -13,7 +13,7 @@ import pprint
 
 from google.protobuf.json_format import MessageToJson
 
-from .ls_problem import ProblemDesc, Input, Target
+from .ls_problem import *
 from ta3ta2_api import problem_pb2, problem_pb2_grpc
 from modeling.scores import Metric
 
@@ -211,7 +211,7 @@ class DefaultProblemDesc(ProblemDesc):
                             Problem Description. Got %s instead" % type(fpath))
         # logger.debug("Read in Problem Doc from file: %s" % str(data))
         # Initialize the class
-        out = DefaultProblemDesc(
+        out = ProblemDesc(
             name=data['about']['problemName'],
             version=data['about']['problemVersion'],
             desc=data['about']['problemDescription'] if 'problemDescription' in data['about'].keys() else '',
@@ -229,12 +229,39 @@ class DefaultProblemDesc(ProblemDesc):
         if 'problemSchemaVersion' in data['about'].keys():
             out.metadata['schema_version'] = data['about']['problemSchemaVersion']
         if 'dataSplits' in data['inputs'].keys():
-            out.metadata['dataSplits'] = data['inputs']['dataSplits'],
+            out.data_split = ProblemDataSplit()
+            if 'method' in data['inputs']['dataSplits']:
+                out.data_split.method = data['inputs']['dataSplits']['method']
+            if 'testSize' in data['inputs']['dataSplits']:
+                out.data_split.test_size = data['inputs']['dataSplits']['testSize']
+            if 'numFolds' in data['inputs']['dataSplits']:
+                out.data_split.num_folds = data['inputs']['dataSplits']['numFolds']
+            if 'stratified' in data['inputs']['dataSplits']:
+                out.data_split.stratified = data['inputs']['dataSplits']['stratified']
+            if 'numRepeats' in data['inputs']['dataSplits']:
+                out.data_split.num_repeats = data['inputs']['dataSplits']['numRepeats']
+            if 'randomSeed' in data['inputs']['dataSplits']:
+                out.data_split.random_seed = data['inputs']['dataSplits']['randomSeed']
+            if 'splitsFile' in data['inputs']['dataSplits']:
+                out.data_split.splits_file = data['inputs']['dataSplits']['splitsFile']
+            if 'splitScript' in data['inputs']['dataSplits']:
+                out.data_split.splitScript = data['inputs']['dataSplits']['splitScript']
         if 'expectedOutputs' in data.keys():
-            out.metadata['expectedOutputs'] = data['expectedOutputs']
+            out.expected_outputs = ExpectedProblemOutput()
+            if 'predictionsFile' in data['expectedOutputs'].keys():
+                out.expected_outputs.pred_file = data['expectedOutputs']['predictionsFile']
+            if 'scoresFile' in data['expectedOutputs'].keys():
+                out.expected_outputs.scores_file = data['expectedOutputs']['scoresFile']
+        if 'dataAugmentation' in data.keys():
+            out.data_aug_params = DataAugmentationParamaters()
+            if 'domain' in data['inputs']['dataAugmentation']:
+                out.data_aug_params.domains = data['inputs']['dataAugmentation']['domain']
+            if 'keywords' in data['inputs']['dataAugmentation']:
+                out.data_aug_params.keywords = data['inputs']['dataAugmentation']['keywords']
+            
 
         # Overrite the auto-generated ID
-        out.id = data['about']['problemID']
+        # out.id = data['about']['problemID']
 
         # Manually create inputs and add them
         for d in data['inputs']['data']:
@@ -245,6 +272,8 @@ class DefaultProblemDesc(ProblemDesc):
                 target.resource_id = t['resID']
                 target.column_index = t['colIndex']
                 target.column_name = t['colName']
+                if 'numClusters' in t:
+                    target.num_clusters = t['numClusters']
                 inpt.targets.append(target)
 
             out.inputs.append(inpt)
@@ -296,7 +325,7 @@ class DefaultProblemDesc(ProblemDesc):
         logger.debug("######################################")
         out = {
             'about': {
-                'problemID': self.id,
+                'problemID': self._id,
                 'problemVersion': self.version
             },
             'inputs': {

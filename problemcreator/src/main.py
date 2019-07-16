@@ -18,11 +18,12 @@ from ls_utilities.ls_logging import setup_logging
 from ls_utilities.cmd_parser import get_default_arg_parser
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
-# from ls_problem_desc.d3m_problem import *
+from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from ls_problem_desc.ls_problem import *
 from dxdb.dx_db import DXDB
 from dxdb.workflow_session import ProblemCreatorSession
 from ls_utilities.dexplorer import *
+from user_ops.problem import *
 
 __version__ = '0.1'
 
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     # Initialize new session
     session = ProblemCreatorSession(user_id=user_id, workflow_id=workflow_id, 
                                    comp_type=comp_type, comp_id=comp_id)
-    session.set_dataset_id(ds_sess._id)
+    session.set_dataset_id(ds._id)
     session.set_input_wfids([ds_sess._id])
     session = db.add_workflow_session(session)
     logger.debug("Created new Workflow Session: %s" % session.to_json())
@@ -128,7 +129,30 @@ if __name__ == '__main__':
         # raise Exception("Could not identify column with name %s from dataset" % args.targetname)
 
     # # Initialize a Problem Description and set target info
-    # prob = ProblemDesc()
+    prob = ProblemDesc()
+    prob._id = db.insert_problem(prob)
+    logger.debug("Initialized problem: %s" % str(prob))
+    session.prob_id = prob._id
+    db.update_workflow_session(session, ['prob_id'])
+
+    # Get Default problem description and add as suggestion
+    runner = DefaultProblemGenerator()
+    def_prob = runner.run(ds)
+    def_prob._id = db.insert_problem(def_prob)
+    session.add_suggestion_prob(def_prob)
+    db.update_workflow_session(session, ['suggest_pids'])
+
+    # Set session state to ready
+    session.set_state_ready()
+    db.update_workflow_session(session, ['state'])
+
+    # Test retrieve problem
+    # temp_prob = db.get_problem(prob._id)
+    # logger.debug("********************************************")
+    # logger.debug("********************************************")
+    # logger.debug("Got problem from DB: %s" % str(temp_prob))
+
+    
     # # prob.description = "CMU-Tigris User generated problem"
     # # prob.name = "Problem-%s" % str(datetime.now())
     # prob.name = args.probname
