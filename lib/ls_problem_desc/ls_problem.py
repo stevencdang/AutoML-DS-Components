@@ -226,7 +226,7 @@ class ProblemDesc(object):
         if self.task_type is not None:
             out["task_type"] = self.task_type
         if self.subtype is not None:
-            out["task_subtype"] = self.subtype
+            out["subtype"] = self.subtype
         if self.metadata is not None:
             out["metadata"] = self.metadata
         
@@ -288,7 +288,7 @@ class ProblemDesc(object):
         name = data['name'] if 'name' in data.keys() else None
         desc = data['description'] if 'description' in data.keys() else None
         task_type = data['task_type'] if 'task_type' in data.keys() else None
-        task_subtype = data['task_subtype'] if 'task_subtype' in data.keys() else None
+        subtype = data['subtype'] if 'subtype' in data.keys() else None
         version = data['version'] if 'version' in data.keys() else 1
         metrics = [Metric.from_json(metric) for metric in data['metrics']] if 'metrics' in data.keys() else None
         metadata = data['metadata'] if 'metadata' in data.keys() else None
@@ -297,7 +297,7 @@ class ProblemDesc(object):
             name=name,
             desc=desc,
             task_type=task_type,
-            subtype=task_subtype,
+            subtype=subtype,
             version=version,
             metrics=None,
             metadata=metadata

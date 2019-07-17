@@ -48,7 +48,7 @@
             <div class="form-label">Prediction Target</div>
             <!--<p-dropdown [options]="task_types" [(ngModel)]="task_type" name="task_type"></p-dropdown>-->
             <p-dropdown [options]="problem_targets" [(ngModel)]="problem_target"
-              name="problem_target" optionLabel="targets.0.column_name"
+              name="problem_target" 
               (ngModelChange)="set_problem_target()"></p-dropdown>
             <!--<p-listbox [options]="task_types" [(ngModel)]="problem.task_type"></p-listbox>-->
             <!--<input pInputText placeholder="What to Predict?" value="Target">-->
@@ -59,7 +59,13 @@
           </div>
           <div class="form-field">
             <div class="form-label">Prediction Task SubType</div>
-            <p-dropdown [options]="task_subtypes" [(ngModel)]="problem.task_subtype" name="task_subtype"></p-dropdown>
+            <p-dropdown [options]="task_subtypes" [(ngModel)]="problem.subtype" name="task_subtype"></p-dropdown>
+          </div>
+          <div class="form-field">
+            <div class="form-label">Problem Metric</div>
+            <p-dropdown [options]="problem_metrics" [(ngModel)]="problem_metric"
+              name="problem_metric"
+              (ngModelChange)="set_problem_metric()"></p-dropdown>
           </div>
         </form>
       </div>

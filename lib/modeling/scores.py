@@ -18,23 +18,25 @@ logger = logging.getLogger(__name__)
 class Metric(object):
 
     __types__ = [
-            'METRIC_UNDEFINED',
-            'ACCURACY',
-            'F1',
-            'F1_MICRO',
-            'F1_MACRO',
-            'ROC_AUC',
-            'ROC_AUC_MICRO',
-            'ROC_AUC_MACRO',
-            'MEAN_SQUARED_ERROR',
-            'ROOT_MEAN_SQUARED_ERROR',
-            'ROOT_MEAN_SQUARED_ERROR_AVG',
-            'MEAN_ABSOLUTE_ERROR',
-            'R_SQUARED',
-            'NORMALIZED_MUTUAL_INFORMATION',
-            'JACCARD_SIMILARITY_SCORE',
-            'PRECISION_AT_TOP_K',
-            'LOSS'
+        "accuracy",
+        "precision",
+        "recall",
+        "f1",
+        "f1Micro",
+        "f1Macro",
+        "rocAuc",
+        "rocAucMacro",
+        "rocAucMicro",
+        "meanSquaredError",
+        "rootMeanSquaredError",
+        "meanAbsoluteError",
+        "rSquared",
+        "normalizedMutualInformation",
+        "jaccardSimilarityScore",
+        "precisionAtTopK",
+        "objectDetectionAP",
+        "hammingLoss",
+        "averageMeanReciprocalRank"
     ]
 
     __ignore_chars__ = ['-', '_']

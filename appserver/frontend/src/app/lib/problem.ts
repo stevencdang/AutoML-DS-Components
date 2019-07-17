@@ -61,10 +61,10 @@ export class ProblemInput {
 
 export class ProblemTarget {
   constructor (
-    public target_index?: number,
     public resource_id: string,
-    public column_index: string,
+    public column_index: number,
     public column_name: string,
+    public target_index?: number,
     public num_clusters?: number
   ) {}
 }
@@ -73,7 +73,7 @@ class PrivilegedData {
   constructor (
     public privileged_data_index: number,
     public resource_id: string,
-    public col_index: string,
+    public col_index: number,
     public col_name: string
   ) {}
 }
@@ -92,11 +92,11 @@ class ProblemDataSplit {
   ) {}
 }
 
-class PerformanceMetric {
+export class PerformanceMetric {
   constructor (
     public metric: string,
-    public K: number,
-    public posLabel: string
+    public K?: number,
+    public posLabel?: string
   ) {}
 }
 
