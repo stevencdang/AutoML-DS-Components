@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { ListboxModule } from 'primeng/listbox';
 import { InputTextModule } from 'primeng/inputtext';
+import {DropdownModule} from 'primeng/dropdown';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,7 +48,8 @@ import { ProblemCreatorComponent } from './problem-creator/problem-creator.compo
     BrowserAnimationsModule,
     ButtonModule,
     ListboxModule,
-    InputTextModule
+    InputTextModule,
+    DropdownModule
     //NgbModule.forRoot(),
     //MatButtonToggleModule,
     //MatListModule,

@@ -353,7 +353,7 @@ class Input(object):
     def from_dict(data):
         out = Input(data['dataset_id'])
         out.targets.extend([Target.from_dict(t) for t in data['targets']])
-        out.priviledged_data.extend([PrivilegedData(**d) for d in data['prividleged_data']])
+        out.privileged_data.extend([PrivilegedData(**d) for d in data['privileged_data']])
         return out
 
     def __str__(self):

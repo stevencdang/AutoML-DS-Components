@@ -1,6 +1,32 @@
 
-export class Problem {
+export enum ProblemTaskTypes {
+      CLASSIFICATION,
+      REGRESSION,
+      CLUSTERING,
+      LINK_PREDICTION,
+      VERTEX_NOMINATION,
+      VERTEX_CLASSIFICATION,
+      COMMUNITY_DETECTION,
+      GRAPH_MATCHING,
+      TIME_SERIES_FORECASTING,
+      COLLABORATIVE_FILTERING,
+      OBJECT_DETECTION,
+      SEMISUPERVISED_CLASSIFICATION,
+      SEMISUPERVISED_REGRESSION
+}
 
+export enum ProblemTaskSubtypes {
+  BINARY,
+    MULTICLASS,
+    MULTILABEL,
+    UNIVARIATE,
+    MULTIVARIATE,
+    OVERLAPPING,
+    NONOVERLAPPING
+}
+
+export class Problem {
+  
   constructor (
     public _id: string,
     public name: string,
@@ -17,7 +43,7 @@ export class Problem {
 
 }
 
-class ProblemInput {
+export class ProblemInput {
   constructor (
     public dataset_id: string,
     public targets: ProblemTarget[],
@@ -33,13 +59,13 @@ class ProblemInput {
   //) {}
 //}
 
-class ProblemTarget {
+export class ProblemTarget {
   constructor (
-    public target_index: number,
+    public target_index?: number,
     public resource_id: string,
     public column_index: string,
     public column_name: string,
-    public num_clusters: number
+    public num_clusters?: number
   ) {}
 }
 

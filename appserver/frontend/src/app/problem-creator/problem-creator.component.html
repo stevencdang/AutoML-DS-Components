@@ -28,18 +28,38 @@
 
     <div class="section-wrapper">
       <div class="problem-fields">
-        <form class="problem-definition-form">
+        <form class="problem-definition-form" #problemForm="ngForm">
           <div class="form-field">
-            <input pInputText placeholder="Problem Name" value="test">
+            <div class="ui-inputgroup">
+              <span class="form-label">Problem Name:</span>
+              <input pInputText placeholder="Problem Name" value="test" required
+                [(ngModel)]="problem.name" name="name">
+            </div>
           </div>
           <div class="form-field">
             <div class="form-label">Description of Problem</div>
             <textarea pInputTextarea
                       autoResize="autoResize"
-                      [rows]="2" [cols]="50"></textarea>
+                      [rows]="2" [cols]="50"
+                      [(ngModel)]="problem.description" 
+                      name="description"></textarea>
           </div>
           <div class="form-field">
-            <input pInputText placeholder="What to Predict?" value="Target">
+            <div class="form-label">Prediction Target</div>
+            <!--<p-dropdown [options]="task_types" [(ngModel)]="task_type" name="task_type"></p-dropdown>-->
+            <p-dropdown [options]="problem_targets" [(ngModel)]="problem_target"
+              name="problem_target" optionLabel="targets.0.column_name"
+              (ngModelChange)="set_problem_target()"></p-dropdown>
+            <!--<p-listbox [options]="task_types" [(ngModel)]="problem.task_type"></p-listbox>-->
+            <!--<input pInputText placeholder="What to Predict?" value="Target">-->
+          </div>
+          <div class="form-field">
+            <div class="form-label">Prediction Task Type</div>
+            <p-dropdown [options]="task_types" [(ngModel)]="problem.task_type" name="task_type"></p-dropdown>
+          </div>
+          <div class="form-field">
+            <div class="form-label">Prediction Task SubType</div>
+            <p-dropdown [options]="task_subtypes" [(ngModel)]="problem.task_subtype" name="task_subtype"></p-dropdown>
           </div>
         </form>
       </div>

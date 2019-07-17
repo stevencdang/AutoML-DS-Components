@@ -58,6 +58,7 @@
 
 .form-field {
     @include make-row();
+    padding: $v-padding-sm 0;
 
   .form-label {
     @include make-col(3);
