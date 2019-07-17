@@ -4,41 +4,48 @@
     <div class="state-label">Status:</div>
     <div class="component-state">{{wfs.state}}</div>
     <div class="select-btn-container">
-      <button mat-raised-button (click)="importDataset()">Import Dataset</button>
+      <p-button (onClick)="importDataset()">Import Dataset</p-button>
     </div>
   </div>
   <div class="dataset-list-container">
     <div class="section-header">Available Datasets</div>
-    <mat-list class="dataset-list" dense>
-      <mat-list-item [ngClass]="{'dataset-item': true, 'selected': isSelectedDataset(ds)}" *ngFor="let ds of available_datasets" (click)="onSelectDataset(ds)">
-        {{ds.about.datasetID}}
-      </mat-list-item>
-    </mat-list>
+    <p-listbox [options]="available_datasets" [(ngModel)]="selected_dataset" filter="filter" optionLabel="about.datasetName">
+       <ng-template let-ds let-i="index" pTemplate="item">
+         {{ds.about.datasetName}}
+       </ng-template>
+    </p-listbox>
+
+
+    <!--<mat-list class="dataset-list" dense>-->
+      <!--<mat-list-item [ngClass]="{'dataset-item': true, 'selected': isSelectedDataset(ds)}" *ngFor="let ds of available_datasets" (click)="onSelectDataset(ds)">-->
+        <!--{{ds.about.datasetID}}-->
+      <!--</mat-list-item>-->
+    <!--</mat-list>-->
   </div>
   <div class="dataset-metadata-container">
-    <div class="section-header">Dataset Information</div>
+    <div class="section-header">Selected Dataset Information</div>
     <div class="metadata-fields" *ngIf="selected_dataset">
       <div class="form-field">
         <div class="form-label">Dataset ID:</div>
-        <div class="form-field">
+        <div class="form-info">
           {{selected_dataset.about.datasetID}}
         </div>
       </div>
       <div class="form-field">
         <div class="form-label">Dataset Name:</div>
-        <div class="form-field">
+        <div class="form-info">
           {{selected_dataset.about.datasetName}}
         </div>
       </div>
       <div class="form-field">
         <div class="form-label">Description:</div>
-        <div class="form-field">
+        <div class="form-info">
           {{selected_dataset.about.description}}
         </div>
       </div>
       <div class="form-field">
         <div class="form-label">Source:</div>
-        <div class="form-field">
+        <div class="form-info">
           {{selected_dataset.about.source}}
         </div>
       </div>
@@ -49,13 +56,13 @@
             <div class="resource-item" (click)="onSelectResource(res)">
               <div class="form-field">
                 <div class="form-label">ID:</div>
-                <div class="form-field">
+                <div class="form-info">
                   {{res.resID}}
                 </div>
               </div>
               <div class="form-field">
                 <div class="form-label">Type:</div>
-                <div class="form-field">
+                <div class="form-info">
                   {{res.resType}}
                 </div>
               </div>

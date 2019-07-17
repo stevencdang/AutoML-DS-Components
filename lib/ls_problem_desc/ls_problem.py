@@ -44,12 +44,14 @@ class ProblemDesc(object):
         'CLUSTERING',
         'LINK_PREDICTION',
         'VERTEX_NOMINATION',
+        'VERTEX_CLASSIFICATION',
         'COMMUNITY_DETECTION',
-        'GRAPH_CLUSTERING',
         'GRAPH_MATCHING',
         'TIME_SERIES_FORECASTING',
-        'COLLABORATIVE_FILTERING ',
-        'OBJECT_DETECTION '
+        'COLLABORATIVE_FILTERING',
+        'OBJECT_DETECTION',
+        'SEMISUPERVISED_CLASSIFICATION',
+        'SEMISUPERVISED_REGRESSION'
     ]
     __task_subtypes__ =  [
 			"binary",
@@ -410,7 +412,7 @@ class ProblemDataSplit(object):
                  split_script=None
                  ):
         self.method = method
-        self.testSize = test_size
+        self.test_size = test_size
         self.num_folds = num_folds
         self.stratified = stratified
         self.num_repeats = num_repeats

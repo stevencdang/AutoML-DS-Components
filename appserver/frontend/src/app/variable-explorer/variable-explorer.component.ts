@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 
 import { Dataset, DatasetIntf, DataAttribute } from '../lib/dataset';
 import { DataService } from "../lib/data.service";

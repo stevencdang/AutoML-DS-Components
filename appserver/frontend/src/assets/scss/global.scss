@@ -6,30 +6,45 @@
 .wf-status-container {
   @include make-row();
 
+  background-color: lightgray;
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+
+
+  .status-view {
+    @include make-col(8);
+    padding: 0.2em;
+  }
+
   .state-label {
-    @include make-col(2);
+    display: inline-block;
+    margin: 0 0.5em;
   }
 
   .component-state {
-    @include make-col(6);
-    padding: 2px 5px;
+    display: inline-block;
+    padding: 2px 10px;
     margin: 2px 5px;
     border: 1px solid black;
+    width: 16rem;
+    text-align: center;
   }
 
   .select-btn-container {
-    @include make-col(3);
+    @include make-col(4);
     text-align: right;
+    padding: 0.4em;
+
+    button {
+      margin-right: 1em;
+      color: primary;
+    }
   }
     
 }
 
 .section-header {
   @include make-col(12);
-  width: 100%;
-  font-style: bold;
-  font-size: $lg-font
-
 }
 
 .state-label {
@@ -41,14 +56,6 @@
 
 }
 
-.metadata-fields {
-  @include make-col-ready();
-  height: 200px;
-  width: 80%;
-  margin: 0 10%;
-  overflow-y: scroll;
-  //@include make-col(12);
-}
 .form-field {
     @include make-row();
 
@@ -60,8 +67,8 @@
     margin-right: 10px;
   }
 
-  .form-field {
-    @include make-col(9);
+  .form-info {
+    @include make-col(8);
     display: inline-block;
     font-style: normal;
     font-size: $md-font;

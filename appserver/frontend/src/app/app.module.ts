@@ -1,10 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { MatButtonToggleModule } from '@angular/material';
-import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button'; 
+
+//import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+//import { MatButtonToggleModule } from '@angular/material';
+//import { MatListModule } from '@angular/material/list';
+//import { MatButtonModule } from '@angular/material/button'; 
+//import { MatInputModule } from '@angular/material/input'; 
+//
+import { ButtonModule } from 'primeng/button';
+import { ListboxModule } from 'primeng/listbox';
+import { InputTextModule } from 'primeng/inputtext';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -33,12 +41,18 @@ import { ProblemCreatorComponent } from './problem-creator/problem-creator.compo
   ],
   imports: [
     BrowserModule,
+    FormsModule,
     HttpClientModule,
     AppRoutingModule,
-		NgbModule.forRoot(),
-    MatButtonToggleModule,
-    MatListModule,
-    MatButtonModule
+    BrowserAnimationsModule,
+    ButtonModule,
+    ListboxModule,
+    InputTextModule
+    //NgbModule.forRoot(),
+    //MatButtonToggleModule,
+    //MatListModule,
+    //MatButtonModule,
+    //MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]

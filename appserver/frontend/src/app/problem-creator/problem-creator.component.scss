@@ -1,8 +1,55 @@
 @import '../../assets/scss/main';
 
+.section-wrapper {
+  @include make-col(12);
+}
+
+.section-header {
+  @include make-row();
+  margin: 0.4rem 1rem;
+
+  .section-label {
+    @include make-col(6);
+  }
+  .select-btn-container {
+    @include make-col(6);
+    text-align: right;
+    color: "accent";
+  }
+
+}
+
 .problem-form-container {
   @include make-row();
-  height: 300px;
-  overflow-y: scroll;
-  
+  padding-top: 0.4rem;
 }
+
+.problem-fields {
+  @include make-col(12);
+  height: 600px;
+  overflow-y: scroll;
+  padding: $v-padding-sm $h-padding-sm;
+
+  .problem-definition-form {
+
+    padding: 0 $h-padding-sm;
+    width: 100%;
+
+    mat-form-field {
+      input {
+        background: red;
+        width: 500px;
+      }
+
+    }
+    .form-field {
+
+      width: 100%;
+
+    }
+
+
+  }
+
+}
+

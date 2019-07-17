@@ -1,21 +1,31 @@
 @import '../../assets/scss/main';
 
 
-.dataset-list-container {
-  @include make-row();
-  .dataset-list {
+.section-header {
+  @include make-col(12);
+  width: 100%;
+  font-style: bold;
+  font-size: $lg-font
 
+}
+
+.dataset-list-container {
+
+  @include make-row();
+  padding: 0.25em 1em;
+
+  .dataset-list {
+    @include make-col(12);
     height: 100px;
-    width: 80%;
-    margin: 0 10%;
+    //margin: 0 10%;
     overflow-y: scroll;
+    border: 2px solid black;
 
     .dataset-item {
       font-size: $md-font;
       margin: 0;
       padding: 0 0;
-      
-
+      height: 1.1rem;
     }
 
     .selected {
@@ -28,5 +38,15 @@
 .dataset-metadata-container {
 
   @include make-row();
+  padding: 0.25em 1em;
+
+  .metadata-fields {
+    @include make-col-ready();
+    height: 175px;
+    padding-bottom: 2em;
+    overflow-y: scroll;
+    //@include make-col(12);
+  }
+
 }
 

@@ -1,5 +1,22 @@
-@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
+// Imports functions, variables, and mixins that are needed by other Bootstrap files
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+// Import Bootstrap Reboot
+@import "~bootstrap/scss/reboot";
+
+// Import prime-ng library
+//@import "../../../node_modules/primeicons/primeicons.css";
+//@import "../../../node_modules/primeng/resources/themes/nova-light/theme.css";
+//@import "../../../node_modules/primeng/resources/primeng.min.css";
+@import "~primeicons/primeicons.css";
+@import "~primeng/resources/themes/nova-light/theme.css";
+@import "~primeng/resources/primeng.min.css";
+
+// Import project specifi variables and global styles
 @import 'variables';
 @import 'global';
 
-@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+//@import '../../../node_modules/bootstrap/scss/bootstrap.scss';  
+
+//@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";

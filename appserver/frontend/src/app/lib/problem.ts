@@ -3,59 +3,52 @@ export class Problem {
 
   constructor (
     public _id: string,
-    public about: ProblemInfo,
-    public inputs: ProblemInput,
-    public expectedOutputs: ProblemOutput,
-    public dataAugmentation: AugmentationInfo[]
+    public name: string,
+    public version: string,
+    public description: string,
+    public task_type: string,
+    public subtype: string,
+    public metrics: PerformanceMetric[],
+    public dataSplits: ProblemDataSplit,
+    public inputs: ProblemInput[],
+    public expected_outputs: ProblemOutput,
+    public data_aug_parms: AugmentationInfo[]
   ) {}
 
-}
-
-class ProblemInfo {
-  constructor (
-    public problemID: string,
-    public problemName: string,
-    public problemDescription: string,
-    public problemURI: string,
-    public taskType: string,
-    public taskSubType: string,
-    public problemVersion: string,
-    public problemSchemaVersion: string
-  ) {}
 }
 
 class ProblemInput {
   constructor (
-    public data: ProblemData,
-    public dataSplits: ProblemDataSplit,
-    public performanceMetrics: PerformanceMetric[]
+    public dataset_id: string,
+    public targets: ProblemTarget[],
+    public privileged_data: PrivilegedData[],
   ) {}
 }
 
-class ProblemData {
-  constructor (
-    public datasetID: string,
-    public targets: ProblemTarget[],
-    public privilegedData: PrivilegedData[]
-  ) {}
-}
+//class ProblemData {
+  //constructor (
+    //public datasetID: string,
+    //public targets: ProblemTarget[],
+    //public privilegedData: PrivilegedData[]
+  //) {}
+//}
 
 class ProblemTarget {
   constructor (
-    public targetIndex: number,
-    public resID: string,
-    public colIndex: string,
-    public colName: string,
-    public numClusters: number
+    public target_index: number,
+    public resource_id: string,
+    public column_index: string,
+    public column_name: string,
+    public num_clusters: number
   ) {}
 }
 
 class PrivilegedData {
   constructor (
-    public privilegedDataIndex: number,
-    public resID: string,
-    public colIndex: string,
-    public colName: string
+    public privileged_data_index: number,
+    public resource_id: string,
+    public col_index: string,
+    public col_name: string
   ) {}
 }
 
@@ -63,13 +56,13 @@ class PrivilegedData {
 class ProblemDataSplit {
   constructor (
     public method: string,
-    public testSize: number,
-    public numFolds: number,
+    public test_size: number,
+    public num_folds: number,
     public stratified: boolean,
-    public numRepeats: number,
-    public randomSeed: number,
-    public splitsFile: string,
-    public splitScript: string
+    public num_repeats: number,
+    public random_seed: number,
+    public splits_file: string,
+    public split_script: string
   ) {}
 }
 

@@ -1,25 +1,50 @@
 <div class="wf-component-container" *ngIf="is_ready(); else wfsElseBlock">
+
   <div class="wf-status-container">
-    <div class="state-label">Status:</div>
-    <div class="component-state">{{wfs.state}}</div>
+    <div class="status-view">
+      <div class="state-label">Status:</div>
+      <div class="component-state">{{wfs.state}}</div>
+    </div>
     <div class="select-btn-container">
-      <button mat-raised-button (click)="set_problem()">Set Problem Definition</button>
+      <button pButton type="button" label="Set Problem Definition" (onClick)="set_problem()"></button>
+      <!--<button  class="btn-success" mat-raised-button (click)="set_problem()">-->
+        <!--Set Problem Definition-->
+      <!--</button>-->
     </div>
   </div>
 
   <div class="problem-form-container">
-    <div class="section-header">Problem Information</div>
-    <div class="problem-fields">
-      <div class="form-field">
-        <div class="form-label">Problem Name:</div>
-        <div class="form-field">
-          {{ataset.about.datasetID}}
+
+    <div class="section-wrapper">
+      <div class="section-header">
+        <div class="section-label">Problem Information</div>
+        <div class="select-btn-container">
+          <button class="btn-secondary" (click)="use_suggest_prob()">
+            Get Suggested Problem
+          </button>
         </div>
       </div>
     </div>
 
+    <div class="section-wrapper">
+      <div class="problem-fields">
+        <form class="problem-definition-form">
+          <div class="form-field">
+            <input pInputText placeholder="Problem Name" value="test">
+          </div>
+          <div class="form-field">
+            <div class="form-label">Description of Problem</div>
+            <textarea pInputTextarea
+                      autoResize="autoResize"
+                      [rows]="2" [cols]="50"></textarea>
+          </div>
+          <div class="form-field">
+            <input pInputText placeholder="What to Predict?" value="Target">
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-
 </div>
 
 <ng-template #wfsElseBlock>
