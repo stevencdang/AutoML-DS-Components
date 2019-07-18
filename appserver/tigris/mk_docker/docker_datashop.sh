@@ -205,8 +205,8 @@ cp $CWD/update_components_docker.sh $DS_DIRECTORY/tools/workflows/exec_component
 # Overwrite the sql script that adds components
 #cp $CWD/workflow_component_local.sql $DS_DIRECTORY/sql/
 # Add a .vimrc file for development
-cp $CWD/.vimrc $DS_DIRECTORY/
-cp $CWD/.gitconfig $DS_DIRECTORY/
+#cp $CWD/.vimrc $DS_DIRECTORY/
+#cp $CWD/.gitconfig $DS_DIRECTORY/
 
 #docker stop ds_instance_alpha ; docker rm ds_instance_alpha ;
 #docker build -t ds_image_alpha .
