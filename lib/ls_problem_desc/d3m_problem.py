@@ -37,7 +37,7 @@ class GRPCProblemDesc(ProblemDesc):
             if metric.pos is not None:
                 m.pos_label = metric.pos
         msg = problem_pb2.ProblemDescription(
-            id=self.id,
+            id=self._id,
             problem=prob
         )
         msg.version = str(self.version)
@@ -57,7 +57,24 @@ class GRPCProblemDesc(ProblemDesc):
                 t.resource_id = target.resource_id
                 t.column_index = target.column_index
                 t.column_name = target.column_name
+                if target.num_clusters is not None:
+                    t.clusters_number = target.num_clusters
                 # Clusters_number????
+            for pfd in inpt.privileged_data:
+                pd = i.privileged_data.add()
+                pd.privileged_data_index = pfd.priviledged_data_index
+                pd.resource_id = pfd.resource_id
+                pd.column_index = pfd.col_index
+                pd.column_name = pfd.col_name
+
+        # Add data augmentation parameters
+        for dap in self.data_aug_params:
+            d = msg.data_augmentation.add()
+            for domain in dap.domains:
+                d.domain.add(domain)
+            for kw in dap.keywords:
+                d.keywords.add(kw)
+
         
         return msg
 

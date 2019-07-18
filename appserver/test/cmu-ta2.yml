@@ -1,0 +1,16 @@
+version: "2"
+services:
+    ta2:
+        image: 
+            registry.datadrivendiscovery.org/sheath/cmu-ta2:live
+        ports:
+            - "45042:45042"
+        environment:
+            - D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
+            - D3MINPUTDIR=/rdata/dataStore/d3m/datasets/seed_datasets_current
+            - D3MRUN=ta2ta3
+            - D3MCPU=8
+            - D3MTIMEOUT=5
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/rdata/dataStore/d3m/datasets/seed_datasets_current
+            - /rdata/dataStore/d3m/test_data_out:/rdata/dataStore/d3m/test_data_out

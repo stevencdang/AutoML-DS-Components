@@ -31,8 +31,10 @@ from ls_problem_desc.d3m_problem import DefaultProblemDesc
 from d3m_ta2.ta2_client import TA2Client
 from d3m_eval.summer_2018.prob_discovery import ProblemDiscoveryWriter
 # from dxdb.workflow_session import ProblemCreatorSession
+from dxdb.dx_db import DXDB
 from dxdb.workflow_session import ModelSearchSession
 # from ls_workflow.workflow import Workflow as Solution
+from ls_utilities.dexplorer import *
 from modeling.models import *
 from modeling.component_out import *
 from user_ops.modeling import *
@@ -105,7 +107,7 @@ if __name__ == '__main__':
     session = ModelSearchSession(user_id=user_id, workflow_id=workflow_id, 
                                    comp_type=comp_type, comp_id=comp_id)
     session.set_dataset_id(ds._id)
-    session.set_prob_id(prob._id)
+    session.set_problem_id(prob._id)
     session.set_input_wfids([prev_sess._id])
     session = db.add_workflow_session(session)
     logger.debug("Created new Workflow Session: %s" % session.to_json())
@@ -129,6 +131,9 @@ if __name__ == '__main__':
     else:
         serv = TA2Client(address, 
                 name=name)
+    session.ta2_addr = address
+    db.update_workflow_session(session, 'ta2_addr')
+    logger.debug("added TA2 address url to session: %s" % session.ta2_addr)
 
 
     if config.get_mode() == 'D3M':
@@ -138,7 +143,7 @@ if __name__ == '__main__':
         out_path = None
 
     runner = ModelSearch()
-    m_index, models, result_df = runner.run(ds, prob, serv, out_path)
+    m_index, models, result_df, score_data, ranked_models = runner.run(ds, prob, serv, out_path)
 
 
     # Write html ui to output file
@@ -156,6 +161,10 @@ if __name__ == '__main__':
     logger.info("Writing session info to file: %s" % (out_file_path))
     out_data = session.to_json()
     logger.debug("Session json to write out: %s" % out_data)
+
+    # Write ranked model list to file
     with open(out_file_path, 'w') as out_file:
         out_file.write(out_data)
         
+    out_file_path = path.join(args.workingDir, config.get('Output', 'ranked_model_file'))
+    ModelRankSetIO.to_file(out_file_path, ranked_models, m_index)

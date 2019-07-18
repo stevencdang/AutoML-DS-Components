@@ -79,15 +79,17 @@ class ModelSearch(object):
 
 
         # Search for solutions
+        # Get training dataset
+        train_ds = ds.get_training_dataset()
         # if config.get_mode() == 'D3M':
         if out_path is not None:
             # Write search and problem to file for problem discovery task
             logger.debug("Writing to out_dir: %s" % out_path)
             prob_list = ProblemDiscoveryWriter(out_path)
-            search_id, request = serv.search_solutions(prob, ds, get_request=True)
+            search_id, request = serv.search_solutions(prob, train_ds, get_request=True)
             prob_list.add_problem(prob, request)
         else:
-            search_id, request = serv.search_solutions(prob, ds, get_request=True)
+            search_id, request = serv.search_solutions(prob, train_ds, get_request=True)
         # Get search results
         soln_ids = serv.get_search_solutions_results(search_id)
         if soln_ids is None:
@@ -115,7 +117,7 @@ class ModelSearch(object):
         fitted_results = {}
         for mid, model in models.items():
             logger.debug("Fitting model: %s" % str(model))
-            fit_req_ids[mid] = serv.fit_solution(model, ds)
+            fit_req_ids[mid] = serv.fit_solution(model, train_ds)
         for mid, rid in fit_req_ids.items():
             logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
             models[mid].fitted_id, fitted_results[mid] = serv.get_fit_solution_results(rid)
@@ -132,12 +134,84 @@ class ModelSearch(object):
                 # result_df = rdf.copy()
                 # result_df.index = rdf['d3mIndex']
             # else:
-            result_df = pd.merge(result_df, rdf, on='d3mIndex')
+            result_df = pd.merge(result_df, rdf, on='d3mIndex', how='outer')
             logger.debug("********************************")
             logger.debug(result_df.columns)
             logger.debug("********************************")
 
-        return m_index, models, result_df
+        # Get Model Predictions
+        req_ids = {}
+        predictions = {}
+        test_ds = ds.get_test_dataset()
+        for mid, model in models.items():
+            # req_ids[mid] = serv.produce_solution(model, ds)
+            fmid = model.fitted_id
+            req_ids[fmid] = serv.produce_solution(fmid, model, test_ds)
+        logger.debug("Created predict solution requests with ids: %s" % str(req_ids))
+        for fmid, rid in req_ids.items():
+            logger.info("Requesting predictions with request id: %s" % rid)
+            predictions[fmid] = serv.get_produce_solution_results(rid)
+            # solution_predictions[fsid] = serv.get_produce_solution_results(rid)
+
+        for fmid, pdata in predictions.items():
+            logger.debug("Got predictions from fitted solution, %s: %s" % (fmid, pdata))
+            rdf = pdata.copy()
+            rdf.rename(columns={rdf.columns[-1]: ("test-%s" % mid)}, inplace=True)
+            # if result_df is None:
+                # result_df = rdf.copy()
+                # result_df.index = rdf['d3mIndex']
+            # else:
+            result_df = pd.merge(result_df, rdf, on='d3mIndex', how='outer')
+            logger.debug("********************************")
+            logger.debug(result_df.columns)
+            logger.debug("********************************")
+
+        # Get Score for each solution
+        score_ds = test_ds
+        req_ids = {}
+        for mid in models:
+            model = models[mid]
+            req_ids[mid] = serv.score_solution(model, score_ds, metrics=[metric])
+        scores = {}
+        for mid in req_ids:
+            results = serv.get_score_solution_results(req_ids[mid])
+            scores[mid] = ModelScores(models[mid].id, [score_ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+
+        ### Parse through model scores to get dataframe of scores
+        # Determine number of scores to  plot:
+        sample_scores = len(scores[m_index[0]].scores)
+        score_data = {score.metric.type: [] for score in scores[m_index[0]].scores}
+        score_data['model_id'] = []
+        score_data['model_num'] = []
+        metrics = [score.metric.type for score in scores[m_index[0]].scores]
+        score_data['index'] = range(len(m_index))
+
+        for mid in scores:
+            score_set = scores[mid]
+            logger.debug("Adding score data for model with id: %s" % score_set.mid)
+            score_data['model_id'].append(mid)
+            score_data['model_num'].append(m_index.index(mid))
+            for score in score_set.scores:
+                metric_val = list(score.value.value.values())[0]
+                logger.debug("appending score for metric: %s\tvalue: %s" % 
+                        (score.metric.type, metric_val))
+                logger.debug("Score value tyep: %s" % type(metric_val))
+                score_data[score.metric.type].append(metric_val)
+                
+        logger.debug("###############################################")
+        logger.debug("Score_data keys: %s" % str([key for key in score_data.keys()]))
+        data = pd.DataFrame(score_data)
+
+        # create ranked model list 
+        ranked_models = {
+                row[1]['model_id']: RankedModel(
+                    mdl=models[row[1]['model_id']],
+                    rank=row[1]['rank']
+                ) for row in sorted_data.iterrows()
+        }
+        
+        
+        return m_index, models, result_df, score_data, ranked_models
     
 class ModelRanker(object):
     """

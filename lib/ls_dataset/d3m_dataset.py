@@ -226,6 +226,84 @@ class D3MDataset(LSDataset):
             logger.debug("Found data resource table with ID: %s\tpath: %s" % (dr.resID, dr.resPath))
             return [col for col in dr.columns if col.colName != 'd3mIndex']
 
+    def get_training_path(self):
+        logger.debug("Checking for TRAIN directory for dataset at path: %s", self.dpath)
+        parent = path.dirname(self.dpath)
+        train_dir = path.join(parent, "TRAIN", "dataset_TRAIN")
+        train_ds_file = path.join(train_dir, "datasetDoc.json")
+        if path.isfile(train_ds_file):
+            logger.debug("Found training dataset schema at: %s" % train_ds_file)
+            return train_dir
+        else:
+            logger.debug("Not training dataset schema found at: %s" % train_dir)
+            return None
+
+    def get_training_dataset(self):
+        train_path = self.get_training_path()
+        if train_path is not None:
+            ds_json = json.loads(self.to_json())
+            ds_json['dataset_info']['root_path'] = train_path
+            ds_json['dataset_info']['dataset_schema'] = path.join(train_path, self.__default_schema__)
+            logger.debug("dataset json before reinitializing dataset: %s" % str(ds_json))
+            train_ds = D3MDataset.from_json(ds_json)
+            logger.debug("Created training dataset: %s" % train_ds.to_json())
+        else:
+            train_ds = ds
+        return train_ds
+
+
+    def get_test_path(self):
+        logger.debug("Checking for TEST directory for dataset at path: %s", self.dpath)
+        parent = path.dirname(self.dpath)
+        test_dir = path.join(parent, "TEST", "dataset_TEST")
+        test_ds_file = path.join(test_dir, "datasetDoc.json")
+        if path.isfile(test_ds_file):
+            logger.debug("Found test dataset schema at: %s" % test_ds_file)
+            return test_dir
+        else:
+            logger.debug("Not test dataset schema found at: %s" % test_dir)
+            return None
+
+    def get_test_dataset(self):
+        test_path = self.get_test_path()
+        if test_path is not None:
+            ds_json = json.loads(self.to_json())
+            ds_json['dataset_info']['root_path'] = test_path
+            ds_json['dataset_info']['dataset_schema'] = path.join(test_path, self.__default_schema__)
+            logger.debug("dataset json before reinitializing dataset: %s" % str(ds_json))
+            test_ds = D3MDataset.from_json(ds_json)
+            logger.debug("Created training dataset: %s" % test_ds.to_json())
+        else:
+            test_ds = ds
+        return test_ds
+
+
+    def get_score_path(self):
+        logger.debug("Checking for SCORE directory for dataset at path: %s", self.dpath)
+        parent = path.dirname(self.dpath)
+        score_dir = path.join(parent, "SCORE", "dataset_SCORE")
+        score_ds_file = path.join(score_dir, "datasetDoc.json")
+        if path.isfile(score_ds_file):
+            logger.debug("Found score dataset schema at: %s" % score_ds_file)
+            return score_dir
+        else:
+            logger.debug("Not score dataset schema found at: %s" % score_dir)
+            return None
+
+    def get_score_dataset(self):
+        score_path = self.get_score_path()
+        if score_path is not None:
+            ds_json = json.loads(self.to_json())
+            ds_json['dataset_info']['root_path'] = score_path
+            ds_json['dataset_info']['dataset_schema'] = path.join(score_path, self.__default_schema__)
+            logger.debug("dataset json before reinitializing dataset: %s" % str(ds_json))
+            score_ds = D3MDataset.from_json(ds_json)
+            logger.debug("Created training dataset: %s" % score_ds.to_json())
+        else:
+            score_ds = ds
+        return score_ds
+
+
 
 
 

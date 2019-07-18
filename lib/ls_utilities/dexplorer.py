@@ -34,6 +34,9 @@ class DexplorerUIServer(object):
     def get_problem_creator_ui_url(self, wfs):
         return self.url + "/problemcreator" + "/%s" % (wfs._id)
 
+    def get_model_search_ui_url(self, wfs):
+        return self.url + "/model/quicksearch" + "/%s" % (wfs._id)
+
 
 class VizServer(object):
 

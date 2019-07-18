@@ -97,7 +97,7 @@ class ProblemDesc(object):
         self.data_split = None
         self.inputs = []
         self.expected_outputs = None
-        self.data_aug_params = None
+        self.data_aug_params = []
        
         # Catchall for extra information to support easy subclassing
         if metadata is not None:
@@ -139,9 +139,10 @@ class ProblemDesc(object):
                             domains=[],
                             keywords=[]
                             ):
-        self.data_aug_params = DataAugmentationParamaters(
+        dap = DataAugmentationParamaters(
             domains=domains,
             keywords=keywords)
+        self.data_aug_params.push(dap)
 
     def add_input(self, did, res, col):
         if len(self.inputs) == 0:
@@ -235,7 +236,7 @@ class ProblemDesc(object):
         if self.expected_outputs is not None:
             out['expected_outputs'] = self.expected_outputs.__dict__
         if self.data_aug_params is not None:
-            out['data_aug_params'] = self.data_aug_params.__dict__
+            out['data_aug_params'] = [dap.__dict__ for dap in self.data_aug_params]
        
         return out
 

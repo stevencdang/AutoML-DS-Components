@@ -1,0 +1,18 @@
+{
+    "_id": "5d2fa2078a7a3fcc587d9e84",
+    "comp_id": "ProblemCreator-1-x922120",
+    "comp_type": "problemcreator",
+    "dataset_id": "5d28a17855f1b51c68ce69ec",
+    "input_wfids": [
+        "5d2ca0de2e47a858a32db199"
+    ],
+    "prob_id": "5d2fa2078a7a3fcc587d9e85",
+    "prob_state": {},
+    "session_url": "sophia.stevencdang.com:4200/problemcreator/5d2fa2078a7a3fcc587d9e84",
+    "state": "Problem Creation Incomplete",
+    "suggest_pids": [
+        "5d2fa2078a7a3fcc587d9e86"
+    ],
+    "user_id": "testuser",
+    "workflow_id": "1162"
+}
