@@ -22,6 +22,10 @@
 .problem-form-container {
   @include make-row();
   padding-top: 0.4rem;
+    button {
+      margin-right: 1em;
+      font-size: $md-font
+    }
 }
 
 .problem-fields {

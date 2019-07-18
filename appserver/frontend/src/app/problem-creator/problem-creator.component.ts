@@ -322,7 +322,7 @@ export class ProblemCreatorComponent implements OnInit {
 
   match_target(target: string) {
     if (this.possible_targets.length == 0) {
-      this.problem_target = t.targets[0].column_name
+      this.problem_target = target;
     } else {
       for (let t of this.possible_targets) {
         console.log("checking for match of, ", target, "with possible target:", t);
