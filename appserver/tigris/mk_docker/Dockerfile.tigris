@@ -338,7 +338,7 @@ RUN mkdir /var/run/sshd \
 RUN printf ",g/ip6/d\nw\nq\n" | ed /etc/hosts
 
 # Make ports 443 (HTTPS), 80 (HTTP), and 22 (SSH) available to the outside world (0.0.0.0)
-EXPOSE 443 80 22
+EXPOSE 8080 22
 CMD ["/bin/bash", "/datashop/d3m_components/mk_docker/start.sh"]
 
 

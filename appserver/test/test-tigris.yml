@@ -1,0 +1,22 @@
+version: "2"
+services:
+    tigris:
+        image: 
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.tigris:local
+        ports:
+            #- "9050:80"
+            - "9051:8080"
+            - "9000:22"
+        environment:
+            - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
+            - D3MINPUTDIR=/rdata/dataStore/d3m/datasets/seed_datasets_current
+            - D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
+            - TA2ADDR=sophia.stevencdang.com:45042
+            - TA2NAME=cmu
+            - VIRTUAL_HOST=learnsphere.sophia.stevencdang.com
+            - HOST_URL=sophia.stevencdang.com
+            - D3M_SERVICE_SUBDOMAIN=dexploraid
+        volumes:
+            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/rdata/dataStore/d3m/datasets/seed_datasets_current
+            - /rdata/dataStore/d3m/test_data_out:/rdata/dataStore/d3m/test_data_out
+
