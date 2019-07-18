@@ -228,3 +228,63 @@ class ProblemCreatorSession(WorkflowSession):
     def add_suggestion_prob(self, prob):
         logger.debug("Adding problem ID to list of suggested problems")
         self.suggest_pids.append(prob._id)
+
+class ModelSearchSession(WorkflowSession):
+
+    available_states = ['Not Ready', 
+                        'Searching for Solutions',
+                        'Fitting Solutions',
+                        'Scoring Solutions',
+                        'Getting Predicitons',
+                        'Solution Search Completed'
+                        ]
+    def __init__(self, 
+                 user_id, 
+                 workflow_id, 
+                 comp_id, 
+                 comp_type, 
+                 _id=None, 
+                 state=None,
+                 input_wfids=[],
+                 dataset_id=None,
+                 prob_id=None,
+                 session_url=None):
+        super().__init__(user_id=user_id, 
+                         workflow_id=workflow_id, 
+                         comp_id=comp_id, 
+                         comp_type=comp_type, 
+                         _id=_id, 
+                         session_url=session_url)
+        self.dataset_id = dataset_id
+        self.prob_id = prob_id
+        self.input_wfids = input_wfids
+        if state is None:
+            self.state = self.available_states[0]
+        else:
+            self.state = state
+
+    def set_state_ready(self):
+        self.state = self.available_states[1]
+
+    def set_state_complete(self):
+        self.state = self.available_states[-1]
+
+    def is_state_complete(self):
+        return self.state == self.available_states[-1]
+
+    def check_state_complete(self):
+        # Check problem state for valid and sufficient user input
+        return False # stubbed for now
+
+    def set_dataset_id(self, ds_id):
+        logger.debug("Setting session dataset id: %s" % ds_id)
+        self.dataset_id = ds_id
+
+    def set_problem_id(self, prob_id):
+        logger.debug("Setting session problem id: %s" % prob_id)
+        self.problem_id = prob_id
+
+    def set_input_wfids(self, wfids):
+        logger.debug("Adding list of input workflow ids to session")
+        self.input_wfids = wfids
+
