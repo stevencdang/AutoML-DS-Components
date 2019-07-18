@@ -92,6 +92,18 @@ class DXDB(object):
         logger.debug("Got problem id: %s" % pid)
         return str(pid)
 
+    def replace_problem(self, pid, prob):
+        logger.info("Replacing problem in db with given problem with id: %s" % pid)
+        # prob._id = ObjectId(prob._id)
+        d = json.loads(prob.to_json())
+        logger.debug("Loaded problem to json: %s" % str(d))
+        result = self.db[self.tbls['problems']].replace_one(
+            {'_id': ObjectId(pid)},
+            d
+        )
+        logger.debug("Count of documents modified by replace operation: %i" % result.modified_count)
+        return result.acknowledged
+
     def add_workflow_session(self, session):
         d = self.db[self.tbls['wf_sessions']].insert_one(session.__dict__)
         logger.debug("Added workflow session to db")

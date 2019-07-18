@@ -35,6 +35,21 @@ export class DataService {
     return this.http.get<Problem>(url);
   }
 
+  updateProblem(prob: Problem): Observable<Object> {
+    let url: string = this.backendAddr + this.problemUrl + "/" + prob._id;
+    const httpoptions = {
+      headers: new HttpHeaders({
+          'Content-Type':  'application/json'
+      })
+    };
+    console.log("updating problem in db with PUT: ", url);
+    let msg = JSON.stringify(prob);
+    console.log("Putting json: ", msg);
+    return this.http.put<Object>(url, msg, httpoptions);
+    
+  }
+
+
 
   getWorkflowSession(wfid: string): Observable<Object> {
     let url: string = this.backendAddr + this.getSessionUrl + "/" + wfid;

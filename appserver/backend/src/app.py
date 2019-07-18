@@ -15,6 +15,7 @@ import urllib
 from ls_utilities.ls_logging import setup_logging
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
+from ls_problem_desc.ls_problem import ProblemDesc
 from dxdb.dx_db import DXDB
 from dxdb.workflow_session import *
 
@@ -148,11 +149,25 @@ def get_dataset(dsid):
     logger.debug("dataset json: %s" % (ds.to_json()))
     return ds.to_json()
 
-@app.route('/prob/getProblem/<string:pid>')
+@app.route('/prob/getProblem/<string:pid>', methods = ['GET', 'PUT'])
 def get_problem(pid):
-    prob = db_client.get_problem(pid)
-    logger.debug("problem json: %s" % (prob.to_json()))
-    return prob.to_json()
+    if request.method == 'GET':
+        prob = db_client.get_problem(pid)
+        logger.debug("problem json: %s" % (prob.to_json()))
+        return prob.to_json()
+    if request.method == 'PUT':
+        data = json.loads(request.data)
+        if '_id' in data.keys():
+            logger.debug("removing _id field from data")
+            del data['_id']
+            logger.debug("data after removing _id: %s" % str(data))
+        prob = ProblemDesc.from_json(data)
+        result = db_client.replace_problem(pid, prob)
+        if result:
+            return "Success"
+        else:
+            return "Error"
+
 
 @app.route('/ds/getDataCols/<string:dsid>')
 def get_data_columns(dsid):

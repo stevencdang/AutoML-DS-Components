@@ -227,7 +227,7 @@ export class ProblemCreatorComponent implements OnInit {
   }
 
   init_problem_fields(prob: Problem) {
-    this.problem = prob;
+    this.set_new_problem(prob);
     console.log("Initializing all relevant field of problem: ", this.problem);
     if (this.problem.name === undefined) {
       this.problem.name = ""
@@ -247,10 +247,6 @@ export class ProblemCreatorComponent implements OnInit {
 
 
 
-
-  set_problem() {
-    console.log("Updating problem in db with current ui state");
-  }
 
   set_problem_target() {
     console.log("state of problem_target", this.problem_target);
@@ -325,35 +321,55 @@ export class ProblemCreatorComponent implements OnInit {
   }
 
   match_target(target: string) {
-    for (let t of this.possible_targets) {
-      console.log("checking for match of, ", target, "with possible target:", t);
-      if (target == t.targets[0].column_name) {
-        console.log("Found matching target");
-        this.problem_target = target;
-        return
+    if (this.possible_targets.length == 0) {
+      this.problem_target = t.targets[0].column_name
+    } else {
+      for (let t of this.possible_targets) {
+        console.log("checking for match of, ", target, "with possible target:", t);
+        if (target == t.targets[0].column_name) {
+          console.log("Found matching target");
+          this.problem_target = target;
+          return
+        }
       }
     }
   }
 
   set_new_problem(prob: Problem) {
-    this.problem = prob;
+    let new_prob: Problem = this.clean_problem(this.copyObject<Problem>(prob));
+    if (this.problem != undefined) {
+      let old_id: string = this.problem._id;
+      this.problem = new_prob;
+      this.problem._id = old_id;
+    } else {
+      this.problem = new_prob;
+    }
+
     // Set the performance metric state according to that in the problem
-    this.problem_metric = prob.metrics[0].metric
+    this.problem_metric = new_prob.metrics[0].metric
     // Set the target according to that reflected in the problem
-    this.match_target(prob.inputs[0].targets[0].column_name);
+    this.match_target(new_prob.inputs[0].targets[0].column_name);
   }
 
   use_suggest_prob() {
     console.log("Problem Suggestion Requested", this.suggest_probs[0]);
     console.log("current problem: ", this.problem);
     console.log("Suggested Problem: ", this.suggest_probs[0]);
-    let new_prob: Problem = this.clean_problem(this.copyObject<Problem>(this.suggest_probs[0]));
-    console.log("Cleaned problem for updating:", new_prob);
-    this.set_new_problem(new_prob);
+    this.set_new_problem(this.suggest_probs[0]);
 
     console.log("Updated problem: ", this.problem);
     console.log("Suggested Problem: ", this.suggest_probs[0]);
   }
+
+  set_problem() {
+    console.log("Updating problem in db with current ui state");
+    this.dataService.updateProblem(this.problem).subscribe(result => console.log("Result of update problem to db:", result));
+    this.wfs.state = "Problem Creation Completed";
+    let updates: Object = {state: this.wfs.state};
+    this.dataService.updateWorkflowSession(this.wfs._id, updates).subscribe(result => console.log(result));
+  }
+
+
 
 }
 
