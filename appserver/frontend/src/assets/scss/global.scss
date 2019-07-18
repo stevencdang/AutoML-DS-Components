@@ -3,6 +3,7 @@
   @include make-container();
 }
 
+
 .wf-status-container {
   @include make-row();
 
@@ -43,6 +44,10 @@
     
 }
 
+.wf-ui-container {
+  @include make-row();
+}
+
 .section-header {
   @include make-col(12);
 }
@@ -65,7 +70,7 @@
     display: inline-block;
     font-style: bold;
     font-size: $md-font;
-    margin-right: 10px;
+    //padding-right: $h-padding-sm;
   }
 
   .form-info {

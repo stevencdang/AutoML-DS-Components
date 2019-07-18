@@ -4,6 +4,8 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
+import {SelectItem} from 'primeng/api';
+
 import { Dataset, DatasetResource } from "../lib/dataset";
 import { DataService } from "../lib/data.service";
 import { WorkflowSession, DatasetImporterSession } from "../lib/workflowSession";
@@ -17,7 +19,7 @@ import { WorkflowSession, DatasetImporterSession } from "../lib/workflowSession"
 export class DatasetImporterComponent implements OnInit {
 
   wfs: DatasetImporterSession;
-  available_datasets: Dataset[];
+  available_datasets: SelectItem[];
   selected_dataset: Dataset;
   selected_resource: DatasetResource;
 
@@ -78,8 +80,9 @@ export class DatasetImporterComponent implements OnInit {
   }
 
   parse_new_dataset(ds: Dataset, setSelected: Boolean) {
-    console.log("Got dataset: ", ds.about.datasetID);
-    this.available_datasets.push(ds);
+    console.log("Got dataset: ", ds.about.datasetName);
+    this.available_datasets.push({label: ds.about.datasetName, value: ds});
+    console.log("Added dataset to available datasets:", this.available_datasets);
     if (setSelected) {
       this.selected_dataset = ds;
     }
@@ -93,17 +96,19 @@ export class DatasetImporterComponent implements OnInit {
     }
   }
 
-  onSelectDataset(ds: Dataset) {
-    console.log("Selected dataset: ", ds);
-    if (this.selected_dataset != undefined) {
-      if (this.selected_dataset._id == ds._id) {
-        this.selected_dataset = undefined;
-      } else {
-        this.selected_dataset = ds;
-      }
-    } else {
-      this.selected_dataset = ds;
-    }
+  on_select_dataset() {
+    console.log("Selected dataset: ", this.selected_dataset);
+    //console.log("Current selected dataset id: ", this.selected_dataset._id);
+    //console.log("Selected dataset: ", ds);
+    //if (this.selected_dataset != undefined) {
+      //if (this.selected_dataset._id == ds._id) {
+        //this.selected_dataset = undefined;
+      //} else {
+        //this.selected_dataset = ds;
+      //}
+    //} else {
+      //this.selected_dataset = ds;
+    //}
 
   }
 

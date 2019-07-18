@@ -2,24 +2,21 @@
 
 
 .section-header {
-  @include make-col(12);
   width: 100%;
   font-style: bold;
   font-size: $lg-font
-
 }
 
 .dataset-list-container {
 
-  @include make-row();
-  padding: 0.25em 1em;
+  @include make-col(4);
+  padding: $v-padding-md $h-padding-sm;
 
   .dataset-list {
-    @include make-col(12);
-    height: 100px;
+    //@include make-col(12);
+    height: 300px;
     //margin: 0 10%;
     overflow-y: scroll;
-    border: 2px solid black;
 
     .dataset-item {
       font-size: $md-font;
@@ -37,15 +34,15 @@
 }
 .dataset-metadata-container {
 
-  @include make-row();
-  padding: 0.25em 1em;
+  @include make-col(8);
+  padding: $v-padding-md $h-padding-sm;
+  //margin: 0.25em 1em;
 
   .metadata-fields {
-    @include make-col-ready();
-    height: 175px;
-    padding-bottom: 2em;
+    @include make-container();
+    height: 300px;
+    margin: $v-padding-md $h-padding-sm;
     overflow-y: scroll;
-    //@include make-col(12);
   }
 
 }
