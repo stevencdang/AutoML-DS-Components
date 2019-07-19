@@ -355,6 +355,7 @@ class TA2Client(object):
                 results = reply
             elif reply.progress.state == core_pb2.ERRORED:
                 logger.error("Fitting model to solution has completed in an error state: %s" % reply.progress.status)
+                raise Exception("Fit solution resulted in error: %s" % str(reply.progress.status))
             else:
                 logger.warning("Fittin model to solution is in an unknown state: %s" % str(reply.progress))
        

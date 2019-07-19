@@ -195,7 +195,7 @@ cp -R $DS_DIRECTORY/docker_datashop/* $DS_DIRECTORY/
 # Overwrite the datashop.war from the d3m trunk
 #cp $CWD/datashop.war $DS_DIRECTORY/deploy/vm/datashop.war
 # Copy Dockerfile to override standard one
-cp $CWD/Dockerfile $DS_DIRECTORY/
+cp $CWD/Dockerfile.tigris $DS_DIRECTORY/
 # Overwrite component config script to handle build bug on unused component
 cp $CWD/update_components_docker.sh $DS_DIRECTORY/tools/workflows/exec_component/
 # OVerwrive component generation script
