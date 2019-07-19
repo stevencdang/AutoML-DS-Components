@@ -19,19 +19,25 @@ WORKDIR /app
 ADD build/requirements.txt /app/
 RUN pip3 install -r requirements.txt
 
-# Add project code to docker 
-COPY program/ /app
-
 # Install ta3ta2-api
-WORKDIR /app/ta3ta2-api
-RUN python3 --version
+RUN mkdir /tmpbuild
+COPY tmp /tmpbuild
+WORKDIR /tmpbuild/ta3ta2-api
+RUN python3 --version \
+  && pwd \
+  && ls
 RUN python3 setup.py install && \
   pip3 freeze
 
+# Add project code to docker 
+COPY program/ /app
+
+COPY start.sh /app
+
 WORKDIR /app
 
-EXPOSE 5000
+EXPOSE 8081
 
 # Set initialization script
-ENTRYPOINT ["python3"]
-CMD ["app.py"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["/app/start.sh"]

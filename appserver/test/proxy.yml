@@ -15,10 +15,10 @@ services:
             - NGINX_PORT=8080
             - LEARNSPHERE_HOST=sophia.stevencdang.com
             - LEARNSPHERE_PORT=9051
-            - FRONTEND_HOST=localhost
-            - FRONTEND_PORT=9051
-            - BACKEND_HOST=localhost
-            - BACKEND_PORT=5000
+            - FRONTEND_HOST=sophia.stevencdang.com
+            - FRONTEND_PORT=8081
+            - BACKEND_HOST=sophia.stevencdang.com
+            - BACKEND_PORT=8083
             - DB_HOST=localhost
             - DB_PORT=27017
             - VIZ_HOST=localhost

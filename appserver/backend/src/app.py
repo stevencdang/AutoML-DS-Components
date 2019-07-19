@@ -217,6 +217,18 @@ def is_ready():
     else:
         return "False"
 
+@app.route('/test/getAllDBDatasets')
+def get_db_datasets():
+    """
+    Get a list of all datasets in the db
+
+    """
+    logger.info("Retreiving all datasets in db")
+    datasets = db_client.get_all_datasets()
+    ds = [d for d in datasets]
+    logger.debug("Got datsets frm db: %s" % str(ds))
+    return str(ds)
+
 @app.route('/test/getDatasetList')
 def get_dataset_list():
     """
@@ -227,8 +239,12 @@ def get_dataset_list():
 
     ds_root = config.get_dataset_path()
 
+    # Get dummy workflow session 
+    session = ImportDatasetSession(user_id="testUser", workflow_id="testWorkflow",
+                                   comp_type="DatasetImporter", comp_id="testDatasetImporter")
+
     logger.info("Scanning dataset root: %s" % ds_root)
-    runner = DatasetImporter()
+    runner = DatasetImporter(db=db_client, session=session)
     datasets = runner.run(ds_root)
 
     out_dir = os.path.join('/output/test')
@@ -438,7 +454,13 @@ def model_export():
 
 if __name__ == '__main__':
     config = SettingsFactory.get_env_settings()
-    db_client = DXDB(config.get_db_addr())
-    bokeh_server_url = "http://" + config.get_viz_addr() 
+    dx_config = SettingsFactory.get_dx_settings()
+    db_client = DXDB(dx_config.get_db_backend_url())
+    bokeh_server_url = "http://" + dx_config.get_viz_server_url() 
+    
+    if os.environ['VIRTUAL_PORT'] is not None:
+        my_port = int(os.environ['VIRTUAL_PORT'])
+    else:
+        my_port = 8081
 
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True,host='0.0.0.0', port=my_port)

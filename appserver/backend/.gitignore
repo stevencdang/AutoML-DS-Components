@@ -2,6 +2,9 @@
 program
 test
 venv
+ta3ta2-api
 
 # Generated log files
 log-*.txt
+
+#

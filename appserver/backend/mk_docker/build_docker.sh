@@ -36,7 +36,13 @@ elif [ "$#" == 1 ]; then
     /bin/bash $setup_path/setup_run.sh
 
     echo "Pulling ta3ta2-api source to be built"
-    cd $app_path/program
+    
+    cd $app_path/
+    if [ ! -d "$app_path"/tmp ]; then
+      rm -Rf "$app_path"/tmp
+    fi
+    mkdir "$app_path"/tmp
+    cd "$app_path"/tmp
     git clone https://gitlab.com/datadrivendiscovery/ta3ta2-api.git
     cd ta3ta2-api
     git checkout dist-python
@@ -68,7 +74,12 @@ elif [ "$#" == 2 ]; then
       /bin/bash $setup_path/setup_run.sh
 
       echo "Pulling ta3ta2-api source to be built"
-      cd $app_path/program
+      cd $app_path/
+      if [ ! -d "$app_path"/tmp ]; then
+        rm -Rf "$app_path"/tmp
+      fi
+      mkdir "$app_path"/tmp
+      cd "$app_path"/tmp
       git clone https://gitlab.com/datadrivendiscovery/ta3ta2-api.git
       cd ta3ta2-api
       git checkout dist-python

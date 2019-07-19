@@ -1,3 +1,4 @@
+export D3MCONFIG=$WCCDEV/d3m.cfg
 export DBADDR="localhost"
 export DBPORT=27017
 export VIZADDR="localhost"

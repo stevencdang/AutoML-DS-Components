@@ -1,0 +1,8 @@
+version: "2"
+services:
+    dexplorer.db:
+        image:
+            registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.db:local
+        ports:
+            - "27017:27017"
+
