@@ -12,10 +12,6 @@ app_path=$build_path
 
 docker_path=$build_path/Dockerfile.tigris
 
-echo "Executing: " "docker build -t $name -f $docker_path $app_path"
-docker build -t $name -f $docker_path $app_path
-
-
 # Handle the path argument to the runWCC.sh
 if [ "$#" == 0 ]; then
     echo "No Options given. Building local test image 'dexplorer.tigris:test' by default"

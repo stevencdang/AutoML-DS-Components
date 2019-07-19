@@ -247,7 +247,9 @@ RUN echo "ServerName localhost" | tee /etc/apache2/conf-available/fqdn.conf && a
  && sed -i "s#[ \t]\+SSLCertificateKeyFile[ \t]\+.*#\t\tSSLCertificateKeyFile\t/etc/apache2/ssl/server.key#g" /etc/apache2/sites-available/default-ssl.conf \
  && mkdir /etc/apache2/ssl \
  && openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -out /etc/apache2/ssl/server.crt -keyout /etc/apache2/ssl/server.key \
-  -subj "/C=US/ST=PA/L=Pittsburgh/O=Carnegie Mellon University/OU=Human Computer Interaction Institute/CN=localhost" 
+  -subj "/C=US/ST=PA/L=Pittsburgh/O=Carnegie Mellon University/OU=Human Computer Interaction Institute/CN=localhost" \
+  && sed -i "s|Listen 80|Listen 9051|g" /etc/apache2/ports.conf \
+  && sed -i "s|*:80|*:9051|g" /etc/apache2/sites-available/000-default.conf
  #&& a2enmod ssl
 
 # Create logging property files from the templates
@@ -265,18 +267,18 @@ ADD workflow_components /datashop/workflow_components
 ADD d3m_components /datashop/d3m_components
 RUN chown -R datashop:datashop /datashop/d3m_components \
     # Setup some docker dev env for testing with docker image
-    && cp /datashop/d3m_components/mk_docker/.vimrc /home/datashop/ \
-    && cp /datashop/d3m_components/mk_docker/.gitconfig /home/datashop/ \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/.vimrc /home/datashop/ \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/.gitconfig /home/datashop/ \
     && echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
     && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile \
     # Copy workflow component init script from d3m directory
-    && cp /datashop/d3m_components/mk_docker/workflow_component_local.sql /datashop/sql/ \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/workflow_component_local.sql /datashop/sql/ \
     && chmod ug+rwx,o+rx /datashop/sql/workflow_component_local.sql \
     # ADD start.sh /datashop/start.sh
-    # && cp /datashop/d3m_components/mk_docker/start.sh /datashop/shart.sh \
-    && chmod ug+rwx,o+rx /datashop/d3m_components/mk_docker/start.sh \
-    && chown datashop:datashop /datashop/d3m_components/mk_docker/start.sh \
-    && dos2unix /datashop/d3m_components/mk_docker/start.sh
+    # && cp /datashop/d3m_components/appserver/tigris/mk_docker/start.sh /datashop/shart.sh \
+    && chmod ug+rwx,o+rx /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
+    && chown datashop:datashop /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
+    && dos2unix /datashop/d3m_components/appserver/tigris/mk_docker/start.sh
 
  # cleanup windows file endings and permissions in workflow components directory
  RUN chown -R datashop:datashop /datashop/workflow_components \
@@ -338,8 +340,8 @@ RUN mkdir /var/run/sshd \
 RUN printf ",g/ip6/d\nw\nq\n" | ed /etc/hosts
 
 # Make ports 443 (HTTPS), 80 (HTTP), and 22 (SSH) available to the outside world (0.0.0.0)
-EXPOSE 8080 22
-CMD ["/bin/bash", "/datashop/d3m_components/mk_docker/start.sh"]
+EXPOSE 9051 22
+CMD ["/bin/bash", "/datashop/d3m_components/appserver/tigris/mk_docker/start.sh"]
 
 
 # END OF Dockerfile

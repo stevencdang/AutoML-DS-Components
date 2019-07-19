@@ -58,8 +58,8 @@ chmod g+w -R $D3MOUTPUTDIR
 
 ### For D3m Tigris only ###
 # Change config to monitor port 8080 instead of 80
-cp /datashop/d3m_components/appserver/tigris/mk_docker/000-default.conf /etc/apache2/sites-available/
-cp /datashop/d3m_components/appserver/tigris/mk_docker/ports.conf /etc/apache2/
+#cp /datashop/d3m_components/appserver/tigris/mk_docker/000-default.conf /etc/apache2/sites-available/
+#cp /datashop/d3m_components/appserver/tigris/mk_docker/ports.conf /etc/apache2/
 
 
 
