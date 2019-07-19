@@ -7,12 +7,11 @@ if [ "$1" == "--help" ]; then
     exit 0
 fi
 
-
 build_path=$(dirname $(readlink -f "$0"))
 app_path=$(dirname $build_path)
+setup_path=$app_path/build
 
 docker_path=$build_path/Dockerfile.proxy
-
 
 # Handle the path argument to the runWCC.sh
 if [ "$#" == 0 ]; then
@@ -29,7 +28,7 @@ elif [ "$#" == 1 ]; then
         echo "Building deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
         name="registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live"
     else
-        echo "Unknown argument given with one arg" $1 ". Building deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
+        echo "Unknown argument given. Building deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
         name="registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live"
     fi
 
@@ -48,7 +47,10 @@ elif [ "$#" == 2 ]; then
           echo "Building deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
           name="registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live"
       else
-          echo "Unknown argument given for building. " $2 "Building deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
+          echo "Unknown argument given." 
+          echo "1: " $1
+          echo "2: " $2 
+          echo "Building deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
           name="registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live"
       fi
 
@@ -66,7 +68,10 @@ elif [ "$#" == 2 ]; then
           echo "Pushing deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
           name="registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live"
       else
-          echo "Unknown argument given. " $2 " Pushing deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
+          echo "Unknown argument given." 
+          echo "1: " $1
+          echo "2: " $2 
+          echo " Pushing deployment docker image:  'registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live'"
           name="registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:live"
       fi
       docker push $name
@@ -74,3 +79,10 @@ elif [ "$#" == 2 ]; then
       echo "Unknown argument given " $1 " must be either <build|push>"
     fi
 fi
+
+
+
+
+
+
+

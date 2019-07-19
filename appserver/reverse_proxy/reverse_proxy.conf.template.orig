@@ -1,0 +1,44 @@
+server {
+
+    listen ${NGINX_PORT};
+    server_name ${NGINX_HOST};
+
+    location / {
+        proxy_pass http://dexplorer.frontend:8081/;
+    }
+      
+    location /tigris/ {
+        proxy_pass http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/;
+        proxy_redirect http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/ http://${NGINX_HOST}:${NGINX_PORT}/tigris/;
+        sub_filter "http://${NGINX_HOST}:${NGINX_PORT}/" "http://${NGINX_HOST}:${NGINX_PORT}/tigris/";
+        sub_filter_once off;
+        sub_filter_types *;
+    }
+    location /tigris/ {
+        proxy_pass http://localhost:9051;
+        proxy_redirect http://localhost:9051/ http://localhost:8080/tigris/;
+        sub_filter "http://localhost:8080" "http://localhost:8080/tigris/";
+        sub_filter_once off;
+        sub_filter_types *;
+    }
+      
+      
+    /*location /componentui/ {*/
+        /*proxy_pass http://${FRONTEND_HOST}:${FRONTEND_PORT}/;*/
+        /*proxy_redirect http://${FRONTEND_HOST}:${FRONTEND_PORT}/ http://${NGINX_HOST}:${NGINX_PORT}/componentui/;*/
+    /*}*/
+      
+    /*location /dexplorer/ {*/
+        /*proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;*/
+    /*}*/
+      
+    /*location /db/ {*/
+        /*proxy_pass http://${DB_HOST}:${DB_PORT}/;*/
+    /*}*/
+      
+    /*location /viz/   {*/
+        /*proxy_pass http://${VIZ_HOST}:${DB_PORT}/;*/
+    /*}*/
+      
+
+}
