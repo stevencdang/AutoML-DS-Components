@@ -4,12 +4,12 @@ server {
 
 
     location / {
-        proxy_pass http://sophia.stevencdang.com:9051/;
+        proxy_pass http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/;
     }
       
     location /tigris/ {
-        proxy_pass http://sophia.stevencdang.com:9051/;
-        proxy_redirect http://sophia.stevencdang.com:9051/ http://localhost:8080/tigris/;
+        proxy_pass http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/;
+        proxy_redirect http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/ http://${NGINX_HOST}:${NGINX_PORT}/tigris/;
     }
 
 }

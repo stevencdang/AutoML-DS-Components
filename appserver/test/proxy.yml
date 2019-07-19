@@ -13,7 +13,7 @@ services:
             - TA2NAME=cmu
             - NGINX_HOST=sophia.stevencdang.com
             - NGINX_PORT=8080
-            - LEARNSPHERE_HOST=localhost
+            - LEARNSPHERE_HOST=sophia.stevencdang.com
             - LEARNSPHERE_PORT=9051
             - FRONTEND_HOST=localhost
             - FRONTEND_PORT=9051
