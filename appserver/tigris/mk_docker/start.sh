@@ -56,12 +56,6 @@ chmod 775 $dockerconfig
 chgrp -R datashop $D3MOUTPUTDIR
 chmod g+w -R $D3MOUTPUTDIR
 
-### For D3m Tigris only ###
-# Change config to monitor port 8080 instead of 80
-#cp /datashop/d3m_components/appserver/tigris/mk_docker/000-default.conf /etc/apache2/sites-available/
-#cp /datashop/d3m_components/appserver/tigris/mk_docker/ports.conf /etc/apache2/
-
-
 
 # MoocDB "core" and "clean" databases
 cd /datashop/sql/create/MOOCdb

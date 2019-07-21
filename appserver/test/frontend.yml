@@ -4,7 +4,7 @@ services:
         image: 
             registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.frontend:local
         ports:
-            - "8081:8081"
+            - "8082:8082"
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/rdata/dataStore/d3m/datasets/seed_datasets_current
             - /rdata/dataStore/d3m/test_data_out:/rdata/dataStore/d3m/test_data_out

@@ -23,7 +23,8 @@ class Dexplorer(object):
 class DexplorerUIServer(object):
 
     def __init__(self, url):
-        self.url = url
+        # self.url = url # no longer aboslute because services are hidden behind proxy
+        self.url = "/componentui"
 
     def get_simple_eda_ui_url(self, wfs):
         return self.url + "/eda" + "/%s" % (wfs._id)
