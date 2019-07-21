@@ -1,6 +1,6 @@
 version: "2"
 services:
-    proxy:
+    reverse.proxy:
         image: 
             registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.proxy:local
         ports:
@@ -9,21 +9,20 @@ services:
             - D3MCONFIG=/datashop/workflow_components/D3M/d3m.cfg
             - D3MINPUTDIR=/rdata/dataStore/d3m/datasets/seed_datasets_current
             - D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
-            - TA2ADDR=sophia.stevencdang.com:45042
+            - TA2ADDR=ta2:45042
             - TA2NAME=cmu
             - NGINX_HOST=sophia.stevencdang.com
             - NGINX_PORT=8080
             - LEARNSPHERE_HOST=sophia.stevencdang.com
             - LEARNSPHERE_PORT=9051
-            - FRONTEND_HOST=sophia.stevencdang.com
-            - FRONTEND_PORT=8081
-            - BACKEND_HOST=sophia.stevencdang.com
-            - BACKEND_PORT=8083
-            - DB_HOST=localhost
+            - BACKEND_HOST=dexplorer.backend
+            - BACKEND_PORT=8081
+            - FRONTEND_HOST=dexplorer.frontend
+            - FRONTEND_PORT=8082
+            - DB_HOST=dexplorer.db
             - DB_PORT=27017
-            - VIZ_HOST=localhost
-            - VIZ_PORT=5200
+            - VIZ_HOST=dexplorer.viz
+            - VIZ_PORT=8083
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/rdata/dataStore/d3m/datasets/seed_datasets_current
             - /rdata/dataStore/d3m/test_data_out:/rdata/dataStore/d3m/test_data_out
-
