@@ -52,6 +52,13 @@ if __name__ == '__main__':
     logger.debug("DB URL: %s" % dx_config.get_db_backend_url())
     db = DXDB(dx_config.get_db_backend_url())
 
+    # Test db
+    result = db.list_all_collections()
+    logger.debug("***************************************************")
+    logger.debug("Got list of collections; %s" % str(result))
+    logger.debug("***************************************************")
+
+
     # Get Session Metadata
     user_id = args.userId
     logger.debug("User ID: %s" % user_id)
@@ -83,7 +90,7 @@ if __name__ == '__main__':
     # Read in the dataset json
     ds_root = config.get_dataset_path()
     runner = DatasetImporter(db, session)
-    datasets = runner.run(ds_root)
+    # datasets = runner.run(ds_root)
 
 
     # Write html ui to output file
