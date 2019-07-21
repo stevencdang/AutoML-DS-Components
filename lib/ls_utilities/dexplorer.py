@@ -23,6 +23,7 @@ class Dexplorer(object):
 class DexplorerUIServer(object):
 
     def __init__(self, url):
+        # url # no longer aboslute because services are hidden behind proxy
         if url.startswith("/"):
             self.url = url
         else:

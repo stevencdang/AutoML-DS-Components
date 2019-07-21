@@ -3,10 +3,20 @@ server {
     listen ${NGINX_PORT};
 
 
+    location /tigris/ {
+        proxy_pass http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/;
+        proxy_redirect http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/ http://${NGINX_HOST}:${NGINX_PORT}/tigris/;
+    }
+
     location /dexplorer/ {
         proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT}/;
     }
       
+    location /componentui/ {
+        proxy_pass http://${FRONTEND_HOST}:${FRONTEND_PORT}/;
+				
+
+    }
 
     location /db/ {
         proxy_pass http://${DB_HOST}:${DB_PORT}/;

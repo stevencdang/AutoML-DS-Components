@@ -41,11 +41,11 @@ services:
             - TA2ADDR=ta2:45042
             - TA2NAME=cmu
             - VIRTUAL_HOST=learnsphere.sophia.stevencdang.com
-            - HOST_URL=sophia.stevencdang.com
-            - D3M_SERVICE_SUBDOMAIN=dexploraid
-        volumes:
-            - /rdata/dataStore/d3m/datasets/seed_datasets_current:/rdata/dataStore/d3m/datasets/seed_datasets_current
-            - /rdata/dataStore/d3m/test_data_out:/rdata/dataStore/d3m/test_data_out
+            - BACKEND_HOST_URL=dexplorer.backend:8081
+            - BACKEND_URL=dexplorer.backend:8081
+            - FRONTEND_HOST_URL=dexplorer.frontend:8082
+            - FRONTEND_URL=dexplorer.frontend:8082
+            - VIZ_HOST_URL=dexplorer.viz:8083
 
 
     dexplorer.backend:

@@ -15,9 +15,9 @@ export class DataService {
   datasetUrl: string = "/ds/getDataset";
   problemUrl: string = "/prob/getProblem";
   getSessionUrl: string = "/wfs";
-  backendAddr: string = "http://localhost:8686";
-  bokehUrl1: string = "http://sophia.stevencdang.com:5000/testbokeh1";
-  bokehUrl2: string = "http://sophia.stevencdang.com:5000/testbokeh2";
+  backendAddr: string = "/dexplorer";
+  bokehUrl1: string = "/viz/bokeh1";
+  bokehUrl2: string = "/viz/testbokeh2";
   constructor(private http: HttpClient) { }
 
   getDataset(dsid: string): Observable<Dataset> {
