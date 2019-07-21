@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # Read in the dataset json
     ds_root = config.get_dataset_path()
     runner = DatasetImporter(db, session)
-    # datasets = runner.run(ds_root)
+    datasets = runner.run(ds_root)
 
 
     # Write html ui to output file
