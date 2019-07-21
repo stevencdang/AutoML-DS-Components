@@ -23,7 +23,10 @@ class Dexplorer(object):
 class DexplorerUIServer(object):
 
     def __init__(self, url):
-        self.url = url
+        if url.startswith("/"):
+            self.url = url
+        else:
+            self.url = "/" + url
 
     def get_simple_eda_ui_url(self, wfs):
         return self.url + "/eda" + "/%s" % (wfs._id)
