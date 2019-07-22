@@ -10,7 +10,7 @@ import csv
 
 # Workflow component specific imports
 from ls_utilities.ls_logging import setup_logging
-from ls_utilities.cmd_parser import get_default_arg_parser
+from ls_utilities.cmd_parser import get_default_arg_parser, get_session_info
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from user_ops.dataset import DatasetImporter
@@ -59,15 +59,7 @@ if __name__ == '__main__':
     logger.debug("***************************************************")
 
 
-    # Get Session Metadata
-    user_id = args.userId
-    logger.debug("User ID: %s" % user_id)
-    workflow_id = os.path.split(os.path.abspath(args.workflowDir))[1]
-    logger.debug("Workflow ID: %s" % workflow_id)
-    comp_type = os.path.split(os.path.abspath(args.toolDir))[1]
-    logger.debug("Component Type: %s" % comp_type)
-    comp_id = os.path.split(os.path.abspath(args.componentXmlFile))[1].split(".")[0]
-    logger.debug("Component Id: %s" % comp_id)
+    user_id, workflow_id, comp_type, comp_id = get_session_info(args)
 
     # Initialize new session
     session = ImportDatasetSession(user_id=user_id, workflow_id=workflow_id, 
