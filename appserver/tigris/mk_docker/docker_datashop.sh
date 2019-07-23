@@ -21,7 +21,7 @@ echo ""
 CWD=$(pwd)
 DS_DIRECTORY="$CWD"/DataShopDocker
 
-DS_VERSION="tags/DATASHOP_10_3_11_patch"
+DS_VERSION="tags/DATASHOP_10_4_6_patch"
 DSA_VERSION="branches/d3m"
 
 if [ -d $DS_DIRECTORY ]; then
