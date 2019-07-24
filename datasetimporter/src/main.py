@@ -17,6 +17,7 @@ from user_ops.dataset import DatasetImporter
 from dxdb.dx_db import DXDB
 from dxdb.workflow_session import ImportDatasetSession
 from ls_utilities.dexplorer import *
+from ls_utilities.html import IframeBuilder
 
 __version__ = '0.1'
 
@@ -54,11 +55,8 @@ if __name__ == '__main__':
 
     # Test db
     result = db.list_all_collections()
-    logger.debug("***************************************************")
-    logger.debug("Got list of collections; %s" % str(result))
-    logger.debug("***************************************************")
 
-
+    # Get Session metadata 
     user_id, workflow_id, comp_type, comp_id = get_session_info(args)
 
     # Initialize new session
@@ -91,9 +89,9 @@ if __name__ == '__main__':
                               )
     logger.info("Writing output html to: %s" % out_file_path)
     logger.debug("Embedded iframe url: %s" % session.session_url)
-    out_html = '<iframe src="%s" width="1024" height="768"></iframe>' % session.session_url
+    html_writer = IframeBuilder(session.session_url)
     with open(out_file_path, 'w') as out_file:
-        out_file.write(out_html)
+        out_file.write(html_writer.get_document())
 
     # Write session info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'session_out_file'))

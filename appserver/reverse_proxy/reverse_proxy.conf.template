@@ -9,7 +9,7 @@ server {
 
     location /tigris/ {
         proxy_pass http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/;
-        proxy_redirect http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/ http://${NGINX_HOST}:${NGINX_PORT}/tigris/;
+        proxy_redirect http://${LEARNSPHERE_HOST}:${LEARNSPHERE_PORT}/ http://$host/tigris/;
     }
 
     location /dexplorer/ {
