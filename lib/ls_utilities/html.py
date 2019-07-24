@@ -13,10 +13,11 @@ class IframeBuilder(object):
         self.width = width
 
     def get_document(self):
-        return '<!DOCTYPE html>\
-                <html>\
-                    <body>\
-                        <iframe src="%s" width="%i" height="%i"></iframe>\
-                    </body>\
-                </html> ' % (self.src, self.width, self.height)
+        output = '<!DOCTYPE html>\n'
+        output = output + "<html>\n"
+        output = output + "<body>\n"
+        output = output + ('<iframe src="%s" width="%i" height="%i"></iframe>\n' % (self.src, self.width, self.height))
+        output = output + "</body>\n"
+        output = output + "</html>\n"
+        return output
 
