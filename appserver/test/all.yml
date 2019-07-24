@@ -42,9 +42,9 @@ services:
             - TA2NAME=cmu
             - VIRTUAL_HOST=learnsphere.sophia.stevencdang.com
             - BACKEND_HOST_URL=dexplorer.backend:8081
-            - BACKEND_URL=dexplorer.backend:8081
+            - BACKEND_URL=dexplorer
             - FRONTEND_HOST_URL=dexplorer.frontend:8082
-            - FRONTEND_URL=dexplorer.frontend:8082
+            - FRONTEND_URL=componentui
             - VIZ_HOST_URL=dexplorer.viz:8083
 
 
