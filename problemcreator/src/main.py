@@ -23,6 +23,7 @@ from ls_problem_desc.ls_problem import *
 from dxdb.dx_db import DXDB
 from dxdb.workflow_session import ProblemCreatorSession
 from ls_utilities.dexplorer import *
+from ls_utilities.html import IframeBuilder
 from user_ops.problem import *
 
 __version__ = '0.1'
@@ -158,9 +159,9 @@ if __name__ == '__main__':
                               )
     logger.info("Writing output html to: %s" % out_file_path)
     logger.debug("Embedded iframe url: %s" % session.session_url)
-    out_html = '<iframe src="%s" width="1024" height="768"></iframe>' % session.session_url
+    html_writer = IframeBuilder(session.session_url)
     with open(out_file_path, 'w') as out_file:
-        out_file.write(out_html)
+        out_file.write(html_writer.get_document())
 
     # Write session info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'session_out_file'))

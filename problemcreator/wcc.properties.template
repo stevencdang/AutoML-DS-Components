@@ -41,7 +41,7 @@ component.description=Allow user to create a new problem given a problem wizard
 component.num_inputs=1
 
 # The number of outputs for the new component. 
-component.num_outputs=3
+component.num_outputs=2
 
 # The number of options for the new component. 
 component.num_options=0
@@ -53,10 +53,7 @@ input.0.type=dataset
 output.0.type=problem
 output.0.name=session.json
 
-output.1.type=ranked-models
-output.1.name=ranked-models.tsv
-
-output.2.type=inline-html
-output.2.name=ui.html
+output.1.type=inline-html
+output.1.name=ui.html
 
 
