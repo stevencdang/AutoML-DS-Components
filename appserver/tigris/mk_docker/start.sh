@@ -17,7 +17,7 @@ mysql -u root analysis_db < /datashop/sql/create/create_adb_10_x.sql
 
 # Update DataShop/Tigris Authentication tables in database
 cat << EOF | \
-   mysql -u root
+   mysql -u root analysis_db
 ALTER TABLE `workflow_component_instance` CHANGE COLUMN `state` `state` ENUM('new','running','running_dirty','error','do_not_run','completed', 'completed_warn') NULL DEFAULT 'new' COLLATE 'utf8_bin' AFTER `dirty_selection`;
 ALTER TABLE `workflow_component_instance_persistence` CHANGE COLUMN `state` `state` ENUM('new','running','running_dirty','error','do_not_run','completed', 'completed_warn') NULL DEFAULT 'new' COLLATE 'utf8_bin' AFTER `dirty_selection`;
 ALTER TABLE `workflow_component_instance` ADD COLUMN `warnings` LONGTEXT NULL COLLATE 'utf8_bin' AFTER `errors`;
