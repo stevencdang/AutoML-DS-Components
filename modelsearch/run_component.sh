@@ -38,6 +38,6 @@ source $venv/bin/activate
 # will exist when this script is run in Tigris
 path="$PYTHONPATH":"$cwd/program"
 
-PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId='testuser' -workflowDir='/datashop/dataset_files/workflows/1162' -is_test=1 -toolDir "$cwd" -componentXmlFile "$cwd/workflows/1162/components/ModelSearch-1-x922120.xml" -file0=$cwd/test/session.json
+PYTHONPATH="$path" python src/main.py -programDir $cwd -workingDir $cwd/test/output -userId='testuser' -workflowDir='/datashop/dataset_files/workflows/1162' -is_test=1 -toolDir "$cwd" -componentXmlFile "$cwd/workflows/1162/components/ModelSearch-1-x922120.xml" -node 0 -fileIndex 0 $cwd/test/session.json
 
 deactivate

@@ -123,7 +123,7 @@ class Model(object):
         
         out = Model(d['id'])
         out.name = d['name']
-        out.desc = d['description']
+        out.desc = d['desc']
         out.add_description(d['model'])
         if 'fitted_id' in d.keys():
             logger.debug("Found fitted id in model json")
@@ -147,7 +147,7 @@ class Model(object):
         out = {
             'id': self.id,
             'name': self.name,
-            'description': self.desc,
+            'desc': self.desc,
             'model': self.model
         }
         if self.fitted_id is not None:

@@ -89,8 +89,8 @@ if __name__ == '__main__':
     except Exception as e:
         logger.error("Error while loading session json at %s" % session_files[0])
     obj = db.get_object('wf_sessions', sess_json['_id'])
-    ds_sess = WorkflowSession.from_json(obj) 
-    logger.debug("recovered input session: %s" % ds_sess.to_json())
+    prev_sess = WorkflowSession.from_json(obj) 
+    logger.debug("recovered input session: %s" % prev_sess.to_json())
 
     # Checking if problem has been defined 
     if not prev_sess.is_state_complete():
@@ -144,8 +144,8 @@ if __name__ == '__main__':
     else:
         out_path = None
 
-    runner = ModelSearch()
-    m_index, models, result_df, score_data, ranked_models = runner.run(ds, prob, serv, out_path)
+    runner = ModelSearch(db, session, serv)
+    m_index, models, result_df, score_data, ranked_models = runner.run(ds, prob, out_path)
 
 
     # Write html ui to output file

@@ -53,6 +53,9 @@ class WorkflowSession(object):
         elif  ses_json['comp_type'].lower() == "problemcreator":
             logger.debug("initializing a problem creation session")
             ses = ProblemCreatorSession(**ses_json)
+        elif  ses_json['comp_type'].lower() == "modelsearch":
+            logger.debug("initializing a model search session")
+            ses = ModelSearchSession(**ses_json)
         else:
             raise Exception("Unable to identify class to initialize workflow session with session: %s" % str(ses_json))
         return ses
@@ -262,6 +265,7 @@ class ModelSearchSession(WorkflowSession):
         self.prob_id = prob_id
         self.input_wfids = input_wfids
         self.ta2_addr = ta2_addr
+        self.soln_ids = soln_ids
         if state is None:
             self.state = self.available_states[0]
         else:

@@ -39,7 +39,12 @@ class ModelSearch(object):
 
     """
 
-    def run(self, ds, prob, serv, out_path=None):
+    def __init__(self, db, sess, serv):
+        self.db = db
+        self.sess = sess
+        self.serv = serv
+
+    def run(self, ds, prob, out_path=None):
 
         logger.info("Running Pipeline Search on TA2")
 
@@ -86,12 +91,12 @@ class ModelSearch(object):
             # Write search and problem to file for problem discovery task
             logger.debug("Writing to out_dir: %s" % out_path)
             prob_list = ProblemDiscoveryWriter(out_path)
-            search_id, request = serv.search_solutions(prob, train_ds, get_request=True)
+            search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
             prob_list.add_problem(prob, request)
         else:
-            search_id, request = serv.search_solutions(prob, train_ds, get_request=True)
+            search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
         # Get search results
-        soln_ids = serv.get_search_solutions_results(search_id)
+        soln_ids = self.serv.get_search_solutions_results(search_id)
         if soln_ids is None:
             raise Exception("No solution returned")
 
@@ -99,49 +104,64 @@ class ModelSearch(object):
         # Get Model for each solution returned
         solns = {}
         for soln_id in soln_ids:
-            solns[soln_id] = serv.describe_solution(soln_id)
+            solns[soln_id] = self.serv.describe_solution(soln_id)
             logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
 
         # Add solutions to db
         for soln_id, soln in solns.items():
-            solns[soln_id] = db.insert_data('solutions', soln)
+            solns[soln_id] = self.db.insert_data('solutions', soln)
 
         # Add soln ids to session
         soln_ids = [soln._id for soln_id, soln in solns.items()]
-        self.session.add_soln_ids(soln_ids)
+        self.sess.add_soln_ids(soln_ids)
         # Update session in db
-        self.db.update_data_fields('wf_sessions', self.session, ['soln_ids'])
+        self.db.update_data_fields('wf_sessions', self.sess, ['soln_ids'])
+
 
         logger.debug("********************************")
         logger.debug("Done searching for solutions")
         logger.debug("********************************")
 
-        ### Temp patch of writing to file and reading back in to simulate passing between components
-        out_file_name = "model_data.tsv"
+        # Test update to wf session
+        sess = self.db.get_workflow_session(self.sess._id)
+        logger.debug("recovered session: %s" % sess.to_json())
 
-        out_file_path = path.join(out_path, out_file_name)
-        ModelSetIO.to_file(out_file_path, solns)
-        logger.info(out_file_path)
-        with open(out_file_path, 'r') as ofile:
-            m_index, models = ModelSetIO.from_file(ofile)
+        # Testing writes of solutions to db
+        for soln_id in self.sess.soln_ids:
+            logger.debug("Retrieving solution from db with id: %s" % soln_id)
+            obj = self.db.get_object('solutions', soln_id)
+            logger.debug("Got json from db: %s" % str(obj))
+            test_soln = Model.from_json(obj)
+            logger.debug("got Solution instance: %s" % str(test_soln))
+
+
+        ### Temp patch of writing to file and reading back in to simulate passing between components
+        # out_file_name = "model_data.tsv"
+
+        # out_file_path = path.join(out_path, out_file_name)
+        # ModelSetIO.to_file(out_file_path, solns)
+        # logger.info(out_file_path)
+        # with open(out_file_path, 'r') as ofile:
+            # m_index, models = ModelSetIO.from_file(ofile)
 
         # Get fitted solution
         fit_req_ids = {}
         #fitted_models = {}
         fitted_results = {}
-        for mid, model in models.items():
+        # models = [Model.from_json(self.db.get_object('solutions', sid) for sid in self.sess.soln_ids)]
+        for mid, model in solns.items():
             logger.debug("Fitting model: %s" % str(model))
-            fit_req_ids[mid] = serv.fit_solution(model, train_ds)
+            fit_req_ids[mid] = self.serv.fit_solution(model, train_ds)
         for mid, rid in fit_req_ids.items():
             logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
             try:
-                models[mid].fitted_id, fitted_results[mid] = serv.get_fit_solution_results(rid)
+                solns[mid].fitted_id, fitted_results[mid] = self.serv.get_fit_solution_results(rid)
             except Exception as e:
                 logger.warning("Got null result for fit solution requerst: %s" % e)
 
-        for mid in models:
+        for mid in solns:
             logger.debug("Got fitted model with model id: %s" % mid)
-            logger.debug("Model: %s\tFitted Model: %s" % (mid, models[mid].fitted_id))
+            logger.debug("Model: %s\tFitted Model: %s" % (mid, solns[mid].fitted_id))
 
         result_df = predictions
         for mid in fitted_results:
@@ -161,14 +181,14 @@ class ModelSearch(object):
         predictions = {}
         test_ds = ds.get_test_dataset()
         for mid, model in models.items():
-            # req_ids[mid] = serv.produce_solution(model, ds)
+            # req_ids[mid] = self.serv.produce_solution(model, ds)
             fmid = model.fitted_id
-            req_ids[fmid] = serv.produce_solution(fmid, model, test_ds)
+            req_ids[fmid] = self.serv.produce_solution(fmid, model, test_ds)
         logger.debug("Created predict solution requests with ids: %s" % str(req_ids))
         for fmid, rid in req_ids.items():
             logger.info("Requesting predictions with request id: %s" % rid)
-            predictions[fmid] = serv.get_produce_solution_results(rid)
-            # solution_predictions[fsid] = serv.get_produce_solution_results(rid)
+            predictions[fmid] = self.serv.get_produce_solution_results(rid)
+            # solution_predictions[fsid] = self.serv.get_produce_solution_results(rid)
 
         for fmid, pdata in predictions.items():
             logger.debug("Got predictions from fitted solution, %s: %s" % (fmid, pdata))
@@ -188,10 +208,10 @@ class ModelSearch(object):
         req_ids = {}
         for mid in models:
             model = models[mid]
-            req_ids[mid] = serv.score_solution(model, score_ds, metrics=[metric])
+            req_ids[mid] = self.serv.score_solution(model, score_ds, metrics=[metric])
         scores = {}
         for mid in req_ids:
-            results = serv.get_score_solution_results(req_ids[mid])
+            results = self.serv.get_score_solution_results(req_ids[mid])
             scores[mid] = ModelScores(models[mid].id, [score_ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
 
         ### Parse through model scores to get dataframe of scores
