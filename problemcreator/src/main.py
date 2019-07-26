@@ -73,7 +73,8 @@ if __name__ == '__main__':
             sess_json = json.load(session_file, encoding='utf-16')
     except Exception as e:
         logger.error("Error while loading session json at %s" % session_files[0])
-    ds_sess = db.get_workflow_session(sess_json['_id'])
+    obj = db.get_object('wf_sessions', sess_json['_id'])
+    ds_sess = WorkflowSession.from_json(obj) 
     logger.debug("recovered dataset session: %s" % ds_sess.to_json())
 
     # Checking if dataset has been selected in dataset session

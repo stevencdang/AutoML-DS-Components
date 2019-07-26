@@ -188,7 +188,7 @@ class DXDB(object):
             try:
                 d = self.db[self.tbls[tbl]].insert_one(data.__dict__)
             except Exception as e:
-                logger.error("Could not insert data into table %s:\n %s", % (self.tbls[tbl], str(data)))
+                logger.error("Could not insert data into table %s:\n %s" % (self.tbls[tbl], str(data)))
                 raise Exception("Error encountered when inserting new data into table %s. Error: %s" % 
                                 (self.tbls[tbl], str(e)))
             logger.debug("Added data to table, %s,  with id: %s" % (self.tbls[tbl], str(d.inserted_id)))
