@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Get Predictions for a fitted model using a specific dataset
 
 # The number of inputs for the new component. 
-component.num_inputs=2
+component.num_input_nodes=2
 
 # The number of outputs for the new component. 
 component.num_outputs=1

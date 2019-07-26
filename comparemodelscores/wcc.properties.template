@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Generates an interactive html boxplot of the given model scores
 
 # The number of inputs for the new component. 
-component.num_inputs=1
+component.num_input_nodes=1
 
 # The number of outputs for the new component. 
 component.num_outputs=1

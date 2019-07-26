@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Export a set of models for evaluation
 
 # The number of inputs for the new component. 
-component.num_inputs=1
+component.num_input_nodes=1
 
 # The number of outputs for the new component. 
 component.num_outputs=0

@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Generates a confusion matrix given a d3m dataset with prediction results
 
 # The number of inputs for the new component. 
-component.num_inputs=4
+component.num_input_nodes=4
 
 # The number of outputs for the new component. 
 component.num_outputs=1

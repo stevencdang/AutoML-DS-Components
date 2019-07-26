@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Allow the selection of a dataset/database location to browse for available datasets
 
 # The number of inputs for the new component. 
-component.num_inputs=0
+component.num_input_nodes=0
 
 # The number of outputs for the new component. 
 component.num_outputs=2

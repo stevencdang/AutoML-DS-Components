@@ -38,7 +38,7 @@ component.version=1.0
 component.description=Import a dataset from DataMart for augmenting a given dataset
 
 # The number of inputs for the new component. 
-component.num_inputs=2
+component.num_input_nodes=2
 
 # The number of outputs for the new component. 
 component.num_outputs=2
