@@ -114,6 +114,9 @@ class DXDB(object):
         logger.info("Replacing problem in db with given problem with id: %s" % pid)
         # prob._id = ObjectId(prob._id)
         d = json.loads(prob.to_json())
+        if '_id' in d.keys():
+            logger.debug("Found _id in problem. Removing to not overwrite")
+            del(d['_id'])
         logger.debug("Loaded problem to json: %s" % str(d))
         result = self.db[self.tbls['problems']].replace_one(
             {'_id': ObjectId(pid)},

@@ -78,7 +78,7 @@ def setup_logging(settings):
         lgr.addHandler(ch)
 
         # Also add logging to stdout when testing
-        ch = StreamHandler(sys.stdout, encoding="UTF-16")
+        ch = StreamHandler(sys.stdout)
         ch.setLevel(settings.get_log_level())
         ch.setFormatter(formatter)
         lgr.addHandler(ch)
