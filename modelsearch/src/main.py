@@ -78,10 +78,19 @@ if __name__ == '__main__':
     logger.debug("DB URL: %s" % dx_config.get_db_backend_url())
     db = DXDB(dx_config.get_db_backend_url())
 
-    # Getting dataset session from db
-    sess_json = json.load(args.file0, encoding='utf-16')
-    prev_sess = db.get_workflow_session(sess_json['_id'])
-    logger.debug("recovered input session: %s" % prev_sess.to_json())
+    # Getting workflow session from db
+    # Parsing inputs
+    session_indx = 0
+    session_files = get_input_files(args, session_indx)
+    # Assume only 1 session input file
+    try:
+        with open(session_files[0], 'r') as session_file:
+            sess_json = json.load(session_file, encoding='utf-16')
+    except Exception as e:
+        logger.error("Error while loading session json at %s" % session_files[0])
+    obj = db.get_object('wf_sessions', sess_json['_id'])
+    ds_sess = WorkflowSession.from_json(obj) 
+    logger.debug("recovered input session: %s" % ds_sess.to_json())
 
     # Checking if problem has been defined 
     if not prev_sess.is_state_complete():
