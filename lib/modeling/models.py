@@ -164,3 +164,32 @@ class SubModelNode(Model, ModelNode):
     def get_type(self):
         return "SubModelNode"
 
+class FittedModel(object):
+
+    def __init__(self, solution_id, dataset_id, _id=None):
+        self._id = _id
+        self.solution_id = solution_id
+        self.dataset_id = dataset_id
+    
+    def to_json(self):
+        return self.__dict__
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    @staticmethod
+    def from_json(data):
+        logger.debug("type of data to load from json: %s" % str(type(data)))
+        if isinstance(data, str):
+            try: 
+                d = json.loads(data)
+            except JSONDecodeError:
+                d = ast.literal_eval(data)
+        elif isinstance(data, dict):
+            d = data
+        else:
+            raise Exception("Invalid type given: %s" % str(type(data)))
+
+        logger.debug("got json data for new model: %s" % str(d))
+        return FittedModel(**d)
+

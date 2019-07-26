@@ -249,6 +249,8 @@ class ModelSearchSession(WorkflowSession):
                  dataset_id=None,
                  prob_id=None,
                  ta2_addr=None,
+                 soln_ids=[],
+                 fsln_ids=[],
                  session_url=None):
         super().__init__(user_id=user_id, 
                          workflow_id=workflow_id, 
@@ -290,4 +292,9 @@ class ModelSearchSession(WorkflowSession):
     def set_input_wfids(self, wfids):
         logger.debug("Adding list of input workflow ids to session")
         self.input_wfids = wfids
+
+    def add_soln_ids(self, sids):
+        logger.debug("Adding solution ids to session")
+        new_sids = [s for s in sids if s not in self.soln_ids]
+        self.soln_ids.extend(new_sids)
 

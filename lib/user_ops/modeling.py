@@ -102,6 +102,17 @@ class ModelSearch(object):
             solns[soln_id] = serv.describe_solution(soln_id)
             logger.debug("Got pipeline descripton for solution id %s: \n%s" % (soln_id, str(solns[soln_id])))
 
+        # Add solutions to db
+        for soln_id, soln in solns.items():
+            solns[soln_id] = db.insert_data('solutions', soln)
+
+        # Add soln ids to session
+        soln_ids = [soln._id for soln_id, soln in solns.items()]
+        self.session.add_soln_ids(soln_ids)
+        # Update session in db
+        self.db.update_data_fields('wf_sessions', self.session, ['soln_ids'])
+
+
         ### Temp patch of writing to file and reading back in to simulate passing between components
         out_file_name = "model_data.tsv"
 

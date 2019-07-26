@@ -22,7 +22,7 @@ from google.protobuf import json_format
 # Workflow component specific imports
 from ls_utilities.ls_wf_settings import SettingsFactory
 from ls_utilities.ls_logging import setup_logging
-from ls_utilities.cmd_parser import get_default_arg_parser
+from ls_utilities.cmd_parser import get_default_arg_parser, get_session_info
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
@@ -38,6 +38,7 @@ from ls_utilities.dexplorer import *
 from modeling.models import *
 from modeling.component_out import *
 from user_ops.modeling import *
+from ls_utilities.html import IframeBuilder
 
 
 __version__ = '0.1'
@@ -93,15 +94,7 @@ if __name__ == '__main__':
         logger.debug("Retrieved dataset info from db for initializing model search: %s" % ds.to_json())
 
     # Get Session Metadata
-    user_id = args.userId
-    logger.debug("User ID: %s" % user_id)
-    workflow_id = os.path.split(os.path.abspath(args.workflowDir))[1]
-    logger.debug("Workflow ID: %s" % workflow_id)
-    comp_type = os.path.split(os.path.abspath(args.toolDir))[1]
-    logger.debug("Component Type: %s" % comp_type)
-    comp_id = os.path.split(os.path.abspath(args.componentXmlFile))[1].split(".")[0]
-    logger.debug("Component Id: %s" % comp_id)
-
+    user_id, workflow_id, comp_type, comp_id = get_session_info(args)
 
     # Initialize new session
     session = ModelSearchSession(user_id=user_id, workflow_id=workflow_id, 
@@ -152,9 +145,9 @@ if __name__ == '__main__':
                               )
     logger.info("Writing output html to: %s" % out_file_path)
     logger.debug("Embedded iframe url: %s" % session.session_url)
-    out_html = '<iframe src="%s" width="1024" height="768"></iframe>' % session.session_url
+    html_writer = IframeBuilder(session.session_url)
     with open(out_file_path, 'w') as out_file:
-        out_file.write(out_html)
+        out_file.write(html_writer.get_document())
 
     # Write session info to output file
     out_file_path = path.join(args.workingDir, config.get('Output', 'session_out_file'))
