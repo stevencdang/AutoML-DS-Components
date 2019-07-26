@@ -157,7 +157,11 @@ class ModelSearch(object):
             try:
                 solns[mid].fitted_id, fitted_results[mid] = self.serv.get_fit_solution_results(rid)
             except Exception as e:
-                logger.warning("Got null result for fit solution requerst: %s" % e)
+                logger.warning("Got null result for fit solution request, %s, removing from solution set" % e)
+                # Removing soln from set of solns 
+                logger.debug("Number of solns before deleting soln that was unable to fit: %i" % len(solns))
+                del solns[mid]
+                logger.debug("Number of solns after deleting soln that was unable to fit: %i" % len(solns))
 
         for mid in solns:
             logger.debug("Got fitted model with model id: %s" % mid)
