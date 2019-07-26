@@ -143,15 +143,6 @@ if __name__ == '__main__':
     session.set_state_ready()
     db.update_workflow_session(session, ['state'])
 
-    # Test overwrite problem with default problem
-    pid = prob._id
-    logger.info("Original pid: %s" % pid)
-    logger.info("Default pid: %s" % def_prob._id)
-    prob = def_prob
-    logger.info("before Replaced pid: %s" % prob._id)
-    prob._id = pid
-    logger.info("Replaced pid: %s" % prob._id)
-    db.replace_problem(pid, prob)
 
     # Test retrieve problem
     # logger.debug("********************************************")
