@@ -145,7 +145,7 @@ if [ -d "$cdir" ]; then
     echo "######################################" 1>&3
     echo "Found existing generated workflow component: " $cdir 1>&3
     echo "Deleting before generating"  1>&3
-    # rm -Rf "$cdir"
+    rm -Rf "$cdir"
 fi
 # Generate the component
 ./runWCC.sh $dir $wcc
