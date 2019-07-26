@@ -22,7 +22,7 @@ from google.protobuf import json_format
 # Workflow component specific imports
 from ls_utilities.ls_wf_settings import SettingsFactory
 from ls_utilities.ls_logging import setup_logging
-from ls_utilities.cmd_parser import get_default_arg_parser, get_session_info
+from ls_utilities.cmd_parser import *
 from ls_utilities.ls_wf_settings import *
 from ls_dataset.d3m_dataset import D3MDataset
 from ls_dataset.d3m_prediction import D3MPrediction
@@ -47,8 +47,8 @@ __version__ = '0.1'
 if __name__ == '__main__':
     # Parse argumennts
     parser = get_default_arg_parser("Model Search")
-    parser.add_argument('-file0', type=argparse.FileType('r'),
-                       help='the workflow session json from a problem session')
+    parser.add_argument("-node", nargs=1, action='append')
+    parser.add_argument("-fileIndex", nargs=2, action='append')
     args = parser.parse_args()
 
     if args.is_test is not None:

@@ -206,7 +206,7 @@ class ProblemCreatorSession(WorkflowSession):
 
     def set_problem_id(self, prob_id):
         logger.debug("Setting session problem id: %s" % prob_id)
-        self.problem_id = prob_id
+        self.prob_id = prob_id
 
     def set_prob_state(self, prob):
         logger.debug("Setting problem state with problem: %s" % prob.to_json())
@@ -287,7 +287,7 @@ class ModelSearchSession(WorkflowSession):
 
     def set_problem_id(self, prob_id):
         logger.debug("Setting session problem id: %s" % prob_id)
-        self.problem_id = prob_id
+        self.prob_id = prob_id
 
     def set_input_wfids(self, wfids):
         logger.debug("Adding list of input workflow ids to session")

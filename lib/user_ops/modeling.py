@@ -113,7 +113,7 @@ class ModelSearch(object):
         self.db.update_data_fields('wf_sessions', self.session, ['soln_ids'])
 
         logger.debug("********************************")
-        logger.debug("Done searching for solutions"
+        logger.debug("Done searching for solutions")
         logger.debug("********************************")
 
         ### Temp patch of writing to file and reading back in to simulate passing between components
