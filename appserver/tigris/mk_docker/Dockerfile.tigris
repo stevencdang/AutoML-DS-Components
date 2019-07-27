@@ -268,6 +268,8 @@ ADD d3m_components /datashop/d3m_components
 RUN chown -R datashop:datashop /datashop/d3m_components \
     # Setup some docker dev env for testing with docker image
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/.vimrc /home/datashop/ \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/vimfiles /home/datashop/ \
+    && tar -xzf vimfiles \
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/.gitconfig /home/datashop/ \
     && echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
     && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile \
