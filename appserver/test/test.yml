@@ -89,8 +89,8 @@ services:
         ports:
             - "45042:45042"
         environment:
-            - D3MOUTPUTDIR=/output
-            - D3MINPUTDIR=/input
+            - D3MINPUTDIR=/rdata/dataStore/d3m/datasets
+            - D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
             - D3MRUN=ta2ta3
             - D3MCPU=8
             - D3MTIMEOUT=5

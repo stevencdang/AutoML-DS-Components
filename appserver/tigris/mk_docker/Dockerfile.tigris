@@ -269,7 +269,7 @@ RUN chown -R datashop:datashop /datashop/d3m_components \
     # Setup some docker dev env for testing with docker image
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/.vimrc /home/datashop/ \
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/vimfiles /home/datashop/ \
-    && tar -xzf vimfiles \
+    && tar -xzf /home/datashop/vimfiles -C /home/datashop \
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/.gitconfig /home/datashop/ \
     && echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
     && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile \
@@ -280,7 +280,7 @@ RUN chown -R datashop:datashop /datashop/d3m_components \
     # && cp /datashop/d3m_components/appserver/tigris/mk_docker/start.sh /datashop/shart.sh \
     && chmod ug+rwx,o+rx /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
     && chown datashop:datashop /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
-    && dos2unix /datashop/d3m_components/appserver/tigris/mk_docker/start.sh
+    && dos2unix /datashop/d3m_components/appserver/tigris/mk_docker/start.sh 
 
  # cleanup windows file endings and permissions in workflow components directory
  RUN chown -R datashop:datashop /datashop/workflow_components \
