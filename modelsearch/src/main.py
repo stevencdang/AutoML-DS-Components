@@ -11,7 +11,6 @@ import logging
 import json
 import sys
 from os import path
-import argparse
 import pprint
 import csv
 
@@ -166,6 +165,8 @@ if __name__ == '__main__':
     logger.info("Writing session info to file: %s" % (out_file_path))
     out_data = session.to_json()
     logger.debug("Session json to write out: %s" % out_data)
+    with open(out_file_path, 'w') as out_file:
+        out_file.write(out_data)
 
     # Write ranked model list to file
     # with open(out_file_path, 'w') as out_file:

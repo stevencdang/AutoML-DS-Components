@@ -24,7 +24,8 @@ class DXDB(object):
             'solutions': "Solutions",
             'fitted_solutions': "FittedSolutions",
             'predictions': "Predictions",
-            'model_scores': "ModelScores"
+            'model_scores': "ModelScores",
+            'ranked_models': "RankedModels"
     }
     
     def __init__(self, db_url):

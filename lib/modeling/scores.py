@@ -236,6 +236,40 @@ class Metric(object):
     def to_json(self, fpath=None):
         out = self.__str__()
 
+    @staticmethod
+    def get_metric_order(metric):
+        m = Metric.convert_type(metric)
+        if m in [
+                "accuracy",
+                "precision",
+                "recall",
+                "f1",
+                "f1Micro",
+                "f1Macro",
+                "rocAuc",
+                "rocAucMacro",
+                "rocAucMicro",
+                "rSquared",
+                "normalizedMutualInformation",
+                "jaccardSimilarityScore",
+                "precisionAtTopK",
+                "objectDetectionAP",
+                "averageMeanReciprocalRank"
+        ]:
+            return "higher_is_better"
+        elif m in [
+                "meanSquaredError",
+                "rootMeanSquaredError",
+                "meanAbsoluteError",
+                "hammingLoss"
+        ]:
+            return "lower_is_better"
+        else:
+            logger.warning("Uncertain order of given metric, %s, returning Higher is Better" %
+                           m)
+            return "higher_is_better"
+
+
 class ModelScores(DBModel):
 
     def __init__(self, mid, inputs, scores, _id=None):
@@ -372,20 +406,25 @@ class Fit(object):
         self.dataset = dataset
         self.fit = fit
 
-class RankedModel(object):
+class RankedModel(DBModel):
 
-    def __init__(self, mdl, rank):
+    def __init__(self, mdl, rank, _id=None):
         self.mdl = mdl
         self.rank = rank
+        super().__init__(_id)
 
     def update_rank(self, rank):
         self.rank = rank
 
     def to_dict(self):
         return {
+            '_id': self._id,
             'model': self.mdl.to_dict(),
             'rank': self.rank
         }
+
+    def to_json(self):
+        return self.to_dict()
 
     def __str__(self):
         return str(self.to_dict())
@@ -402,4 +441,4 @@ class RankedModel(object):
 
         logger.debug("Creating RankedModel from %s: %s" % (str(type(data)), str(data)))
         model = Model.from_json(data['model'])
-        return RankedModel(model, data['rank'])
+        return RankedModel(mdl=model, rank=data['rank'], _id=data['_id'])

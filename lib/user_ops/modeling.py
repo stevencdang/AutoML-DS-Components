@@ -96,6 +96,9 @@ class ModelSearch(object):
         # else:
             # search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
         search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
+        self.sess.search_id = search_id
+        # Update session in db
+        self.db.update_data_fields('wf_sessions', self.sess, ['search_id'])
         # Get search results
         soln_ids = self.serv.get_search_solutions_results(search_id)
         if soln_ids is None:
@@ -246,14 +249,13 @@ class ModelSearch(object):
         model_scores = {}
         for mid in req_ids:
             results = self.serv.get_score_solution_results(req_ids[mid])
-            scores = ModelScores(solns[mid].id, [score_ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+            scores = ModelScores(solns[mid]._id, [score_ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
             scores._id = self.db.insert_data('model_scores', scores)
-            model_scores[scores._id] = scores
+            model_scores[scores.mid] = scores
             logger.debug("Added ModelScores to db: %s" % str(scores))
 
         score_ids = [score._id for sid, score in model_scores.items()]
         self.sess.score_ids = score_ids
-        self.sess.set_state_complete()
         # Update session in db
         self.db.update_data_fields('wf_sessions', self.sess, ['score_ids', 'state'])
 
@@ -264,37 +266,79 @@ class ModelSearch(object):
 
         ### Parse through model scores to get dataframe of scores
         # Determine number of scores to  plot:
-        # mid = slns.keys()[0]
-        # sample_scores = len(scores[mid].scores)
-        # score_data = {score.metric.type: [] for score in scores[mid].scores}
-        # score_data['model_id'] = []
+        mid = list(solns)[0]
+        sample_scores = len(model_scores[mid].scores)
+        score_data = {score.metric.type: [] for score in model_scores[mid].scores}
+        score_data['model_id'] = []
         # score_data['model_num'] = []
-        # metrics = [score.metric.type for score in scores[mid].scores]
-        # score_data['index'] = range(len(slns.keys()))
+        metrics = [score.metric.type for score in model_scores[mid].scores]
+        # score_data['index'] = [ms.mid for , mid, ms in model_scores]
 
-        # for mid in scores:
-            # score_set = scores[mid]
-            # logger.debug("Adding score data for model with id: %s" % score_set.mid)
-            # score_data['model_id'].append(mid)
-            # score_data['model_num'].append(m_index.index(mid))
-            # for score in score_set.scores:
-                # metric_val = list(score.value.value.values())[0]
-                # logger.debug("appending score for metric: %s\tvalue: %s" % 
-                        # (score.metric.type, metric_val))
-                # logger.debug("Score value tyep: %s" % type(metric_val))
-                # score_data[score.metric.type].append(metric_val)
+        soln_ids = list(solns)
+        for mid in model_scores:
+            score_set = model_scores[mid]
+            logger.debug("Adding score data for model with id: %s" % score_set.mid)
+            score_data['model_id'].append(mid)
+            # score_data['model_num'].append(soln_ids.index(mid))
+            for score in score_set.scores:
+                metric_val = list(score.value.value.values())[0]
+                logger.debug("appending score for metric: %s\tvalue: %s" % 
+                        (score.metric.type, metric_val))
+                logger.debug("Score value tyep: %s" % type(metric_val))
+                score_data[score.metric.type].append(metric_val)
                 
         # logger.debug("###############################################")
         # logger.debug("Score_data keys: %s" % str([key for key in score_data.keys()]))
-        # data = pd.DataFrame(score_data)
+        data = pd.DataFrame(score_data)
+        logger.debug("Score data with solution ids: %s" % str(data))
 
+        # Sort models by metricA
+        ordering = Metric.get_metric_order(metrics[0])
+        if ordering.lower() == 'higher_is_better':
+            logger.info("Sorting models in descending order")
+            sorted_data = data.sort_values(by=[metrics[0]], ascending=False)
+        elif ordering.lower() == "lower_is_better":
+            logger.info("Sorting models in ascending order")
+            sorted_data = data.sort_values(by=[metrics[0]], ascending=True)
+        else:
+            logger.warning("'%s' ordering given. Using ascending order by default." % ordering)
+            sorted_data = data.sort_values(by=[metrics[0]], ascending=True)
+        sorted_data['rank'] = range(1, sorted_data.shape[0] + 1)
+
+        logger.debug("###############################################")
+        logger.debug(sorted_data.columns)
+        logger.debug("#############")
+        logger.debug(sorted_data.shape)
+        logger.debug("#############")
+        logger.debug(sorted_data.head())
+        logger.debug("#############")
+        logger.debug(sorted_data[metrics[0]])
+        logger.debug("#############")
+        logger.debug(sorted_data['model_id'])
+        logger.debug("#############")
+        logger.debug(sorted_data['rank'])
+        logger.debug("###############################################")
         # create ranked model list 
-        # ranked_models = {
-                # row[1]['model_id']: RankedModel(
-                    # mdl=models[row[1]['model_id']],
-                    # rank=row[1]['rank']
-                # ) for row in sorted_data.iterrows()
-        # }
+        # Write ranked models to db
+        rm_ids = []
+        for row in sorted_data.iterrows():
+            rm = RankedModel(
+                    mdl=solns[row[1]['model_id']],
+                    rank=row[1]['rank']
+            )
+            rm._id = self.db.insert_data('ranked_models', rm)
+            logger.debug("Added ranked model to db: %s" % str(rm))
+            rm_ids.append(rm._id)
+
+       # Update session in db
+        self.sess.ranked_mdl_ids = rm_ids
+        self.sess.set_state_complete()
+        self.db.update_data_fields('wf_sessions', self.sess, ['ranked_mdl_ids', 'state'])
+        
+        # Test update to wf session
+        sess = self.db.get_workflow_session(self.sess._id)
+        logger.debug("recovered session: %s" % sess.to_json())
+
         
         
         # return m_index, models, result_df, score_data, ranked_models
@@ -407,11 +451,12 @@ class ModelExporter(object):
 
     def run(self, out_path, ranked_models, serv):
         #Create model writer 
-        logger.debug("Writing Ranked models to out_dir: %s" % config.get_out_path())
-        model_writer = RankedPipelineWriter(config.get_out_path())
-        model_writer.write_ranked_models(ranked_models)
+        logger.debug("Writing Ranked models to out_dir: %s" % out_path)
+        # model_writer = RankedPipelineWriter(out_path)
+        # model_writer.write_ranked_models(ranked_models)
 
-        for mid, rmodel in ranked_models.items():
-            logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (mid, rmodel.rank))
+        for rmodel in ranked_models:
+            logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (rmodel.mdl.id, rmodel.rank))
             serv.export_solution(rmodel.mdl, rmodel.mdl.id, rmodel.rank)
+
 
