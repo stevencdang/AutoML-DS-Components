@@ -87,14 +87,18 @@ class ModelSearch(object):
         # Get training dataset
         train_ds = ds.get_training_dataset()
         # if config.get_mode() == 'D3M':
-        if out_path is not None:
-            # Write search and problem to file for problem discovery task
-            logger.debug("Writing to out_dir: %s" % out_path)
-            prob_list = ProblemDiscoveryWriter(out_path)
-            search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
-            prob_list.add_problem(prob, request)
-        else:
-            search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
+        # if out_path is not None:
+            # # Write search and problem to file for problem discovery task
+            # logger.debug("Writing to out_dir: %s" % out_path)
+            # prob_list = ProblemDiscoveryWriter(out_path)
+            # search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
+            # prob_list.add_problem(prob, request)
+        # else:
+            # search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
+        search_id, request = self.serv.search_solutions(prob, train_ds, get_request=True)
+        self.sess.search_id = search_id
+        # Update session in db
+        self.db.update_data_fields('wf_sessions', self.sess, ['search_id'])
         # Get search results
         soln_ids = self.serv.get_search_solutions_results(search_id)
         if soln_ids is None:
@@ -109,7 +113,11 @@ class ModelSearch(object):
 
         # Add solutions to db
         for soln_id, soln in solns.items():
-            solns[soln_id] = self.db.insert_data('solutions', soln)
+            solns[soln_id]._id = self.db.insert_data('solutions', soln)
+        # Rewrite solns dict with db _id as key
+        solns = {soln._id: soln for sid, soln in solns.items()}
+
+
 
         # Add soln ids to session
         soln_ids = [soln._id for soln_id, soln in solns.items()]
@@ -146,8 +154,9 @@ class ModelSearch(object):
 
         # Get fitted solution
         fit_req_ids = {}
-        #fitted_models = {}
+        fitted_models = {}
         fitted_results = {}
+        mdl_predictions = {}
         # models = [Model.from_json(self.db.get_object('solutions', sid) for sid in self.sess.soln_ids)]
         for mid, model in solns.items():
             logger.debug("Fitting model: %s" % str(model))
@@ -155,7 +164,7 @@ class ModelSearch(object):
         for mid, rid in fit_req_ids.items():
             logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
             try:
-                solns[mid].fitted_id, fitted_results[mid] = self.serv.get_fit_solution_results(rid)
+                fitted_id, fitted_results = self.serv.get_fit_solution_results(rid)
             except Exception as e:
                 logger.warning("Got null result for fit solution request, %s, removing from solution set" % e)
                 # Removing soln from set of solns 
@@ -163,75 +172,114 @@ class ModelSearch(object):
                 del solns[mid]
                 logger.debug("Number of solns after deleting soln that was unable to fit: %i" % len(solns))
 
-        for mid in solns:
-            logger.debug("Got fitted model with model id: %s" % mid)
-            logger.debug("Model: %s\tFitted Model: %s" % (mid, solns[mid].fitted_id))
+            # Adding fitted model and results to db
+            fitted_mdl = FittedModel(solution_id= mid, fitted_id=fitted_id, dataset_id=ds._id)
+            fitted_mdl._id = self.db.insert_data('fitted_solutions', fitted_mdl)
+            fitted_models[fitted_mdl._id] = fitted_mdl
+            logger.debug("Added fitted model to db: %s" % str(fitted_mdl))
+            # for inpt in prob.inputs:
+                # for target in inpt.targets:
+                    # logger.debug("Input datasetID: %s\ttarget: %s " % (inpt.dataset_id, str(target)))
+            # logger.debug("Predictions to json: %s" % str(fitted_results.to_dict(orient='records')))
+            predictions = ModelPredictions(dataset_id=ds._id, problem_id=prob._id, fitted_model_id=fitted_mdl._id, data=fitted_results.to_dict('list'))
+            predictions._id = self.db.insert_data('predictions', predictions)
+            mdl_predictions[fitted_mdl._id] = predictions
+            logger.debug("Added predictions to db: %s" % str(predictions))
 
-        result_df = predictions
-        for mid in fitted_results:
-            rdf = fitted_results[mid].copy()
-            rdf.rename(columns={rdf.columns[-1]: mid}, inplace=True)
-            # if result_df is None:
-                # result_df = rdf.copy()
-                # result_df.index = rdf['d3mIndex']
-            # else:
-            result_df = pd.merge(result_df, rdf, on='d3mIndex', how='outer')
-            logger.debug("********************************")
-            logger.debug(result_df.columns)
-            logger.debug("********************************")
 
-        # Get Model Predictions
+        valid_slns = [mdl.solution_id for mid, mdl in fitted_models.items()]
+        for valid_sln in valid_slns:
+            logger.debug("Got valid solution from fitted model search from soln id: %s" % valid_sln)
+
+        # Updating workflow session with fitted model ids and prediction ids
+        fitted_mdl_ids = [mdl._id for mid, mdl in fitted_models.items()]
+        pred_ids = [pred._id for mid, pred in mdl_predictions.items()]
+        self.sess.fitted_ids = fitted_mdl_ids
+        self.sess.fitted_pred_ids = pred_ids
+        # Update session in db
+        self.db.update_data_fields('wf_sessions', self.sess, ['fitted_ids', 'fitted_pred_ids'])
+
+        # Test update to wf session
+        sess = self.db.get_workflow_session(self.sess._id)
+        logger.debug("recovered session: %s" % sess.to_json())
+
+        # Testing writes of fitted Models and predictions to db
+        for fid in self.sess.fitted_ids:
+            logger.debug("Retrieving fitted model from db with id: %s" % fid)
+            obj = self.db.get_object('fitted_solutions', fid)
+            logger.debug("Got json from db: %s" % str(obj))
+            test_soln = FittedModel.from_json(obj)
+            logger.debug("got fitted model instance from db: %s" % str(test_soln))
+
+        # Get Model Predictions on test data
         req_ids = {}
-        predictions = {}
+        test_predictions = {}
         test_ds = ds.get_test_dataset()
-        for mid, model in models.items():
-            # req_ids[mid] = self.serv.produce_solution(model, ds)
-            fmid = model.fitted_id
-            req_ids[fmid] = self.serv.produce_solution(fmid, model, test_ds)
+        for fmid, fmdl in fitted_models.items():
+            soln = solns[fmdl.solution_id]
+            req_ids[fmid] = self.serv.produce_solution(fmdl.fitted_id, soln, test_ds)
         logger.debug("Created predict solution requests with ids: %s" % str(req_ids))
         for fmid, rid in req_ids.items():
             logger.info("Requesting predictions with request id: %s" % rid)
-            predictions[fmid] = self.serv.get_produce_solution_results(rid)
+            try:
+                fmdl_predictions = self.serv.get_produce_solution_results(rid)
+                predictions = ModelPredictions(dataset_id=ds._id, problem_id=prob._id, fitted_model_id=fmid, data=fmdl_predictions.to_dict('list'))
+                predictions._id = self.db.insert_data('predictions', predictions)
+                test_predictions[predictions._id] = predictions
+                logger.debug("Added predictions to db: %s" % str(predictions))
+            except Exception as e:
+                logger.warning("Encountered error while producing predictions for fitted model, %s.\n Error: %s" %
+                               (fmid, str(e)))
             # solution_predictions[fsid] = self.serv.get_produce_solution_results(rid)
 
-        for fmid, pdata in predictions.items():
-            logger.debug("Got predictions from fitted solution, %s: %s" % (fmid, pdata))
-            rdf = pdata.copy()
-            rdf.rename(columns={rdf.columns[-1]: ("test-%s" % mid)}, inplace=True)
-            # if result_df is None:
-                # result_df = rdf.copy()
-                # result_df.index = rdf['d3mIndex']
-            # else:
-            result_df = pd.merge(result_df, rdf, on='d3mIndex', how='outer')
-            logger.debug("********************************")
-            logger.debug(result_df.columns)
-            logger.debug("********************************")
+        tpred_ids = [pred._id for pid, pred in test_predictions.items()]
+        self.sess.test_pred_ids = tpred_ids
+        # Update session in db
+        self.db.update_data_fields('wf_sessions', self.sess, ['test_pred_ids'])
+
+        # Test update to wf session
+        sess = self.db.get_workflow_session(self.sess._id)
+        logger.debug("recovered session: %s" % sess.to_json())
 
         # Get Score for each solution
-        score_ds = test_ds
+        score_ds = ds
         req_ids = {}
-        for mid in models:
-            model = models[mid]
-            req_ids[mid] = self.serv.score_solution(model, score_ds, metrics=[metric])
-        scores = {}
+        for mid, soln in solns.items():
+            req_ids[mid] = self.serv.score_solution(soln, score_ds, metrics=prob.metrics)
+        model_scores = {}
         for mid in req_ids:
             results = self.serv.get_score_solution_results(req_ids[mid])
-            scores[mid] = ModelScores(models[mid].id, [score_ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+            scores = ModelScores(solns[mid]._id, [score_ds.get_schema_uri()], [Score.from_protobuf(result) for result in results])
+            scores._id = self.db.insert_data('model_scores', scores)
+            model_scores[scores.mid] = scores
+            logger.debug("Added ModelScores to db: %s" % str(scores))
+
+        score_ids = [score._id for sid, score in model_scores.items()]
+        self.sess.score_ids = score_ids
+        # Update session in db
+        self.db.update_data_fields('wf_sessions', self.sess, ['score_ids', 'state'])
+
+        # Test update to wf session
+        sess = self.db.get_workflow_session(self.sess._id)
+        logger.debug("recovered session: %s" % sess.to_json())
+
 
         ### Parse through model scores to get dataframe of scores
         # Determine number of scores to  plot:
-        sample_scores = len(scores[m_index[0]].scores)
-        score_data = {score.metric.type: [] for score in scores[m_index[0]].scores}
+        mid = list(solns)[0]
+        sample_scores = len(model_scores[mid].scores)
+        score_data = {score.metric.type: [] for score in model_scores[mid].scores}
         score_data['model_id'] = []
-        score_data['model_num'] = []
-        metrics = [score.metric.type for score in scores[m_index[0]].scores]
-        score_data['index'] = range(len(m_index))
+        # score_data['model_num'] = []
+        metrics = [score.metric.type for score in model_scores[mid].scores]
+        # score_data['index'] = [ms.mid for , mid, ms in model_scores]
 
-        for mid in scores:
-            score_set = scores[mid]
+        soln_ids = list(solns)
+        for mid in model_scores:
+            score_set = model_scores[mid]
             logger.debug("Adding score data for model with id: %s" % score_set.mid)
             score_data['model_id'].append(mid)
-            score_data['model_num'].append(m_index.index(mid))
+            # score_data['model_num'].append(soln_ids.index(mid))
             for score in score_set.scores:
                 metric_val = list(score.value.value.values())[0]
                 logger.debug("appending score for metric: %s\tvalue: %s" % 
@@ -239,20 +287,61 @@ class ModelSearch(object):
                 logger.debug("Score value tyep: %s" % type(metric_val))
                 score_data[score.metric.type].append(metric_val)
                 
-        logger.debug("###############################################")
-        logger.debug("Score_data keys: %s" % str([key for key in score_data.keys()]))
+        # logger.debug("###############################################")
+        # logger.debug("Score_data keys: %s" % str([key for key in score_data.keys()]))
         data = pd.DataFrame(score_data)
+        logger.debug("Score data with solution ids: %s" % str(data))
 
+        # Sort models by metricA
+        ordering = Metric.get_metric_order(metrics[0])
+        if ordering.lower() == 'higher_is_better':
+            logger.info("Sorting models in descending order")
+            sorted_data = data.sort_values(by=[metrics[0]], ascending=False)
+        elif ordering.lower() == "lower_is_better":
+            logger.info("Sorting models in ascending order")
+            sorted_data = data.sort_values(by=[metrics[0]], ascending=True)
+        else:
+            logger.warning("'%s' ordering given. Using ascending order by default." % ordering)
+            sorted_data = data.sort_values(by=[metrics[0]], ascending=True)
+        sorted_data['rank'] = range(1, sorted_data.shape[0] + 1)
+
+        logger.debug("###############################################")
+        logger.debug(sorted_data.columns)
+        logger.debug("#############")
+        logger.debug(sorted_data.shape)
+        logger.debug("#############")
+        logger.debug(sorted_data.head())
+        logger.debug("#############")
+        logger.debug(sorted_data[metrics[0]])
+        logger.debug("#############")
+        logger.debug(sorted_data['model_id'])
+        logger.debug("#############")
+        logger.debug(sorted_data['rank'])
+        logger.debug("###############################################")
         # create ranked model list 
-        ranked_models = {
-                row[1]['model_id']: RankedModel(
-                    mdl=models[row[1]['model_id']],
+        # Write ranked models to db
+        rm_ids = []
+        for row in sorted_data.iterrows():
+            rm = RankedModel(
+                    mdl=solns[row[1]['model_id']],
                     rank=row[1]['rank']
-                ) for row in sorted_data.iterrows()
-        }
+            )
+            rm._id = self.db.insert_data('ranked_models', rm)
+            logger.debug("Added ranked model to db: %s" % str(rm))
+            rm_ids.append(rm._id)
+
+       # Update session in db
+        self.sess.ranked_mdl_ids = rm_ids
+        self.sess.set_state_complete()
+        self.db.update_data_fields('wf_sessions', self.sess, ['ranked_mdl_ids', 'state'])
+        
+        # Test update to wf session
+        sess = self.db.get_workflow_session(self.sess._id)
+        logger.debug("recovered session: %s" % sess.to_json())
+
         
         
-        return m_index, models, result_df, score_data, ranked_models
+        # return m_index, models, result_df, score_data, ranked_models
     
 class ModelRanker(object):
     """
@@ -362,11 +451,12 @@ class ModelExporter(object):
 
     def run(self, out_path, ranked_models, serv):
         #Create model writer 
-        logger.debug("Writing Ranked models to out_dir: %s" % config.get_out_path())
-        model_writer = RankedPipelineWriter(config.get_out_path())
-        model_writer.write_ranked_models(ranked_models)
+        logger.debug("Writing Ranked models to out_dir: %s" % out_path)
+        # model_writer = RankedPipelineWriter(out_path)
+        # model_writer.write_ranked_models(ranked_models)
 
-        for mid, rmodel in ranked_models.items():
-            logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (mid, rmodel.rank))
+        for rmodel in ranked_models:
+            logger.info("Exporting model via TA2 with id: %s\t and rank: %s" % (rmodel.mdl.id, rmodel.rank))
             serv.export_solution(rmodel.mdl, rmodel.mdl.id, rmodel.rank)
+
 

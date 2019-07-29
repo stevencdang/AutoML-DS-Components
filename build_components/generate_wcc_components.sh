@@ -86,27 +86,27 @@ echo "Build directory " $build_dir
 # Remove all old workflow components
 wf_comps=( \
     DatasetImporter \
-    DatasetSelector \
     ProblemCreator \
-    ProblemTaskSelector \
-    ProblemMetricSelector \
-    ProblemGeneratorDefault \
     ModelSearch \
+    ModelExport \
+)
+
+do_not_build=( \
+    CompareModelScores \
+    DatasetSelector \
+    VisualizationDescribeData \
+    VisualizationConfusionMatrix \
+    MetricSelector \
     ModelPredict \
     ModelScore \
     ModelSelector \
     ModelRank \
     ModelRerank \
-    ModelExport \
+    ProblemTaskSelector \
+    ProblemMetricSelector \
+    ProblemGeneratorDefault \
     DescribeData \
-    CompareModelScores \
     CompareModelPredictions \
-)
-
-do_not_build=( \
-    VisualizationDescribeData \
-    VisualizationConfusionMatrix \
-    MetricSelector \
 )
 
 cd $cwd

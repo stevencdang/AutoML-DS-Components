@@ -48,7 +48,6 @@ component.num_options=0
 
 # For each input, specify the type, e.g., file, tab-delimited, csv, student-step
 input.0.type=ranked-models
-input.0.type=ranked-models
 
 # For each output, specify the name and type, e.g., file, tab-delimited, csv, student-step
 

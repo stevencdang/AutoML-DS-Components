@@ -11,7 +11,6 @@ import logging
 import json
 import sys
 from os import path
-import argparse
 import pprint
 import csv
 
@@ -145,7 +144,10 @@ if __name__ == '__main__':
         out_path = None
 
     runner = ModelSearch(db, session, serv)
-    m_index, models, result_df, score_data, ranked_models = runner.run(ds, prob, out_path)
+    # m_index, models, result_df, score_data, ranked_models = runner.run(ds, prob, out_path)
+    runner.run(ds, prob)
+
+    session = runner.sess
 
 
     # Write html ui to output file
@@ -163,10 +165,12 @@ if __name__ == '__main__':
     logger.info("Writing session info to file: %s" % (out_file_path))
     out_data = session.to_json()
     logger.debug("Session json to write out: %s" % out_data)
-
-    # Write ranked model list to file
     with open(out_file_path, 'w') as out_file:
         out_file.write(out_data)
+
+    # Write ranked model list to file
+    # with open(out_file_path, 'w') as out_file:
+        # out_file.write(out_data)
         
-    out_file_path = path.join(args.workingDir, config.get('Output', 'ranked_model_file'))
-    ModelRankSetIO.to_file(out_file_path, ranked_models, m_index)
+    # out_file_path = path.join(args.workingDir, config.get('Output', 'ranked_model_file'))
+    # ModelRankSetIO.to_file(out_file_path, ranked_models, m_index)
