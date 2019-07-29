@@ -23,8 +23,8 @@ class DXDB(object):
             'viz_sessions': 'VizSessions',
             'solutions': "Solutions",
             'fitted_solutions': "FittedSolutions",
-
-
+            'predictions': "Predictions",
+            'model_scores': "ModelScores"
     }
     
     def __init__(self, db_url):
@@ -188,8 +188,13 @@ class DXDB(object):
                             (tbl, str(list(self.tbls.values()))))
         else:
             logger.debug("Adding given data to table, %s" % self.tbls[tbl])
+            # dd = data.__dict__
+            dd = data.to_json()
+            if '_id' in dd.keys():
+                logger.warning("Found _id, %s, in data to be inserted. Removing to insert new data" % dd['_id'])
+                del dd['_id']
             try:
-                d = self.db[self.tbls[tbl]].insert_one(data.__dict__)
+                d = self.db[self.tbls[tbl]].insert_one(dd)
             except Exception as e:
                 logger.error("Could not insert data into table %s:\n %s" % (self.tbls[tbl], str(data)))
                 raise Exception("Error encountered when inserting new data into table %s. Error: %s" % 
@@ -197,7 +202,7 @@ class DXDB(object):
             logger.debug("Added data to table, %s,  with id: %s" % (self.tbls[tbl], str(d.inserted_id)))
             # did = self.db[self.tbls['wf_sessions']].insert_one(session.__dict__).inserted_id
             data._id = str(d.inserted_id)
-            return data
+            return data._id
 
 
     def update_data_fields(self, tbl, data, fields):

@@ -1,17 +1,17 @@
 {
-    "_id": "5d3aca607f5ae731ee23096d",
+    "_id": "5d3c92981ef3fa089ff73db2",
     "comp_id": "test",
     "comp_type": "problemcreator",
-    "dataset_id": "5d3a8a847f5ae704d29e0bc8",
+    "dataset_id": "5d3c90591ef3fa071b0918ad",
     "input_wfids": [
-        "5d3ac70f7f5ae72c25043489"
+        "5d3c904f1ef3fa071b091876"
     ],
-    "prob_id": "5d3aca607f5ae731ee23096e",
+    "prob_id": "5d3c92981ef3fa089ff73db3",
     "prob_state": {},
-    "session_url": "/componentui/problemcreator/5d3aca607f5ae731ee23096d",
+    "session_url": "/componentui/problemcreator/5d3c92981ef3fa089ff73db2",
     "state": "Problem Creation Incomplete",
     "suggest_pids": [
-        "5d3aca607f5ae731ee23096f"
+        "5d3c92981ef3fa089ff73db4"
     ],
     "user_id": "testuser",
     "workflow_id": "problemcreator"

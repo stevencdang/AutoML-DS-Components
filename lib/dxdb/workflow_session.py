@@ -253,7 +253,10 @@ class ModelSearchSession(WorkflowSession):
                  prob_id=None,
                  ta2_addr=None,
                  soln_ids=[],
-                 fsln_ids=[],
+                 fitted_ids=[],
+                 fitted_pred_ids=[],
+                 score_ids=[],
+                 test_pred_ids=[],
                  session_url=None):
         super().__init__(user_id=user_id, 
                          workflow_id=workflow_id, 
@@ -266,6 +269,10 @@ class ModelSearchSession(WorkflowSession):
         self.input_wfids = input_wfids
         self.ta2_addr = ta2_addr
         self.soln_ids = soln_ids
+        self.fitted_ids = fitted_ids
+        self.fitted_pred_ids = fitted_pred_ids
+        self.score_ids = score_ids
+        self.test_pred_ids = test_pred_ids
         if state is None:
             self.state = self.available_states[0]
         else:

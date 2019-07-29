@@ -14,7 +14,6 @@ component.type=analysis
 # If Python, we default to 2.7. Update build.properties if otherwise.
 component.lang=Python
 
-# The Java package for the generated Main class. [Default = edu.cmu.learnsphere]
 component.pkg=edu.cmu.learnsphere.d3m.analysis
 
 # The author of the new component. [Default = system]
@@ -53,7 +52,7 @@ input.0.type=problem
 #output.0.type=dataset
 #output.0.name=datasetDoc.json
 
-output.0.type=problem
+output.0.type=ranked-models
 output.0.name=session.json
 
 output.1.type=inline-html

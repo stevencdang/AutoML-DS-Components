@@ -11,7 +11,7 @@ from google.protobuf import json_format
 
 from ta3ta2_api import problem_pb2
 
-from .models import Model
+from .models import Model, DBModel
 
 logger = logging.getLogger(__name__)
 
@@ -236,9 +236,9 @@ class Metric(object):
     def to_json(self, fpath=None):
         out = self.__str__()
 
-class ModelScores(object):
+class ModelScores(DBModel):
 
-    def __init__(self, mid, inputs, scores):
+    def __init__(self, mid, inputs, scores, _id=None):
         logger.debug("ModelScore initialized with id: %s\ninputs: %s\nscores: %s" % (mid, str(inputs), str(scores)))
         # A ModeL id this score applies to
         self.mid = mid
@@ -246,15 +246,21 @@ class ModelScores(object):
         self.inputs = inputs
         # list of scores
         self.scores = scores
+        super().__init__(_id)
 
     def to_dict(self):
-        out = {'model_id': self.mid,
+        # out = self.__dict__
+        out = {'_id': self._id,
+               'mid': self.mid,
                'inputs': self.inputs,
-               # 'scores': [json_format.MessageToJson(score) for score in self.scores]
-               # 'scores': [protobuf_to_dict(score) for score in self.scores]
                'scores': [score.to_dict() for score in self.scores]
         }
+        # out['scores'] = [score.to_dict() for score in self.scores]
         return out
+
+    def to_json(self):
+        # Override DBModel version of to_json
+        return self.to_dict()
 
     def __str__(self):
         out = self.to_dict()
