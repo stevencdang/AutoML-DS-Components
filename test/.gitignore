@@ -1,3 +1,9 @@
 run/*.log
+*.log
+settings.cfg
+!settings.cfg.sample
 
 problems
+# Test run folders
+program
+test
