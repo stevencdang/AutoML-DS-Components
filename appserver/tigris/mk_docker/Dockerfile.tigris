@@ -280,7 +280,8 @@ RUN chown -R datashop:datashop /datashop/d3m_components \
     # && cp /datashop/d3m_components/appserver/tigris/mk_docker/start.sh /datashop/shart.sh \
     && chmod ug+rwx,o+rx /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
     && chown datashop:datashop /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
-    && dos2unix /datashop/d3m_components/appserver/tigris/mk_docker/start.sh 
+    && dos2unix /datashop/d3m_components/appserver/tigris/mk_docker/start.sh \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/ComponentTypeHierarchy.xml /datashop/workflow_components/CommonResources/
 
  # cleanup windows file endings and permissions in workflow components directory
  RUN chown -R datashop:datashop /datashop/workflow_components \

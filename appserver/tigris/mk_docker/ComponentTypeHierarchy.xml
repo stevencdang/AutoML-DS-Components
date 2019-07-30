@@ -1,0 +1,12 @@
+<component_menu>
+	<Analysis>
+        <Recently_Used />
+        <Dataset_Importer />
+        <Problem_Creator />
+        <Model_Search />
+        <Model_Export />
+	</Analysis>
+	<Visualization>
+        <Recently_Used />
+	</Visualization>
+</component_menu>
