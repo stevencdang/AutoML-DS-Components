@@ -39,7 +39,8 @@ export class DataService {
     let url: string = this.backendAddr + this.problemUrl + "/" + prob._id;
     const httpoptions = {
       headers: new HttpHeaders({
-          'Content-Type':  'application/json'
+        'Content-Type':  'application/json',
+        'responseType':  'text'
       })
     };
     console.log("updating problem in db with PUT: ", url);
@@ -62,7 +63,8 @@ export class DataService {
     let url: string = this.backendAddr + this.getSessionUrl + "/" + wfid;
     const httpoptions = {
       headers: new HttpHeaders({
-          'Content-Type':  'application/json'
+        'Content-Type':  'application/json',
+        'responseType':  'text'
       })
     };
     console.log("updating workflow session with PUT: ", url);

@@ -149,6 +149,7 @@ if __name__ == '__main__':
     # logger.debug("********************************************")
     # logger.debug("Got problem from DB: %s" % str(temp_prob))
 
+    # Dummy code to set default problem as initial problem
     pid = prob._id
     prob = def_prob
     prob._id = pid
