@@ -355,7 +355,14 @@ export class ProblemCreatorComponent implements OnInit {
     console.log("Problem Suggestion Requested", this.suggest_probs[0]);
     console.log("current problem: ", this.problem);
     console.log("Suggested Problem: ", this.suggest_probs[0]);
+    let pid: string = this.problem._id
+    console.log("Current problem id before reseting problem: ", pid)
     this.set_new_problem(this.suggest_probs[0]);
+    console.log("Current problem id after reseting problem: ", pid)
+    console.log("this.problem_id before seting to old pid: ", pid)
+    this.problem._id = pid
+    console.log("this.problem_id after seting to old pid: ", pid)
+
 
     console.log("Updated problem: ", this.problem);
     console.log("Suggested Problem: ", this.suggest_probs[0]);
