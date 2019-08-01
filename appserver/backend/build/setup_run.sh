@@ -95,8 +95,8 @@ find "$libdir"/user_ops -type d -printf %P\\n | xargs -I {} mkdir "$srcdir/progr
 find "$libdir"/user_ops -type f -name "*.py"  -printf %P\\n | xargs -I {} cp "$libdir"/user_ops/{} "$srcdir"/program/user_ops/{}
 
 ### Copy the config files to the build directory
-cp $libdir/../d3m.cfg "$srcdir"/program/
-cp $libdir/../docker_config.cfg "$srcdir"/program/
+#cp $libdir/../d3m.cfg "$srcdir"/program/
+#cp $libdir/../docker_config.cfg "$srcdir"/program/
 
 
 cd $cwd
