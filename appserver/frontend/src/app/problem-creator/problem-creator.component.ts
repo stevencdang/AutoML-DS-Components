@@ -85,6 +85,7 @@ export class ProblemCreatorComponent implements OnInit {
       {label: "average mean reciprocal rank", value:  "averagemeanreciprocalrank"}
     ];
     this.problem_targets = [];
+    this.problem = new Problem('','','','','','',[],null,[],null,[])
   }
 
 
@@ -99,21 +100,6 @@ export class ProblemCreatorComponent implements OnInit {
     const wfid = this.route.snapshot.paramMap.get('wfid');
     console.log("Got workflow Id: ", wfid);
     return wfid;
-  }
-
-  is_ready() {
-    //Validate that state variables are defined and state is not "not ready" state 
-    if (this.wfs === undefined) {
-      return false;
-    } else {
-      return true;
-      //if (this.wfs.state == "Not Ready") {
-        //return false;
-      //} else {
-        //return true;
-      //}
-    }
-
   }
 
   parse_session_data(sesData: ProblemCreatorSession) {
@@ -161,6 +147,42 @@ export class ProblemCreatorComponent implements OnInit {
       }
     }
   }
+
+  init_session() {
+    console.log("Initializing Problem Creator Session with Data");
+    //Get Dataset for this workflow
+    //this.dataService.getDataset(this.wfs.dataset_id).subscribe((result: Dataset) => this.dataset = result);
+    this.dataService.getDataset(this.wfs.dataset_id).subscribe((result: Dataset) => this.process_dataset(result));
+
+    // Get problem for this workflow
+    if (this.wfs.prob_id != undefined) {
+      this.dataService.getProblem(this.wfs.prob_id).subscribe((result: Problem) => this.init_problem_fields(result));
+    }
+    // Get the list of problems
+    this.suggest_probs = []
+    console.log("wfs", this.wfs);
+    console.log("Suggested problems: ", this.wfs.suggest_pids.length);
+    for (let pid of this.wfs.suggest_pids) {
+      this.dataService.getProblem(pid).subscribe((result: Problem) => this.suggest_probs.push(result));
+    }
+
+
+  }
+  is_ready() {
+    //Validate that state variables are defined and state is not "not ready" state 
+    if (this.wfs === undefined) {
+      return false;
+    } else {
+      return true;
+      //if (this.wfs.state == "Not Ready") {
+        //return false;
+      //} else {
+        //return true;
+      //}
+    }
+
+  }
+
   process_dataset(ds: Dataset) {
     this.dataset = ds;
     console.log("Got dataset: ", ds);
@@ -205,46 +227,42 @@ export class ProblemCreatorComponent implements OnInit {
     
   }
 
-  init_session() {
-    console.log("Initializing Problem Creator Session with Data");
-    //Get Dataset for this workflow
-    //this.dataService.getDataset(this.wfs.dataset_id).subscribe((result: Dataset) => this.dataset = result);
-    this.dataService.getDataset(this.wfs.dataset_id).subscribe((result: Dataset) => this.process_dataset(result));
-
-    // Get problem for this workflow
-    if (this.wfs.prob_id != undefined) {
-      this.dataService.getProblem(this.wfs.prob_id).subscribe((result: Problem) => this.init_problem_fields(result));
-    }
-    // Get the list of problems
-    this.suggest_probs = []
-    console.log("wfs", this.wfs);
-    console.log("Suggested problems: ", this.wfs.suggest_pids.length);
-    for (let pid of this.wfs.suggest_pids) {
-      this.dataService.getProblem(pid).subscribe((result: Problem) => this.suggest_probs.push(result));
-    }
-
-
-  }
 
   init_problem_fields(prob: Problem) {
+    console.log("Initializing all relevant field of problem: ", prob);
+    if (prob.name === undefined) {
+      prob.name = ""
+    }
+    if (prob.description === undefined) {
+      prob.description = ""
+    }
+    if (prob.task_type ===undefined) {
+      prob.task_type = ""
+    }
+    if (prob.subtype === undefined) {
+      prob.subtype = ""
+    }
     this.set_new_problem(prob);
-    console.log("Initializing all relevant field of problem: ", this.problem);
-    if (this.problem.name === undefined) {
-      this.problem.name = ""
-    }
-    if (this.problem.description === undefined) {
-      this.problem.description = ""
-    }
-    if (this.problem.task_type ===undefined) {
-      this.problem.task_type = ""
-    }
-    if (this.problem.subtype === undefined) {
-      this.problem.subtype = ""
-    }
     console.log("Initialized all relevant problem fields: ", this.problem);
 
   }
 
+
+  set_new_problem(prob: Problem) {
+    let new_prob: Problem = this.clean_problem(this.copyObject<Problem>(prob));
+    if (this.problem._id != '') {
+      let old_id: string = this.problem._id;
+      this.problem = new_prob;
+      this.problem._id = old_id;
+    } else {
+      this.problem = new_prob;
+    }
+
+    // Set the performance metric state according to that in the problem
+    this.problem_metric = new_prob.metrics[0].metric
+    // Set the target according to that reflected in the problem
+    this.match_target(new_prob.inputs[0].targets[0].column_name);
+  }
 
 
 
@@ -278,9 +296,13 @@ export class ProblemCreatorComponent implements OnInit {
   clean_problem(prob: Problem) {
     console.log("Original problem before cleaning fields", prob);
     // COnvert task type to lowercase with spaces
-    let task_type: string = prob.task_type.toLowerCase();
-    console.log("new task type:", task_type);
-    prob.task_type = task_type;
+    if (prob.task_type != undefined) {
+      let task_type: string = prob.task_type.toLowerCase();
+      console.log("new task type:", task_type);
+      prob.task_type = task_type;
+    } else {
+      prob.task_type = "";
+    }
     // Convert subtask type to lowercase
 
     if (prob.subtype != undefined) {
@@ -288,7 +310,8 @@ export class ProblemCreatorComponent implements OnInit {
       task_subtype.split("_").join(" ");
       console.log("new taks subtype:", task_subtype);
       prob.subtype = task_subtype;
-
+    } else {
+      prob.subtype = ""
     }
     //Convert metric to metric with lowercase and spaces
     let new_metrics: PerformanceMetric[] = [];
@@ -333,22 +356,6 @@ export class ProblemCreatorComponent implements OnInit {
         }
       }
     }
-  }
-
-  set_new_problem(prob: Problem) {
-    let new_prob: Problem = this.clean_problem(this.copyObject<Problem>(prob));
-    if (this.problem != undefined) {
-      let old_id: string = this.problem._id;
-      this.problem = new_prob;
-      this.problem._id = old_id;
-    } else {
-      this.problem = new_prob;
-    }
-
-    // Set the performance metric state according to that in the problem
-    this.problem_metric = new_prob.metrics[0].metric
-    // Set the target according to that reflected in the problem
-    this.match_target(new_prob.inputs[0].targets[0].column_name);
   }
 
   use_suggest_prob() {
