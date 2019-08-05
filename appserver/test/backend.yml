@@ -4,16 +4,27 @@ services:
         image: 
             registry.datadrivendiscovery.org/sdang/cmu-ta3/dexplorer.backend:local
         ports:
-          - "8083:8083"
+          - "8081:8081"
         environment:
+            - VIRTUAL_PORT=8081
+            - DOCKERCONFIG=/app
             - D3MCONFIG=/app/d3m.cfg
-            - D3MINPUTDIR=/rdata/dataStore/d3m/datasets/seed_datasets_current
+            - D3MINPUTDIR=/rdata/dataStore/d3m/datasets
             - D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
             - TA2ADDR=ta2:45042
             - TA2NAME=cmu
-            - VIRTUAL_HOST=sophia.stevencdang.com
-            - VIRTUAL_PORT=4200
-            - HOST_URL=sophia.stevencdang.com
+            - BACKEND_HOST=dexplorer.backend
+            - BACKEND_PORT=8081
+            - BACKEND_URL=dexplorer
+            - FRONTEND_HOST=dexplorer.frontend
+            - FRONTEND_PORT=8082
+            - FRONTEND_URL=componentui
+            - VIZ_HOST=dexplorer.viz
+            - VIZ_PORT=8083
+            - VIZ_URL=viz
+            - DB_HOST=dexplorer.db
+            - DB_PORT=27017
+            - DB_URL=db
         volumes:
             - /rdata/dataStore/d3m/datasets/seed_datasets_current:/rdata/dataStore/d3m/datasets/seed_datasets_current
             - /rdata/dataStore/d3m/test_data_out:/rdata/dataStore/d3m/test_data_out

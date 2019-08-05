@@ -459,7 +459,7 @@ if __name__ == '__main__':
     bokeh_server_url = "http://" + dx_config.get_viz_server_url() 
     
     if os.environ['VIRTUAL_PORT'] is not None:
-        my_port = int(os.environ['VIRTUAL_PORT'])
+        my_port = int(os.environ['BACKEND_PORT'])
     else:
         my_port = 8081
 

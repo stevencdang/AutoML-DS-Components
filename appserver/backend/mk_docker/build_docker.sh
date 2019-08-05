@@ -35,18 +35,6 @@ elif [ "$#" == 1 ]; then
     echo "Grabbing lib and src into single program directory"
     /bin/bash $setup_path/setup_run.sh
 
-    echo "Pulling ta3ta2-api source to be built"
-    
-    cd $app_path/
-    if [ ! -d "$app_path"/tmp ]; then
-      rm -Rf "$app_path"/tmp
-    fi
-    mkdir "$app_path"/tmp
-    cd "$app_path"/tmp
-    git clone https://gitlab.com/datadrivendiscovery/ta3ta2-api.git
-    cd ta3ta2-api
-    git checkout dist-python
-
 
     echo "Executing: " "docker build -t $name -f $docker_path $app_path"
     docker build -t $name -f $docker_path $app_path
@@ -72,17 +60,6 @@ elif [ "$#" == 2 ]; then
 
       echo "Grabbing lib and src into single program directory"
       /bin/bash $setup_path/setup_run.sh
-
-      echo "Pulling ta3ta2-api source to be built"
-      cd $app_path/
-      if [ ! -d "$app_path"/tmp ]; then
-        rm -Rf "$app_path"/tmp
-      fi
-      mkdir "$app_path"/tmp
-      cd "$app_path"/tmp
-      git clone https://gitlab.com/datadrivendiscovery/ta3ta2-api.git
-      cd ta3ta2-api
-      git checkout dist-python
 
 
       echo "Executing: " "docker build -t $name -f $docker_path $app_path"

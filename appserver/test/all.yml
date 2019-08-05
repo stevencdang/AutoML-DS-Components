@@ -57,6 +57,7 @@ services:
             - "8081:8081"
         environment:
             - D3MCONFIG=/app/d3m.cfg
+            - DOCKERCONFIG=/app
             - D3MINPUTDIR=/rdata/dataStore/d3m/datasets
             - D3MOUTPUTDIR=/rdata/dataStore/d3m/test_data_out
             - TA2ADDR=ta2:45042
