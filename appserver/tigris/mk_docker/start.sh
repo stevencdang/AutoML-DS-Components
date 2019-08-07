@@ -43,15 +43,15 @@ chmod 775 $D3MCONFIG
 # Write Docker env variables to config file
 dockerconfig="/datashop/workflow_components/D3M/docker_config.cfg"
 echo "[frontend]" >> $dockerconfig
-echo "HOST_URL=$FRONTEND_HOST_URL" >> $dockerconfig
+echo "HOST_URL=$FRONTEND_HOST:$FRONTEND_PORT" >> $dockerconfig
 echo "EXTERNAL_URL=$FRONTEND_URL" >> $dockerconfig
 echo "[backend]" >> $dockerconfig
-echo "HOST_URL=$BACKEND_HOST_URL" >> $dockerconfig
+echo "HOST_URL=$BACKEND_HOST:$BACKEND_PORT" >> $dockerconfig
 echo "EXTERNAL_URL=$BACKEND_URL" >> $dockerconfig
 echo "[db]" >> $dockerconfig
-echo "HOST_URL=$DB_HOST_URL" >> $dockerconfig
+echo "HOST_URL=$DB_HOST:$DB_PORT" >> $dockerconfig
 echo "[viz]" >> $dockerconfig
-echo "HOST_URL=$VIZ_HOST_URL" >> $dockerconfig
+echo "HOST_URL=$VIZ_HOST:$VIZ_PORT" >> $dockerconfig
 echo "EXTERNAL_URL=$VIZ_URL" >> $dockerconfig
 chown jboss:datashop $dockerconfig
 chmod 775 $dockerconfig
