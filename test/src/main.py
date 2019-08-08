@@ -53,6 +53,10 @@ test_data_names = ['DA_college_debt',
 
 
 if __name__ == '__main__':
+    # Setup paths to manage output directories
+    out_dir = "/output"
+    main_out_dir = os.path.join(out_dir, "pipelines_ranked")
+
     # Parse argumennts
     parser = get_default_arg_parser("Test baseline components")
     args = parser.parse_args()
@@ -108,6 +112,7 @@ if __name__ == '__main__':
     for dsid in datasets:
         
         ds = db.get_dataset_metadata(dsid)
+
         # ds_name = ds.name.lower().replace("_", " ")
         # logger.info("Checking if %s is in list of datasets: %r" % (ds_name, ds_name in ds_names))
         # logger.info("Cfolder folder folder folder folder folder folder hecking if folder %s is in list of datasets: %r" % (ds.dpath, any(dpath in ds.dpath for dpath in test_data_names)))
@@ -125,6 +130,13 @@ if __name__ == '__main__':
             logger.info("*******************************************")
             logger.info("Testing with dataset: %s" % ds.name)
             logger.info("*******************************************")
+
+            # Write dataset to file in output
+            ds_name = os.path.split(ds.dpath)[1]
+            out_path = os.path.join(out_dir, ds_name)
+            os.mkdir(out_path)
+            out_file = os.path.join(out_path, "dataset.json")
+            ds.to_json(out_file)
 
 
             # Grabbing default problem
@@ -185,3 +197,15 @@ if __name__ == '__main__':
 
             serv.end_search_solutions(search_session.search_id)
             logger.info("Ended search solution after exporting: %s" % search_session.search_id)
+
+            # Move exported files to dataset directory
+            for f in os.listdir(main_out_dir):
+                if not os.path.isdir(os.path.join(main_out_dir, f)):
+                    logger.debug("Moving %s to %s" % (os.path.join(main_out_dir, f),
+                                    os.path.join(out_path, f)))
+                    try: 
+                        os.rename(os.path.join(main_out_dir, f), os.path.join(out_path, f))
+                    except Exception as e:
+                        logger.error("Ran into error when moving pipeline file: %s" % str(e))
+
+
