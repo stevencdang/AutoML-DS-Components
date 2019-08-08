@@ -198,7 +198,7 @@ class TA2Client(object):
         reply = self.serv.EndSearchSolutions(msg)
         if sid in self.search_solution_requests:
             try: 
-                del search_solution_requestsi[sid]
+                del search_solution_requests[sid]
             except KeyError:
                 logger.warning("Can't find search with ID, %s, to end search" % sid)
         else:
