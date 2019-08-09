@@ -142,7 +142,7 @@ class ModelSearch2(object):
             # solution_predictions[fsid] = self.serv.get_produce_solution_results(rid)
 
 
-    def score_models(self, solns, ds, prob)
+    def score_models(self, solns, ds, prob):
         # Get Score for each solution
         score_ds = ds
         req_ids = {}
