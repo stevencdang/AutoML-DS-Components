@@ -29,7 +29,11 @@ from ls_utilities.html import IframeBuilder
 __version__ = '0.1'
 
 test_data_names = [
-                   'LL0_acled_reduced',
+                   'DA_poverty_estimation',
+                   # 'LL1_336_MS_Geolife_transport_mode_prediction',
+                   # 'LL1_336_MS_Geolife_transport_mode_prediction_separate_lat_lon',
+                   # 'LL1_736_population_spawn',
+                   # 'LL1_736_population_spawn_simpler',
 ]
 # test_data_names = ['DA_college_debt',
                    # 'DA_medical_malpractice',
