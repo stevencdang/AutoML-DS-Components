@@ -28,26 +28,29 @@ from ls_utilities.html import IframeBuilder
 
 __version__ = '0.1'
 
-test_data_names = ['DA_college_debt',
-                   'DA_medical_malpractice',
-                   'DA_ny_taxi_demand',
-                   'DA_poverty_estimation',
+test_data_names = [
                    'LL0_acled_reduced',
-                   'LL1_336_MS_Geolife_transport_mode_prediction',
-                   'LL1_336_MS_Geolife_transport_mode_prediction_separate_lat_lon',
-                   'LL1_736_population_spawn',
-                   'LL1_736_population_spawn_simpler',
-                   'LL1_penn_fudan_pedestrian',
-                   'LL1_VTXC_1343_cora',
-                   'LL1_VTXC_1369_synthetic',
-                   'SEMI_1040_sylva_prior',
-                   'SEMI_1044_eye_movements',
-                   'SEMI_1053_jm1',
-                   'SEMI_1217_click_prediction_small',
-                   'SEMI_1459_artificial_characters',
-                   'SEMI_155_pokerhand',
-                   'SUPDATA_usps_digit_classification'
-                   ]
+]
+# test_data_names = ['DA_college_debt',
+                   # 'DA_medical_malpractice',
+                   # 'DA_ny_taxi_demand',
+                   # 'DA_poverty_estimation',
+                   # 'LL0_acled_reduced',
+                   # 'LL1_336_MS_Geolife_transport_mode_prediction',
+                   # 'LL1_336_MS_Geolife_transport_mode_prediction_separate_lat_lon',
+                   # 'LL1_736_population_spawn',
+                   # 'LL1_736_population_spawn_simpler',
+                   # 'LL1_penn_fudan_pedestrian',
+                   # 'LL1_VTXC_1343_cora',
+                   # 'LL1_VTXC_1369_synthetic',
+                   # 'SEMI_1040_sylva_prior',
+                   # 'SEMI_1044_eye_movements',
+                   # 'SEMI_1053_jm1',
+                   # 'SEMI_1217_click_prediction_small',
+                   # 'SEMI_1459_artificial_characters',
+                   # 'SEMI_155_pokerhand',
+                   # 'SUPDATA_usps_digit_classification'
+                   # ]
                    
 
 
