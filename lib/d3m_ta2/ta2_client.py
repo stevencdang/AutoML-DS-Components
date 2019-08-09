@@ -92,7 +92,7 @@ class TA2Client(object):
                          dataset, 
                          inputs=None, 
                          pipeline=None, 
-                         max_time=5, 
+                         max_time=30, 
                          priority=0,
                          time_bound=1,
                          rank_solutions_limit=10,
