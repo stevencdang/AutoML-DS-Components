@@ -273,6 +273,13 @@ RUN chown -R datashop:datashop /datashop/d3m_components \
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/.gitconfig /home/datashop/ \
     && echo "export WCC=/datashop/workflow_components" >> /home/datashop/.profile \
     && echo "export WCCDEV=/datashop/d3m_components" >> /home/datashop/.profile \
+    # Setup some docker dev env for testing with docker image from root profile
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/.vimrc /root/ \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/vimfiles.tar /root/ \
+    && tar -xzf /home/datashop/vimfiles.tar -C /root \
+    && cp /datashop/d3m_components/appserver/tigris/mk_docker/.gitconfig /root/ \
+    && echo "export WCC=/datashop/workflow_components" >> /root/.profile \
+    && echo "export WCCDEV=/datashop/d3m_components" >> /root/.profile \
     # Copy workflow component init script from d3m directory
     && cp /datashop/d3m_components/appserver/tigris/mk_docker/workflow_component_local.sql /datashop/sql/ \
     && chmod ug+rwx,o+rx /datashop/sql/workflow_component_local.sql \
