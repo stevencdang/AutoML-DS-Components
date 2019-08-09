@@ -188,9 +188,9 @@ if __name__ == '__main__':
             search_session.ta2_addr = address
             search_session = db.add_workflow_session(search_session)
 
-            runner = ModelSearch(db, search_session, serv)
+            runner = ModelSearch2(db, search_session, serv)
             # m_index, models, result_df, score_data, ranked_models = runner.run(ds, prob, out_path)
-            runner.run(ds, def_prob)
+            runner.short_run(ds, def_prob)
             search_session = runner.sess
 
             ranked_models = []
