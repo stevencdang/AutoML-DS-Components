@@ -163,28 +163,31 @@ class ModelSearch(object):
             fit_req_ids[mid] = self.serv.fit_solution(model, train_ds)
         for mid, rid in fit_req_ids.items():
             logger.debug("Model id: %s\tfit model request id: %s" % (mid, rid))
+            got_fitted_mdl = False
             try:
                 fitted_id, fitted_results = self.serv.get_fit_solution_results(rid)
+                got_fitted_mdl = True
             except Exception as e:
                 logger.warning("Got null result for fit solution request, %s, removing from solution set" % e)
                 # Removing soln from set of solns 
                 logger.debug("Number of solns before deleting soln that was unable to fit: %i" % len(solns))
                 del solns[mid]
                 logger.debug("Number of solns after deleting soln that was unable to fit: %i" % len(solns))
-
-            # Adding fitted model and results to db
-            fitted_mdl = FittedModel(solution_id= mid, fitted_id=fitted_id, dataset_id=ds._id)
-            fitted_mdl._id = self.db.insert_data('fitted_solutions', fitted_mdl)
-            fitted_models[fitted_mdl._id] = fitted_mdl
-            logger.debug("Added fitted model to db: %s" % str(fitted_mdl))
-            # for inpt in prob.inputs:
-                # for target in inpt.targets:
-                    # logger.debug("Input datasetID: %s\ttarget: %s " % (inpt.dataset_id, str(target)))
-            # logger.debug("Predictions to json: %s" % str(fitted_results.to_dict(orient='records')))
-            predictions = ModelPredictions(dataset_id=ds._id, problem_id=prob._id, fitted_model_id=fitted_mdl._id, data=fitted_results.to_dict('list'))
-            predictions._id = self.db.insert_data('predictions', predictions)
-            mdl_predictions[fitted_mdl._id] = predictions
-            logger.debug("Added predictions to db: %s" % str(predictions)[:300])
+						
+            if got_fitted_mdl:
+                # Adding fitted model and results to db
+                fitted_mdl = FittedModel(solution_id= mid, fitted_id=fitted_id, dataset_id=ds._id)
+                fitted_mdl._id = self.db.insert_data('fitted_solutions', fitted_mdl)
+                fitted_models[fitted_mdl._id] = fitted_mdl
+                logger.debug("Added fitted model to db: %s" % str(fitted_mdl))
+                # for inpt in prob.inputs:
+                    # for target in inpt.targets:
+                        # logger.debug("Input datasetID: %s\ttarget: %s " % (inpt.dataset_id, str(target)))
+                # logger.debug("Predictions to json: %s" % str(fitted_results.to_dict(orient='records')))
+                predictions = ModelPredictions(dataset_id=ds._id, problem_id=prob._id, fitted_model_id=fitted_mdl._id, data=fitted_results.to_dict('list'))
+                predictions._id = self.db.insert_data('predictions', predictions)
+                mdl_predictions[fitted_mdl._id] = predictions
+                logger.debug("Added predictions to db: %s" % str(predictions)[:300])
 
 
         valid_slns = [mdl.solution_id for mid, mdl in fitted_models.items()]
