@@ -93,20 +93,18 @@ wf_comps=( \
 
 do_not_build=( \
     CompareModelScores \
+    CompareModelPredictions \
+    DatasetAugmenter \
     DatasetSelector \
     VisualizationDescribeData \
     VisualizationConfusionMatrix \
-    MetricSelector \
     ModelPredict \
     ModelScore \
+    ModelFit \
     ModelSelector \
     ModelRank \
     ModelRerank \
-    ProblemTaskSelector \
-    ProblemMetricSelector \
-    ProblemGeneratorDefault \
     DescribeData \
-    CompareModelPredictions \
 )
 
 cd $cwd
