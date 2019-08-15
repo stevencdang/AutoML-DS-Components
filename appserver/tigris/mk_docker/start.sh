@@ -16,12 +16,6 @@ mysql -u root adb_source < /datashop/sql/create/create_adb_10_x.sql
 mysql -u root analysis_db < /datashop/sql/create/create_adb_10_x.sql
 mysql -u root analysis_db < /datashop/d3m_components/appserver/tigris/mk_docker/warning_alter.sql
 
-# Update DataShop/Tigris Authentication tables in database
-
-# Generate D3M Components
-# cd /datashop/d3m_components/mk_docker
-# ./setup_d3m_components.sh
-
 mysql -u root analysis_db < /datashop/sql/workflow_component_local.sql
 mysql -u root analysis_db < /datashop/sql/workflow_error_translation.sql
 mysql -u root analysis_versions < /datashop/sql/create/create_versions_10_x.sql
