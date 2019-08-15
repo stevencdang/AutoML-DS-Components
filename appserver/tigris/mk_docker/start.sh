@@ -93,8 +93,6 @@ cat >> /etc/security/limits.conf << EOF
 
 EOF
 
-# Start a python server to try to keep network interface alive
-python -m SimpleHTTPServer 8000 &
 
 # Remote ipv6 lines from /etc/hosts
 sudo printf ",g/ip6/d\nw\nq\n" | sudo ed /etc/hosts
@@ -121,5 +119,3 @@ echo "JBoss started."
 touch /datashop/docker.log
 tail -f /datashop/docker.log /opt/jboss/server/oli/log/server.log
 
-# Start  the testing server as a service
-./datashop/d3m_components/appserver/backend/run_server.sh &
